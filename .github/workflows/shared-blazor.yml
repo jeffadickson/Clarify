@@ -24,6 +24,9 @@ jobs:
       - run: node --test designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs
       - run: node workflow/compile.mjs
       - run: git diff --exit-code -- examples/workflows/OrderApproval.plan.json
+      - run: node --test tests/automatic-observability.test.mjs
+      - run: node tools/generate-observability.mjs
+      - run: git diff --exit-code -- src/Clarify.Demo.Web/GeneratedObservability.cs
       - run: node tools/generate-shared-blazor.mjs
       - run: git diff --exit-code -- src/Clarify.Forms.Shared/CustomerFields.razor
       - run: dotnet restore tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj
