@@ -33,3 +33,12 @@ The exporter protocol/port must match the Collector configuration; the default O
 `tests/Clarify.M0.Tests/ObservabilityTests.cs` validates ActivitySource and Meter emission with in-process listeners. Additional required work: instrument order persistence, generated CRUD operations, Studio generation/builds, report renderer and permission denials; add Collector-backed integration tests using Testcontainers; verify no sensitive content is exported.
 
 **Status:** Implementation and tests committed; .NET build/test has not been verified in the current authoring environment.
+
+## Automatic generation — new default
+The Clarify generator now emits `src/Clarify.Demo.Web/GeneratedObservability.cs` through `node tools/generate-observability.mjs` and the generated web host calls `AddGeneratedObservability(configuration)`. Developers do not have to add instrumentation registration manually.
+
+`tests/automatic-observability.test.mjs` verifies the generated artifact is deterministic and checked into source control. Local verification scripts and GitHub Actions invoke the generator and reject source drift.
+
+**Important boundary:** The present implementation targets the sample generated web host and instruments its HTTP requests and customer/order saves through the existing library. It is not yet a general multi-target generator for every Clarify application, nor does it automatically instrument every report, command, field-validation path or Elsa activity. Those remain tracked in issue #31.
+
+**Defaults:** operational spans and counters are enabled; OTLP network export remains off unless an endpoint is configured. No application data values are intentionally recorded in Clarify's custom spans. Backend instrumentation and exporters require privacy and environment validation.
