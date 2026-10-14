@@ -21,6 +21,7 @@ jobs:
           dotnet-version: '10.0.x'
       - run: node --test designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs
       - run: node tools/generate-shared-blazor.mjs
+      - run: git diff --exit-code -- src/Clarify.Forms.Shared/CustomerFields.razor
       - run: dotnet restore tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj
       - run: dotnet build src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release
       - run: dotnet test tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj -c Release --logger trx
