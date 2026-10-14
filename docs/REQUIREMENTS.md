@@ -435,3 +435,28 @@ All items are proposed until a linked passing test verifies them. Refer to DESIG
 | ELSA-018 | P1 | Proposed | Test parallel workflow recovery and deduplication | Automated parser/adapter/runtime contract test |
 | ELSA-019 | P1 | Proposed | Native node configuration in visual properties UI | Automated parser/adapter/runtime contract test |
 | ELSA-020 | P1 | Proposed | Diagnostics for unsupported Elsa nodes and versions | Automated parser/adapter/runtime contract test |
+
+## Application-scoped identity and permissions
+
+Status: proposed until runtime tests and enforcement across generated pages. Design: [IDENTITY-AND-APP-PERMISSIONS.md](IDENTITY-AND-APP-PERMISSIONS.md).
+
+| ID | Priority | Status | Requirement | Acceptance evidence |
+|---|---|---|---|---|
+| AUTH-001 | P0 | Proposed | Stable host identity with optional OIDC | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-002 | P0 | Proposed | Application registry with immutable IDs | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-003 | P0 | Proposed | Application-scoped membership and disable | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-004 | P0 | Proposed | Application-scoped custom roles | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-005 | P0 | Proposed | Application-scoped permission grants | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-006 | P0 | Proposed | Multiple roles per application user | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-007 | P0 | Proposed | Server-side deny-by-default policy evaluation | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-008 | P0 | Proposed | Record-level access predicates | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-009 | P0 | Proposed | Tenant boundary enforcement | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-010 | P0 | Proposed | Workflow assignment and candidate-group mapping | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-011 | P1 | Proposed | Prohibit self-approval when specified | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-012 | P1 | Proposed | Role and membership administration UI | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-013 | P1 | Proposed | Permission change audit history | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-014 | P1 | Proposed | Secure first administrator onboarding | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-015 | P1 | Proposed | Authenticated application data APIs | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-016 | P1 | Proposed | Permission-aware generated forms and menus | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-017 | P1 | Proposed | Identity-aware Testcontainers acceptance tests | xUnit authorization tests, web API denial tests and audit evidence |
+| AUTH-018 | P1 | Proposed | No privileged role implicit cross-application access | xUnit authorization tests, web API denial tests and audit evidence |
