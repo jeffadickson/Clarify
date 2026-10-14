@@ -1,0 +1,77 @@
+{
+  "entities": [
+    {
+      "name": "Customer",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "Email",
+          "type": "string"
+        },
+        {
+          "name": "City",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "Price",
+          "type": "money",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "fields": [
+        {
+          "name": "CustomerId",
+          "type": "int",
+          "required": true
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "OrderLine",
+      "fields": [
+        {
+          "name": "OrderId",
+          "type": "int",
+          "required": true
+        },
+        {
+          "name": "ProductId",
+          "type": "int",
+          "required": true
+        },
+        {
+          "name": "Quantity",
+          "type": "int",
+          "required": true
+        },
+        {
+          "name": "UnitPrice",
+          "type": "money",
+          "required": true
+        }
+      ]
+    }
+  ]
+}
