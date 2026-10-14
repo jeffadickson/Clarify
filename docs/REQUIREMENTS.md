@@ -408,3 +408,30 @@ Specification: [CLARIFY-DSL-BIDIRECTIONAL.md](CLARIFY-DSL-BIDIRECTIONAL.md). All
 | WF-018 | P1 | Proposed | Provider parity under Testcontainers | Traceable automated integration or review evidence |
 | WF-019 | P1 | Proposed | Crash/restart acceptance test | Traceable automated integration or review evidence |
 | WF-020 | P1 | Proposed | Backwards-compatible workflow version upgrades | Traceable automated integration or review evidence |
+
+## Full Elsa interoperability (ELSA requirements)
+
+All items are proposed until a linked passing test verifies them. Refer to DESIGN.md §13.
+
+| ID | Priority | Status | Requirement | Verification |
+|---|---|---|---|---|
+| ELSA-001 | P0 | Proposed | Reference any registered Elsa native activity by qualified type | Automated parser/adapter/runtime contract test |
+| ELSA-002 | P0 | Proposed | Bind external versioned configuration to native activity nodes | Automated parser/adapter/runtime contract test |
+| ELSA-003 | P0 | Proposed | Reject path traversal in native activity references | Automated parser/adapter/runtime contract test |
+| ELSA-004 | P0 | Proposed | Preserve opaque native configuration through visual editing | Automated parser/adapter/runtime contract test |
+| ELSA-005 | P0 | Proposed | Check Elsa activity metadata against installed packages | Automated parser/adapter/runtime contract test |
+| ELSA-006 | P0 | Proposed | Support Elsa native inputs outputs variables and expressions | Automated parser/adapter/runtime contract test |
+| ELSA-007 | P1 | Proposed | Support sequences decisions and condition branches | Automated parser/adapter/runtime contract test |
+| ELSA-008 | P1 | Proposed | Support parallel forks and joins | Automated parser/adapter/runtime contract test |
+| ELSA-009 | P1 | Proposed | Support timers delays schedules and events | Automated parser/adapter/runtime contract test |
+| ELSA-010 | P1 | Proposed | Support exception handlers and compensation | Automated parser/adapter/runtime contract test |
+| ELSA-011 | P1 | Proposed | Support workflow composition and subprocesses | Automated parser/adapter/runtime contract test |
+| ELSA-012 | P1 | Proposed | Support first-party and third-party Elsa activities | Automated parser/adapter/runtime contract test |
+| ELSA-013 | P1 | Proposed | Version pin plugin and workflow dependencies | Automated parser/adapter/runtime contract test |
+| ELSA-014 | P1 | Proposed | Roundtrip Elsa Studio definitions without silent loss | Automated parser/adapter/runtime contract test |
+| ELSA-015 | P1 | Proposed | Generate typed C# activity registration | Automated parser/adapter/runtime contract test |
+| ELSA-016 | P1 | Proposed | Execute mixed native and Clarify C# activities | Automated parser/adapter/runtime contract test |
+| ELSA-017 | P1 | Proposed | Verify durable bookmark restart and resume | Automated parser/adapter/runtime contract test |
+| ELSA-018 | P1 | Proposed | Test parallel workflow recovery and deduplication | Automated parser/adapter/runtime contract test |
+| ELSA-019 | P1 | Proposed | Native node configuration in visual properties UI | Automated parser/adapter/runtime contract test |
+| ELSA-020 | P1 | Proposed | Diagnostics for unsupported Elsa nodes and versions | Automated parser/adapter/runtime contract test |
