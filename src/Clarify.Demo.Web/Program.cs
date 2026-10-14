@@ -22,6 +22,17 @@ using(var scope=app.Services.CreateScope()){
  await using var db=await factory.CreateDbContextAsync();
  await db.Database.EnsureCreatedAsync(); // temporary demo initialization
 }
+// Demonstration-only API: unauthenticated workflow operations must never be exposed remotely.
+app.Use(async (ctx,next)=>{
+ if(ctx.Request.Path.StartsWithSegments("/api/workflows") &&
+    (!app.Environment.IsDevelopment() ||
+     !System.Net.IPAddress.IsLoopback(ctx.Connection.RemoteIpAddress ?? System.Net.IPAddress.None))) {
+  ctx.Response.StatusCode=403;
+  await ctx.Response.WriteAsync("Demo workflow endpoints restricted to development loopback.");
+  return;
+ }
+ await next();
+});
 app.MapGet("/api/workflows", async (ApprovalWorkflowService service,CancellationToken ct)=> await service.ListAsync(ct));
 app.MapGet("/api/workflows/{id}", async (string id,ApprovalWorkflowService service,CancellationToken ct)=> (await service.FindAsync(id,ct)) is { } snapshot ? Results.Ok(snapshot) : Results.NotFound());
 app.MapPost("/api/workflows/orders/{orderId:long}/submit", async (long orderId, SubmitRequest request,ApprovalWorkflowService service,CancellationToken ct)=> Results.Ok(await service.SubmitAsync(orderId,request.CorrelationKey,ct)));
