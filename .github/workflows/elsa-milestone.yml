@@ -41,6 +41,10 @@ jobs:
         run: |
           dotnet restore artifacts/ClarifyElsaHost
           dotnet build artifacts/ClarifyElsaHost --no-restore -c Release
+      - name: Run Elsa engine workflow smoke
+        run: dotnet run --project tests/Clarify.Elsa.Smoke/Clarify.Elsa.Smoke.csproj -c Release | tee artifacts/elsa-smoke.log
+      - name: Require Elsa activity execution
+        run: grep -q ELSA_SMOKE_COMPLETE artifacts/elsa-smoke.log
       - name: Preserve template manifest
         run: |
           find artifacts/ClarifyElsaHost -name '*.csproj' -print | sort
