@@ -36,7 +36,7 @@ public static class ClarifyPolicies
 /// Production implementations must also enforce tenant membership and separation of duties.
 /// </summary>
 public sealed record OrderApprovalResource(long OrderId, string RequesterId);
-public sealed class OrderApprovalRequirement : IAuthorizationRequirement;
+public sealed class OrderApprovalRequirement : IAuthorizationRequirement { }
 public sealed class OrderApprovalHandler : AuthorizationHandler<OrderApprovalRequirement,OrderApprovalResource>
 {
     protected override Task HandleRequirementAsync(
