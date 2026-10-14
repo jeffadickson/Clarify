@@ -1,0 +1,47 @@
+name: Elsa 3.8 milestone smoke
+on:
+  push:
+    paths:
+      - '.github/workflows/elsa-milestone.yml'
+      - 'scripts/bootstrap-elsa.sh'
+      - 'scripts/bootstrap-elsa.ps1'
+      - 'workflow/**'
+      - 'examples/workflows/**'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compiler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run ClarifyDSL workflow tests
+        run: node --test workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs
+      - name: Verify generated workflow plan
+        run: |
+          node workflow/compile.mjs
+          git diff --exit-code -- examples/workflows/OrderApproval.plan.json
+  elsa-template:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Install Elsa template
+        run: dotnet new install Elsa.Templates@3.8.0
+      - name: Create combined SQLite host
+        run: dotnet new elsa-combined -n ClarifyElsaHost --feature-model static --studio-hosting server --persistence sqlite -o artifacts/ClarifyElsaHost
+      - name: Restore and build
+        run: |
+          dotnet restore artifacts/ClarifyElsaHost
+          dotnet build artifacts/ClarifyElsaHost --no-restore -c Release
+      - name: Preserve template manifest
+        run: |
+          find artifacts/ClarifyElsaHost -name '*.csproj' -print | sort
+          grep -R 'TargetFramework' artifacts/ClarifyElsaHost --include='*.csproj'
