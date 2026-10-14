@@ -6,7 +6,7 @@ dotnet new install Elsa.Templates@3.8.0
 if ($LASTEXITCODE -ne 0) { throw "Elsa template installation failed" }
 New-Item -ItemType Directory artifacts -Force | Out-Null
 if (Test-Path artifacts/ClarifyElsaHost) { throw "Destination exists; refusing overwrite" }
-dotnet new elsa-combined -n ClarifyElsaHost --feature-model static --studio-hosting server -o artifacts/ClarifyElsaHost
+dotnet new elsa-combined -n ClarifyElsaHost --feature-model static --studio-hosting server --persistence sqlite -o artifacts/ClarifyElsaHost
 if ($LASTEXITCODE -ne 0) { throw "Elsa template creation failed" }
 dotnet restore artifacts/ClarifyElsaHost
 if ($LASTEXITCODE -ne 0) { throw "Elsa restore failed" }
