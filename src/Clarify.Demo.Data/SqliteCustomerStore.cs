@@ -1,4 +1,6 @@
 using Clarify.Forms.Shared;
+using Clarify.Observability;
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 namespace Clarify.Demo.Data;
 public sealed class CustomerRow {
@@ -26,6 +28,9 @@ public sealed class SqliteCustomerStore(IDbContextFactory<CustomerDb> factory): 
   return await db.Customers.AsNoTracking().Where(x=>x.Id==id).Select(x=>new CustomerModel{Id=x.Id,Name=x.Name,Email=x.Email,City=x.City}).SingleOrDefaultAsync(ct);
  }
  public async Task<long> SaveAsync(CustomerModel model,CancellationToken ct=default) {
+  using var activity=ClarifyTelemetry.StartOperation("clarify.customer.save","Customer");
+  var started=Stopwatch.GetTimestamp();
+  try {
   var validation=new System.Collections.Generic.List<System.ComponentModel.DataAnnotations.ValidationResult>();
   if(!System.ComponentModel.DataAnnotations.Validator.TryValidateObject(model,new System.ComponentModel.DataAnnotations.ValidationContext(model),validation,true))throw new ArgumentException(string.Join("; ",validation.Select(x=>x.ErrorMessage)));
   await using var db=await factory.CreateDbContextAsync(ct);
@@ -33,6 +38,15 @@ public sealed class SqliteCustomerStore(IDbContextFactory<CustomerDb> factory): 
   if(model.Id==0){row=new CustomerRow();db.Customers.Add(row);}
   else{row=await db.Customers.FindAsync(new object[]{model.Id},ct) ?? throw new KeyNotFoundException("Customer not found");}
   row.Name=model.Name;row.Email=model.Email;row.City=model.City;
-  await db.SaveChangesAsync(ct);return row.Id;
+  await db.SaveChangesAsync(ct);
+  ClarifyTelemetry.Saves.Add(1,new KeyValuePair<string,object?>("entity","Customer"));
+  return row.Id;
+  } catch(Exception ex) {
+   ClarifyTelemetry.SaveFailures.Add(1,new KeyValuePair<string,object?>("entity","Customer"));
+   activity?.SetStatus(ActivityStatusCode.Error,ex.GetType().Name);
+   throw;
+  } finally {
+   ClarifyTelemetry.SaveDuration.Record(Stopwatch.GetElapsedTime(started).TotalMilliseconds,new KeyValuePair<string,object?>("entity","Customer"));
+  }
  }
 }
