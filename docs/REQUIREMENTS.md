@@ -464,3 +464,25 @@ Status: proposed until runtime tests and enforcement across generated pages. Des
 | AUTH-019 | P0 | Proposed | Application-configurable Public, OptionalLogin or LoginRequired mode | Route and authorization integration tests |
 | AUTH-020 | P0 | Proposed | Public mode cannot bypass protected administrative or workflow actions | Unauthorized HTTP mutation tests |
 | AUTH-021 | P1 | Proposed | Anonymous commands require explicit policy, abuse protection and rate limiting | Security tests |
+
+## Observability and OpenTelemetry — implementation increment
+
+These requirements describe the target; instrumentation beyond HTTP/Customer save remains proposed. No passing .NET build was observed in this environment.
+
+| ID | Priority | Status | Requirement | Acceptance evidence |
+|---|---|---|---|---|
+| OTEL-001 | P0 | Implemented (unverified) | OpenTelemetry-based tracing with stable ActivitySource | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-002 | P0 | Implemented (unverified) | HTTP request tracing without secret/header capture | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-003 | P0 | Implemented (unverified) | Generated form-save spans and duration metrics | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-004 | P0 | Proposed | Structured telemetry for validation and save failures | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-005 | P0 | Proposed | Metrics for code-generation duration and outcomes | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-006 | P0 | Implemented (unverified) | Optional OTLP trace and metric export | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-007 | P0 | Implemented (unverified) | Offline operation with no Collector configured | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-008 | P0 | Proposed | Prohibit field values, passwords, secrets and SQL parameters in telemetry | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-009 | P0 | Proposed | Consistent per-application service and operation names | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-010 | P1 | Proposed | Trace context propagation across generated commands | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-011 | P1 | Proposed | Integration with Elsa built-in tracing without duplicate spans | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-012 | P1 | Proposed | Studio diagnostics and correlated generation/build failures | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-013 | P1 | Proposed | Audit trail distinct from telemetry | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-014 | P1 | Proposed | Unit tests of trace and metric emission | xUnit tracing and metric tests, OTLP smoke, security review |
+| OTEL-015 | P1 | Proposed | Collector-backed integration tests and redaction assertions | xUnit tracing and metric tests, OTLP smoke, security review |
