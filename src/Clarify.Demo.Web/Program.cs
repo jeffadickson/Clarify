@@ -31,6 +31,24 @@ app.Use(async (ctx,next)=>{
   await ctx.Response.WriteAsync("Demo workflow endpoints restricted to development loopback.");
   return;
  }
+ // Mutations of the unauthenticated demo API must not accept cross-site requests.
+ if (ctx.Request.Path.StartsWithSegments("/api/workflows") &&
+     !HttpMethods.IsGet(ctx.Request.Method)) {
+   var origin = ctx.Request.Headers.Origin.ToString();
+   if (!string.IsNullOrEmpty(origin) &&
+       (!Uri.TryCreate(origin, UriKind.Absolute, out var parsedOrigin) ||
+        !System.Net.IPAddress.TryParse(parsedOrigin.Host, out var parsedIp) ||
+        !System.Net.IPAddress.IsLoopback(parsedIp) ||
+        parsedOrigin.Port != ctx.Request.Host.Port)) {
+     ctx.Response.StatusCode=403;
+     await ctx.Response.WriteAsync("Cross-origin workflow operations are disabled.");
+     return;
+   }
+   if (!ctx.Request.HasJsonContentType()) {
+     ctx.Response.StatusCode=415;
+     return;
+   }
+ }
  await next();
 });
 app.MapGet("/api/workflows", async (ApprovalWorkflowService service,CancellationToken ct)=> await service.ListAsync(ct));
