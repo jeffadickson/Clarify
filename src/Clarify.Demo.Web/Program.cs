@@ -37,8 +37,9 @@ app.Use(async (ctx,next)=>{
    var origin = ctx.Request.Headers.Origin.ToString();
    if (!string.IsNullOrEmpty(origin) &&
        (!Uri.TryCreate(origin, UriKind.Absolute, out var parsedOrigin) ||
-        !System.Net.IPAddress.TryParse(parsedOrigin.Host, out var parsedIp) ||
-        !System.Net.IPAddress.IsLoopback(parsedIp) ||
+        !(parsedOrigin.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
+          (System.Net.IPAddress.TryParse(parsedOrigin.Host, out var parsedIp) &&
+           System.Net.IPAddress.IsLoopback(parsedIp))) ||
         parsedOrigin.Port != ctx.Request.Host.Port)) {
      ctx.Response.StatusCode=403;
      await ctx.Response.WriteAsync("Cross-origin workflow operations are disabled.");
