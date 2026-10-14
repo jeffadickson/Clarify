@@ -12,6 +12,7 @@ export function compileElsaManifest(source, knownActivities) {
     const op=plan.Operations[i];
     if(op.Kind==="step"&&!registered.has(op.Name))
       issues.push({index:i,message:"Unregistered C# activity: "+op.Name});
+    if(op.Kind==="native" && (!op.NativeType || !op.Config)) issues.push({index:i,message:"Native activity needs type and config"});
     if(op.Kind==="wait"&&!op.Role)
       issues.push({index:i,message:"Human approval needs a role"});
   }
@@ -24,9 +25,11 @@ export function compileElsaManifest(source, knownActivities) {
     trigger:plan.Trigger,
     steps:plan.Operations.map((op,i)=>({
       id:plan.Name+"/v"+plan.Version+"/"+i,
-      type:op.Kind==="wait"?"human-approval-bookmark":"registered-csharp-activity",
+      type:op.Kind==="wait"?"human-approval-bookmark":op.Kind==="native"?"native-elsa-activity":"registered-csharp-activity",
       activity:op.Name,
-      role:op.Role??null
+      role:op.Role??null,
+      nativeType:op.NativeType??null,
+      config:op.Config??null
     })),
     retryLimit:plan.MaxRetries
   };
