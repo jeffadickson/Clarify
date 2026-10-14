@@ -73,5 +73,28 @@
         }
       ]
     }
+  ],
+  "relationships": [
+    {
+      "from": "Order",
+      "to": "Customer",
+      "foreignKey": "CustomerId",
+      "cardinality": "one-to-many",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "OrderLine",
+      "to": "Order",
+      "foreignKey": "OrderId",
+      "cardinality": "one-to-many",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "OrderLine",
+      "to": "Product",
+      "foreignKey": "ProductId",
+      "cardinality": "one-to-many",
+      "onDelete": "restrict"
+    }
   ]
 }
