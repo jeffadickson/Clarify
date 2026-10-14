@@ -10,7 +10,7 @@ if(/^form\s+/.test(t)){opened=true;continue}
 if(t==='}'){if(stack.length>1)stack.pop();else opened=false;continue}
 const b=t.match(/^(grid|group|row|stack|tabs|tab|actions)\b(.*)\{\s*$/);
 if(b){const p=stack.at(-1),n={kind:b[1],line:i,columns:+(b[2].match(/columns\s+(\d+)/)?.[1]||p.columns),path:p.path+'/'+b[1]+'@'+i};nodes.push(n);stack.push(n);continue}
-if(/^(title|size|breakpoint)\b/.test(t)||stack.at(-1).kind==='actions')continue;
+if(/^(title|size|breakpoint)\b/.test(t)||/^actions\s*\{.*\}\s*$/.test(t)||stack.at(-1).kind==='actions')continue;
 const n=t.match(/^(\w+)\b/),m=line.match(loc);if(!n||!m){errors.push('Line '+(i+1)+': invalid field declaration');continue}
 if(!entity?.fields.some(f=>f.name===n[1]))errors.push('Line '+(i+1)+': unknown field '+n[1]);
 const c={id:n[1],name:n[1],x:+m[1],y:+m[2],w:+m[3],h:+m[4],line:i,path:stack.at(-1).path};
