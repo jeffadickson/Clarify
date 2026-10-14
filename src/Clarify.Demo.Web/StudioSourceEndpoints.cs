@@ -12,7 +12,7 @@ public static class StudioSourceEndpoints
     public sealed record SaveForm(string Source, string Revision);
     public static void MapStudioSource(this WebApplication app)
     {
-        var repo = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", ".."));
+        var repo = FindProjectRoot(app.Environment.ContentRootPath);
         var dictionary = Path.Combine(repo, "examples", "order-entry", "dictionary.json");
         var forms = Path.Combine(repo, "examples", "forms");
         // Only known entity names can address a project file.
@@ -45,6 +45,18 @@ public static class StudioSourceEndpoints
             finally { if(File.Exists(temp)) File.Delete(temp); }
             return Results.Ok(new { revision = Hash(request.Source) });
         });
+    }
+    private static string FindProjectRoot(string start)
+    {
+        // dotnet run --project can be invoked from different working directories.
+        // Find the repository by a known source file, never by a fragile ../.. assumption.
+        for (var dir = new DirectoryInfo(Path.GetFullPath(start)); dir is not null; dir = dir.Parent)
+        {
+            if (File.Exists(Path.Combine(dir.FullName,"examples","order-entry","dictionary.json")) &&
+                Directory.Exists(Path.Combine(dir.FullName,"examples","forms")))
+                return dir.FullName;
+        }
+        throw new DirectoryNotFoundException("Clarify source tree is unavailable; disable local source editing.");
     }
     private static bool Allowed(string entity, string dictionary) =>
         entity is "Customer" && File.Exists(dictionary); // M0 whitelist; expand through typed dictionary parser later.
