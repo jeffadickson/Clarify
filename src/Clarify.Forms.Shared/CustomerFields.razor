@@ -1,0 +1,20 @@
+@* GENERATED FROM examples/forms/Customer.clarify (see tools/generate-shared-blazor.mjs) *@
+<div class="clarify-fields">
+  <div style="grid-column: 1 / span 6; grid-row: 1 / span 1">
+    <label for="customer-name">Name</label>
+    <InputText id="customer-name" @bind-Value="Model.Name" />
+    <ValidationMessage For="() => Model.Name" />
+  </div>
+  <div style="grid-column: 7 / span 6; grid-row: 1 / span 1">
+    <label for="customer-email">Email</label>
+    <InputText id="customer-email" @bind-Value="Model.Email" />
+    <ValidationMessage For="() => Model.Email" />
+  </div>
+  <div style="grid-column: 1 / span 6; grid-row: 2 / span 1">
+    <label for="customer-city">City</label>
+    <InputText id="customer-city" @bind-Value="Model.City" />
+    <ValidationMessage For="() => Model.City" />
+  </div>
+</div>
+<style>.clarify-fields{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1rem}.clarify-fields>div{display:flex;flex-direction:column;gap:.4rem}.clarify-fields input{min-width:0}@media(max-width:700px){.clarify-fields{display:flex;flex-direction:column}}</style>
+@code {[Parameter,EditorRequired] public CustomerModel Model { get; set; } = default!; }
