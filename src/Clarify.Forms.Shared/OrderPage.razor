@@ -23,7 +23,7 @@
 <table><thead><tr><th>Product</th><th>Qty</th><th>Unit</th><th>Total</th><th></th></tr></thead><tbody>
 @for(var i=0;i<order.Lines.Count;i++){
  var index=i; var line=order.Lines[i];
- <tr><td>@line.ProductName</td><td>@line.Quantity</td><td>@Money(line.UnitPriceCents)</td><td>@Money(line.TotalCents)</td>
+ <tr><td>@line.ProductName</td><td><input type="number" min="1" max="100000" value="@line.Quantity" @onchange="e => ChangeQuantity(index,e)" /></td><td>@Money(line.UnitPriceCents)</td><td>@Money(line.TotalCents)</td>
  <td><button @onclick="() => Remove(index)">Remove</button></td></tr>
 }
 </tbody></table>
@@ -47,6 +47,7 @@
  private async Task Reload(){orders=await Store.OrdersAsync();products=await Store.ProductsAsync();customers=await Customers.ListAsync();}
  private void NewOrder(){order=new();error=null;}
  private async Task Open(long id){order=await Store.GetAsync(id)??new();}
+ private void ChangeQuantity(int i, ChangeEventArgs e){ if(int.TryParse(e.Value?.ToString(),out var n) && n>=1 && n<=100000) order.Lines[i].Quantity=n; else error="Invalid quantity"; }
  private void Remove(int index){order.Lines.RemoveAt(index);}
  private void AddLine(){
   var product=products.FirstOrDefault(x=>x.Id==selectedProduct);
