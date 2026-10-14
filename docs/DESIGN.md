@@ -49,3 +49,15 @@ M0 — documentation, contracts and CI. M1 — dictionary + validation + SQLite 
 
 ## 11. Architecture decisions outstanding
 ADR-002 frontend renderer; ADR-003 JSON vs YAML authoring truth; ADR-004 plugin trust/hosting; ADR-005 schema migration ownership; ADR-006 API generator style; ADR-007 Visual Designer event model.
+
+
+## 12. Five-pass RAD/database review (2026-10-14)
+See [expert review](REVIEW-5-PASSES.md) and requirements REV1..REV5. The following supersede any broad assumption that provider independence is free:
+- Record a capability profile for each database; disallow unsupported schema/query semantics unless explicit reviewed degradation.
+- Use separate provider-specific migration outputs. Require dry-run/backfill and production DBA approval for destructive transformations; forbid automatic production migration by default.
+- SQLite's limitations on decimal ordering/comparison, sequences, and schema DDL must be tested. Never use floating point as the silent money storage fallback.
+- For RAD completeness, treat menu/navigation generation, wizard speed, stateful browse, fast keyboard entry, report grouping, permissions, audit and bulk editing as first-class design surfaces.
+- Visual edits are user-owned declarative patches with stable IDs; generator writes are staged and atomic, with conflict previews and rollback.
+- Generated applications are portable and runnable without Loom or Studio; optional Loom adapter is isolated behind a capability contract.
+- Beta criteria require demonstrably successful nondeveloper workflows, strict provider parity checks, fault injection, traceability reports, security/accessibility tests, and generated output code review.
+- Distinguish **requirements tracker** (stable IDs, status, evidence) from **STRIDE security model**. A machine-readable tracker and CI checker are now required; Markdown alone is insufficient.
