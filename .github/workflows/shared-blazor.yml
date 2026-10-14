@@ -18,8 +18,8 @@ jobs:
           node-version: '22'
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
-      - run: node --test designer/clarifydsl.test.mjs
+          dotnet-version: '10.0.x'
+      - run: node --test designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs
       - run: node tools/generate-shared-blazor.mjs
       - run: dotnet restore tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj
       - run: dotnet build src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release
@@ -37,6 +37,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
       - run: dotnet workload install maui
       - run: dotnet build src/Clarify.Demo.Desktop/Clarify.Demo.Desktop.csproj -f net8.0-windows10.0.19041.0 -c Release
