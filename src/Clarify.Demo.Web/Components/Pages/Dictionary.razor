@@ -1,34 +1,7 @@
 @page "/studio/schema"
-@using System.Text.Json
-@inject IWebHostEnvironment Host
-<PageTitle>Clarify Dictionary</PageTitle>
-<div class="dict">
- <nav aria-label="Project navigation"><a href="/studio">← Form designer</a> · <a href="/customers">Run customers</a> · <a href="/orders">Run orders</a></nav>
- <header><p class="overline">ORDER ENTRY / SEMANTIC MODEL</p><h1>Data dictionary</h1><p>Schema is the starting point for form generation. The table below is read-only until the model editor is integrated.</p></header>
- <div class="entities">
- @foreach(var entity in entities) {
-  <section>
-   <h2>@entity.Name</h2>
-   <table><thead><tr><th>Field</th><th>Type</th><th>Required</th></tr></thead><tbody>
-   @foreach(var field in entity.Fields) {
-    <tr><td>@field.Name</td><td>@field.Type</td><td>@(field.Required ? "Yes" : "No")</td></tr>
-   }
-   </tbody></table>
-  </section>
- }
- </div>
-</div>
-<style>.dict{font:15px/1.5 system-ui,sans-serif;color:#203149;background:#f5f7fb;min-height:100vh;padding:28px}.dict a{color:#2358a0}.dict header{margin:25px 0}.overline{font-size:11px;letter-spacing:1px;color:#647e9b}.entities{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}.entities section{padding:22px;border:1px solid #dce5ef;background:white;border-radius:12px}.entities h2{margin:0 0 12px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px;border-bottom:1px solid #e8edf3}th{color:#5e7087;font-size:12px}</style>
-@code {
- private IReadOnlyList<DictionaryEntity> entities=[];
- protected override void OnInitialized(){
-   var json=System.IO.File.ReadAllText(System.IO.Path.Combine(Host.WebRootPath,"studio","dictionary.json"));
-   using var root=JsonDocument.Parse(json);
-   entities=root.RootElement.GetProperty("entities").EnumerateArray().Select(e=>
-     new DictionaryEntity(e.GetProperty("name").GetString()??"",e.GetProperty("fields").EnumerateArray().Select(f=>
-      new DictionaryField(f.GetProperty("name").GetString()??"",f.GetProperty("type").GetString()??"",
-       f.TryGetProperty("required",out var r)&&r.GetBoolean())).ToArray())).ToArray();
- }
- private sealed record DictionaryEntity(string Name,DictionaryField[] Fields);
- private sealed record DictionaryField(string Name,string Type,bool Required);
-}
+<PageTitle>Clarify Data Dictionary</PageTitle>
+<nav style="padding:14px;background:#172a44"><a style="color:white" href="/studio">← Form Designer</a> <a style="color:white;margin-left:25px" href="/orders">Run Order Entry →</a></nav>
+<iframe title="Interactive Clarify data dictionary and relationship designer"
+        src="/studio/schema-designer.html"
+        style="width:100%;height:calc(100vh - 65px);border:0;display:block">
+</iframe>
