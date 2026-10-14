@@ -3,8 +3,18 @@ using Clarify.Demo.Data;
 using Microsoft.EntityFrameworkCore;
 using Clarify.Demo.Web.Components;
 using Clarify.Demo.Web;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 var builder=WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+// Identity is a host service; Elsa may refer to the same stable user and role IDs.
+builder.Services.AddDbContext<ClarifyIdentityDb>(o =>
+    o.UseSqlite($"Data Source={Path.Combine(builder.Environment.ContentRootPath, "clarify-identity.sqlite")}"));
+builder.Services.AddIdentityApiEndpoints<ClarifyUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ClarifyIdentityDb>();
+builder.Services.AddClarifyAuthorization();
+builder.Services.AddScoped<IAuthorizationHandler, OrderApprovalHandler>();
 var file=Path.Combine(builder.Environment.ContentRootPath,"clarify-customers.sqlite");
 builder.Services.AddDbContextFactory<CustomerDb>(o=>o.UseSqlite($"Data Source={file}"));
 builder.Services.AddScoped<ICustomerStore,SqliteCustomerStore>();
@@ -18,6 +28,18 @@ builder.Services.AddScoped<IWorkflowActivity>(_=>new DemoWorkflowActivity("Valid
 builder.Services.AddScoped<IWorkflowActivity>(_=>new DemoWorkflowActivity("ReserveInventory"));
 builder.Services.AddScoped<IWorkflowActivity>(_=>new DemoWorkflowActivity("PublishOrder"));
 var app=builder.Build();
+using(var scope=app.Services.CreateScope()){
+    var identityDb=scope.ServiceProvider.GetRequiredService<ClarifyIdentityDb>();
+    // Demo initialization only. Production must use reviewed EF Core migrations.
+    await identityDb.Database.EnsureCreatedAsync();
+}
+app.UseAuthentication();
+app.UseAuthorization();
+// Local-only Identity API for experimenting with users, sign-in and roles.
+// Do not expose open registration in production; use an administrator-controlled
+// enrollment flow or external OIDC provider.
+if (app.Environment.IsDevelopment())
+    app.MapGroup("/identity").MapIdentityApi<ClarifyUser>();
 using(var scope=app.Services.CreateScope()){
  var factory=scope.ServiceProvider.GetRequiredService<IDbContextFactory<CustomerDb>>();
  await using var db=await factory.CreateDbContextAsync();
