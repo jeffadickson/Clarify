@@ -1,0 +1,21 @@
+{
+  "schema": "clarify.elsa.catalog/1",
+  "elsaVersion": "3.8.0",
+  "activities": [
+    {
+      "type": "Elsa.Http.SendHttpRequest",
+      "enabled": true,
+      "properties": [
+        "Url",
+        "Method"
+      ]
+    },
+    {
+      "type": "Elsa.Workflows.Activities.WriteLine",
+      "enabled": true,
+      "properties": [
+        "Text"
+      ]
+    }
+  ]
+}
