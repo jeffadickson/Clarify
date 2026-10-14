@@ -38,6 +38,10 @@ using(var scope=app.Services.CreateScope()){
  var dbFactory=scope.ServiceProvider.GetRequiredService<IDbContextFactory<SalesDb>>();
  await using var sales=await dbFactory.CreateDbContextAsync();
  await sales.Database.EnsureCreatedAsync();
+ if (!await sales.Products.AnyAsync()) {
+  sales.Products.AddRange(new CatalogProduct { Name = "Digital Multimeter", PriceCents = 44900 }, new CatalogProduct { Name = "Signal Generator", PriceCents = 129950 });
+  await sales.SaveChangesAsync();
+ }
 }
 // Demonstration-only API: unauthenticated workflow operations must never be exposed remotely.
 app.Use(async (ctx,next)=>{
