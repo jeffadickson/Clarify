@@ -1,0 +1,10 @@
+form CustomerEditor for Customer {
+  title "Customer Editor"
+  group "Contact" {
+    grid columns 12 gap 12 {
+      Name at (1,1) span (6,1) // customer name
+      Email at (7,1) span (6,1)
+      City at (1,2) span (6,1)
+    }
+  }
+}
