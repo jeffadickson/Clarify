@@ -344,3 +344,30 @@ All additions below are **Proposed**; no code has been implemented or verified. 
 - No data loss on power interruption during migration, regeneration or save under defined fault-injection scenarios.
 - Data integrity, schema changes, money handling, concurrency and row-level authorization are verified against each supported real DB backend.
 - All accepted P0 requirements have linked executable tests, review evidence or documented waivers; coverage statistics are reported honestly.
+
+## Bidirectional designer and positioning requirements
+
+Specification: [CLARIFY-DSL-BIDIRECTIONAL.md](CLARIFY-DSL-BIDIRECTIONAL.md). All below Proposed and unverified.
+
+| ID | Priority | Status | Requirement | Acceptance evidence |
+|---|---|---|---|---|
+| DSL-001 | P0 | Proposed | Bidirectional DSL and visual designer synchronization | Round-trip source/visual test tied to DSL-001 |
+| DSL-002 | P0 | Proposed | Dictionary-bound WYSIWYG preview | Round-trip source/visual test tied to DSL-002 |
+| DSL-003 | P0 | Proposed | Grid row and column position attributes | Round-trip source/visual test tied to DSL-003 |
+| DSL-004 | P0 | Proposed | Grid spans and resizing handles | Round-trip source/visual test tied to DSL-004 |
+| DSL-005 | P0 | Proposed | Container drag and drop with structural source edits | Round-trip source/visual test tied to DSL-005 |
+| DSL-006 | P0 | Proposed | Responsive breakpoint source rules | Round-trip source/visual test tied to DSL-006 |
+| DSL-007 | P0 | Proposed | Constrained width height min max properties | Round-trip source/visual test tied to DSL-007 |
+| DSL-008 | P0 | Proposed | Print canvas absolute positions and physical units | Round-trip source/visual test tied to DSL-008 |
+| DSL-009 | P0 | Proposed | Lossless source trivia and comment preservation | Round-trip source/visual test tied to DSL-009 |
+| DSL-010 | P0 | Proposed | Minimal source patches on visual edits | Round-trip source/visual test tied to DSL-010 |
+| DSL-011 | P0 | Proposed | Source selection and UI selection synchronization | Round-trip source/visual test tied to DSL-011 |
+| DSL-012 | P0 | Proposed | Incremental parse preview with invalid text | Round-trip source/visual test tied to DSL-012 |
+| DSL-013 | P0 | Proposed | Atomic undo redo across code and visual editing | Round-trip source/visual test tied to DSL-013 |
+| DSL-014 | P0 | Proposed | Stable control IDs across movement and rename | Round-trip source/visual test tied to DSL-014 |
+| DSL-015 | P1 | Proposed | External file revision conflict and merge handling | Round-trip source/visual test tied to DSL-015 |
+| DSL-016 | P1 | Proposed | Source formatting and deterministic output | Round-trip source/visual test tied to DSL-016 |
+| DSL-017 | P1 | Proposed | Keyboard and accessibility warnings for positioning | Round-trip source/visual test tied to DSL-017 |
+| DSL-018 | P1 | Proposed | Playwright drag edit roundtrip test | Round-trip source/visual test tied to DSL-018 |
+| DSL-019 | P1 | Proposed | xUnit property-based parse edit reparse tests | Round-trip source/visual test tied to DSL-019 |
+| DSL-020 | P1 | Proposed | NSubstitute edit transaction order tests | Round-trip source/visual test tied to DSL-020 |
