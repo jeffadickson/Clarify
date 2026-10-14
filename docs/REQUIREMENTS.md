@@ -371,3 +371,40 @@ Specification: [CLARIFY-DSL-BIDIRECTIONAL.md](CLARIFY-DSL-BIDIRECTIONAL.md). All
 | DSL-018 | P1 | Proposed | Playwright drag edit roundtrip test | Round-trip source/visual test tied to DSL-018 |
 | DSL-019 | P1 | Proposed | xUnit property-based parse edit reparse tests | Round-trip source/visual test tied to DSL-019 |
 | DSL-020 | P1 | Proposed | NSubstitute edit transaction order tests | Round-trip source/visual test tied to DSL-020 |
+
+## User-authored .NET and durable workflows
+
+[Detailed specification](CUSTOM-CSHARP-AND-WORKFLOWS.md). Proposed only; not implemented or verified end-to-end.
+
+| ID | Priority | Status | Requirement | Acceptance evidence |
+|---|---|---|---|---|
+| CS-001 | P0 | Proposed | Typed user-owned C# command handlers | Traceable automated integration or review evidence |
+| CS-002 | P0 | Proposed | Typed validators and formula extension points | Traceable automated integration or review evidence |
+| CS-003 | P0 | Proposed | Generate handler and xUnit skeleton through Studio | Traceable automated integration or review evidence |
+| CS-004 | P0 | Proposed | Detect missing and duplicate DI registrations | Traceable automated integration or review evidence |
+| CS-005 | P0 | Proposed | Preserve user C# across regeneration | Traceable automated integration or review evidence |
+| CS-006 | P0 | Proposed | VS Code and Visual Studio debugging launch profile | Traceable automated integration or review evidence |
+| CS-007 | P0 | Proposed | Diagnostics link DSL action names to C# symbols | Traceable automated integration or review evidence |
+| CS-008 | P0 | Proposed | Compile without Clarify Studio or Loom | Traceable automated integration or review evidence |
+| CS-009 | P1 | Proposed | Safe local compilation permissions | Traceable automated integration or review evidence |
+| CS-010 | P1 | Proposed | Custom workflow step contract | Traceable automated integration or review evidence |
+| WF-001 | P0 | Proposed | Embedded durable workflow runtime adapter | Traceable automated integration or review evidence |
+| WF-002 | P0 | Proposed | Persist execution state and workflow history | Traceable automated integration or review evidence |
+| WF-003 | P0 | Proposed | Resume after host restart | Traceable automated integration or review evidence |
+| WF-004 | P0 | Proposed | Immutable version-pinned workflow definitions | Traceable automated integration or review evidence |
+| WF-005 | P0 | Proposed | Wait for correlated external events | Traceable automated integration or review evidence |
+| WF-006 | P0 | Proposed | Human approval tasks and permissions | Traceable automated integration or review evidence |
+| WF-007 | P0 | Proposed | Persisted timers retries and escalation | Traceable automated integration or review evidence |
+| WF-008 | P0 | Proposed | Idempotent step execution and durable outbox | Traceable automated integration or review evidence |
+| WF-009 | P1 | Proposed | Lease and concurrency protections | Traceable automated integration or review evidence |
+| WF-010 | P1 | Proposed | Retry failure dead-letter handling | Traceable automated integration or review evidence |
+| WF-011 | P1 | Proposed | Audit log of actors and actions | Traceable automated integration or review evidence |
+| WF-012 | P1 | Proposed | Offline local execution and eventual synchronization | Traceable automated integration or review evidence |
+| WF-013 | P1 | Proposed | OpenTelemetry workflow events | Traceable automated integration or review evidence |
+| WF-014 | P1 | Proposed | Workflow step authoring in user-owned C# | Traceable automated integration or review evidence |
+| WF-015 | P1 | Proposed | DSL workflow grammar and diagnostics | Traceable automated integration or review evidence |
+| WF-016 | P1 | Proposed | Visual workflow design and definition roundtrip | Traceable automated integration or review evidence |
+| WF-017 | P1 | Proposed | Workflow monitoring and operator controls | Traceable automated integration or review evidence |
+| WF-018 | P1 | Proposed | Provider parity under Testcontainers | Traceable automated integration or review evidence |
+| WF-019 | P1 | Proposed | Crash/restart acceptance test | Traceable automated integration or review evidence |
+| WF-020 | P1 | Proposed | Backwards-compatible workflow version upgrades | Traceable automated integration or review evidence |
