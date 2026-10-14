@@ -1,0 +1,34 @@
+name: Shared Blazor + DSL
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'designer/**'
+      - 'tools/generate-shared-blazor.mjs'
+      - 'examples/**'
+      - '.github/workflows/shared-blazor.yml'
+  pull_request:
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: node --test designer/clarifydsl.test.mjs
+      - run: node tools/generate-shared-blazor.mjs
+      - run: dotnet build src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release
+  desktop:
+    runs-on: windows-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet workload install maui
+      - run: dotnet build src/Clarify.Demo.Desktop/Clarify.Demo.Desktop.csproj -f net8.0-windows10.0.19041.0 -c Release
