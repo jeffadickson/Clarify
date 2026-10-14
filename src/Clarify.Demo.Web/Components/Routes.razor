@@ -1,0 +1,5 @@
+@using Clarify.Forms.Shared
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(CustomerPage).Assembly }">
+  <Found Context="routeData"><RouteView RouteData="routeData"/></Found>
+  <NotFound><h1>Page not found</h1></NotFound>
+</Router>
