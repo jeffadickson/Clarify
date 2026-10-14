@@ -1,0 +1,42 @@
+@page "/"
+@page "/customers"
+@inject ICustomerStore Store
+<h1>Customers</h1>
+<p>Shared ClarifyDSL-generated form running in Blazor Web or Blazor Hybrid.</p>
+@if (!string.IsNullOrEmpty(error)) { <p role="alert" style="color:#a21d2e">@error</p> }
+@if (busy) { <p>Loading…</p> }
+else {
+ <div class="clarify-two">
+  <section><h2>Browse</h2><button @onclick="NewCustomer">New customer</button>
+   <ul>@foreach (var row in customers) {
+    <li><button @onclick="() => Select(row.Id)">@row.Name</button> (@row.City)</li>
+   }</ul>
+  </section>
+  <section><h2>@(model.Id == 0 ? "New customer" : "Edit customer")</h2>
+   <EditForm Model="@model" OnValidSubmit="SaveAsync" FormName="customerEditor" @key="model">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <CustomerFields Model="@model" />
+    <button type="submit" disabled="@saving">@(saving ? "Saving…" : "Save customer")</button>
+   </EditForm>
+  </section>
+ </div>
+}
+<style>.clarify-two{display:grid;grid-template-columns:1fr 2fr;gap:2rem}@media(max-width:700px){.clarify-two{grid-template-columns:1fr}}button{padding:.5rem;margin:.25rem}input{padding:.5rem}</style>
+@code {
+ private CustomerModel model = new();
+ private IReadOnlyList<CustomerModel> customers = Array.Empty<CustomerModel>();
+ private bool busy = true, saving;
+ private string? error;
+ protected override async Task OnInitializedAsync() { await ReloadAsync(); busy = false; }
+ private async Task ReloadAsync() { try { customers = await Store.ListAsync(); error=null; } catch(Exception ex){error=ex.Message;} }
+ private void NewCustomer(){ model = new(); error=null; }
+ private async Task Select(long id) { try { model = await Store.GetAsync(id) ?? new(); error=null; } catch(Exception ex){error=ex.Message;} }
+ private async Task SaveAsync() {
+  if(saving) return;
+  saving=true;
+  try { var id=await Store.SaveAsync(model);await ReloadAsync();model=await Store.GetAsync(id) ?? new(); }
+  catch(Exception ex){ error=ex.Message; }
+  finally { saving=false; }
+ }
+}
