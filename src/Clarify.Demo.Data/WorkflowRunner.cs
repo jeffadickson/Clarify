@@ -82,7 +82,7 @@ public sealed class WorkflowRunner(
         var run=await db.Runs.SingleAsync(x=>x.Id==id,ct);
         var plan=JsonSerializer.Deserialize<WorkflowPlan>(run.PlanJson) ?? throw new InvalidOperationException("Invalid persisted workflow definition");
         plan.Validate();
-        while (run.NextIndex < plan.Operations.Length && run.Status is "Ready" or "Failed") {
+        while (run.NextIndex < plan.Operations.Length && (run.Status == "Ready" || (run.Status == "Failed" && run.Attempts <= plan.MaxRetries))) {
             var op=plan.Operations[run.NextIndex];
             if (op.Kind=="wait") {
                 run.Status="Waiting";run.WaitingFor=op.Name;run.UpdatedUtc=DateTime.UtcNow;
@@ -99,7 +99,7 @@ public sealed class WorkflowRunner(
                 await db.SaveChangesAsync(ct);
             } catch(Exception ex) when (ex is not OperationCanceledException) {
                 run.Attempts++;
-                run.Error=ex.Message;run.Status="Failed";run.UpdatedUtc=DateTime.UtcNow;
+                run.Error=ex.GetType().Name + ": " + ex.Message;run.Status="Failed";run.UpdatedUtc=DateTime.UtcNow;
                 await db.SaveChangesAsync(ct);break;
             }
         }
