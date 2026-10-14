@@ -6,6 +6,8 @@ on:
       - 'designer/**'
       - 'tools/generate-shared-blazor.mjs'
       - 'examples/**'
+      - 'scripts/**'
+      - 'tests/**'
       - '.github/workflows/shared-blazor.yml'
   pull_request:
 jobs:
@@ -27,6 +29,8 @@ jobs:
       - run: dotnet restore tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj
       - run: dotnet build src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release
       - run: dotnet test tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj -c Release --logger trx
+      - name: Smoke running web host and Studio
+        run: bash scripts/smoke-web.sh
       - run: dotnet publish src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release -o artifacts/web
       - uses: actions/upload-artifact@v4
         with:
