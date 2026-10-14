@@ -36,6 +36,7 @@ using(var scope=app.Services.CreateScope()){
 }
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapApplicationAccess();
 // Local-only Identity API for experimenting with users, sign-in and roles.
 // Do not expose open registration in production; use an administrator-controlled
 // enrollment flow or external OIDC provider.
