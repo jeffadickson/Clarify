@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '22'
       - name: Run ClarifyDSL workflow tests
-        run: node --test workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs
+        run: node --test workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs workflow/elsa-native.test.mjs
       - name: Verify generated workflow plan
         run: |
           node workflow/compile.mjs
