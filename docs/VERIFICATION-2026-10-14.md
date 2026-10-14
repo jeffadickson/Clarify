@@ -22,3 +22,12 @@
 - Integrate workflow execution and activity registration with persisted engine storage, outbox and concurrency leases.
 - Add Testcontainers-backed database parity and Playwright browser tests.
 - Build and smoke-test Windows and macOS native packages and publish signed versioned artifacts.
+
+## Subsequent build hardening pass
+- Fixed the net8/native-versus-net10/shared project framework mismatch by retargeting MAUI to net10 and requesting MAUI 10 package references. Native build is still unverified and may require additional platform package/SDK changes.
+- Configured NuGet lockfile generation for test projects too. Lockfiles have not yet been generated or committed; locked-mode restore remains unavailable.
+- Added local JSON mutation and Origin safeguards to development-only workflow endpoints, while noting that loopback access is **not authentication**.
+- GitHub status API returned no commit statuses for the checked commit; this is not evidence that Actions ran or passed.
+- Workflow Core itself, a compiler connection from workflow DSL to runtime, Testcontainers integration and signed packaging remain open.
+
+**Release verdict:** not beta-certified. Changes in this pass are committed source/build configuration without observed native or .NET execution.
