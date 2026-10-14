@@ -10,9 +10,7 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 // Identity is a host service; Elsa may refer to the same stable user and role IDs.
 builder.Services.AddDbContext<ClarifyIdentityDb>(o =>
     o.UseSqlite($"Data Source={Path.Combine(builder.Environment.ContentRootPath, "clarify-identity.sqlite")}"));
-builder.Services.AddIdentityApiEndpoints<ClarifyUser>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ClarifyIdentityDb>();
+builder.Services.AddClarifyAuthentication(builder.Configuration);
 builder.Services.AddClarifyAuthorization();
 builder.Services.AddScoped<IAuthorizationHandler, OrderApprovalHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, ApplicationPermissionHandler>();
@@ -40,7 +38,9 @@ app.MapApplicationAccess();
 // Local-only Identity API for experimenting with users, sign-in and roles.
 // Do not expose open registration in production; use an administrator-controlled
 // enrollment flow or external OIDC provider.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() &&
+    builder.Configuration.GetValue<bool>("Clarify:Authentication:EnableLocalRegistration") &&
+    (builder.Configuration["Clarify:Authentication:Provider"] ?? "Identity") == "Identity")
     app.MapGroup("/identity").MapIdentityApi<ClarifyUser>();
 using(var scope=app.Services.CreateScope()){
  var factory=scope.ServiceProvider.GetRequiredService<IDbContextFactory<CustomerDb>>();
