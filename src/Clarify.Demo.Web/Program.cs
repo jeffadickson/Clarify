@@ -15,6 +15,7 @@ builder.Services.AddIdentityApiEndpoints<ClarifyUser>()
     .AddEntityFrameworkStores<ClarifyIdentityDb>();
 builder.Services.AddClarifyAuthorization();
 builder.Services.AddScoped<IAuthorizationHandler, OrderApprovalHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, ApplicationPermissionHandler>();
 var file=Path.Combine(builder.Environment.ContentRootPath,"clarify-customers.sqlite");
 builder.Services.AddDbContextFactory<CustomerDb>(o=>o.UseSqlite($"Data Source={file}"));
 builder.Services.AddScoped<ICustomerStore,SqliteCustomerStore>();
