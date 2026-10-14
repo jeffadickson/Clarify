@@ -3,6 +3,7 @@
 @inject IOrderStore Store
 @inject ICustomerStore Customers
 
+<nav><a href="/customers">Customers</a> · <a href="/orders">Orders</a></nav>
 <h1>Order Entry</h1>
 <p>Create and edit orders with transactionally saved line items.</p>
 @if (error is not null) { <p role="alert">@error</p> }
@@ -33,20 +34,28 @@
 <button @onclick="AddLine">Add line</button>
 <h3>Order total: @Money(order.TotalCents)</h3>
 <button disabled="@saving" @onclick="Save">Save order</button>
+@if (order.Id > 0) { <button @onclick="PrintInvoice">Print invoice</button> }
+@if (showInvoice && order.Id > 0) {
+ <article class="invoice"><h2>Invoice #@order.Id</h2><p>Date: @order.Date</p><p>Customer: @customers.FirstOrDefault(c=>c.Id==order.CustomerId)?.Name</p>
+ <table><thead><tr><th>Product</th><th>Quantity</th><th>Unit price</th><th>Amount</th></tr></thead><tbody>
+ @foreach (var line in order.Lines) { <tr><td>@line.ProductName</td><td>@line.Quantity</td><td>@Money(line.UnitPriceCents)</td><td>@Money(line.TotalCents)</td></tr> }
+ </tbody></table><h3>Total @Money(order.TotalCents)</h3><p class="nonprint">Use the browser Print command to print or save as PDF.</p></article>
+}
 </section>
 </div>
-<style>.orders{display:grid;grid-template-columns:1fr 3fr;gap:2rem}table{width:100%}td,th{padding:.5rem;border-bottom:1px solid #ddd}@media(max-width:700px){.orders{display:block}}</style>
+<style>.orders{display:grid;grid-template-columns:1fr 3fr;gap:2rem}table{width:100%}td,th{padding:.5rem;border-bottom:1px solid #ddd}@media(max-width:700px){.orders{display:block}}@media print{nav,button,select,input,.orders>section:first-child,.nonprint{display:none!important}.orders{display:block}.invoice{display:block;border:0}}</style>
 @code {
  private OrderModel order=new();
  private IReadOnlyList<OrderModel> orders=[];
  private IReadOnlyList<ProductModel> products=[];
  private IReadOnlyList<CustomerModel> customers=[];
- private long selectedProduct;private bool saving;
+ private long selectedProduct;private bool saving;private bool showInvoice;
  private string? error;
  protected override async Task OnInitializedAsync(){await Reload();}
  private async Task Reload(){orders=await Store.OrdersAsync();products=await Store.ProductsAsync();customers=await Customers.ListAsync();}
- private void NewOrder(){order=new();error=null;}
- private async Task Open(long id){order=await Store.GetAsync(id)??new();}
+ private void NewOrder(){order=new();showInvoice=false;error=null;}
+ private async Task Open(long id){order=await Store.GetAsync(id)??new();showInvoice=false;error=null;}
+ private void PrintInvoice(){showInvoice=true;}
  private void ChangeQuantity(int i, ChangeEventArgs e){ if(int.TryParse(e.Value?.ToString(),out var n) && n>=1 && n<=100000) order.Lines[i].Quantity=n; else error="Invalid quantity"; }
  private void Remove(int index){order.Lines.RemoveAt(index);}
  private void AddLine(){
@@ -57,7 +66,7 @@
  private async Task Save(){
   if(saving)return;
   saving=true;
-  try{var id=await Store.SaveAsync(order);await Reload();order=await Store.GetAsync(id)??new();error=null;}
+  try{var id=await Store.SaveAsync(order);await Reload();order=await Store.GetAsync(id)??new();showInvoice=false;error=null;}
   catch(Exception ex){error=ex.Message;}
   finally{saving=false;}
  }
