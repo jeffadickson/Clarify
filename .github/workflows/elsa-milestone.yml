@@ -45,6 +45,8 @@ jobs:
         run: dotnet run --project tests/Clarify.Elsa.Smoke/Clarify.Elsa.Smoke.csproj -c Release | tee artifacts/elsa-smoke.log
       - name: Require Elsa activity execution
         run: grep -q ELSA_SMOKE_COMPLETE artifacts/elsa-smoke.log
+      - name: Compile Elsa bookmark and authenticated approval examples
+        run: dotnet build tests/Clarify.Elsa.Approval/Clarify.Elsa.Approval.csproj -c Release
       - name: Preserve template manifest
         run: |
           find artifacts/ClarifyElsaHost -name '*.csproj' -print | sort
