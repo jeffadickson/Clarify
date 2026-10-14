@@ -61,3 +61,34 @@ See [expert review](REVIEW-5-PASSES.md) and requirements REV1..REV5. The followi
 - Generated applications are portable and runnable without Loom or Studio; optional Loom adapter is isolated behind a capability contract.
 - Beta criteria require demonstrably successful nondeveloper workflows, strict provider parity checks, fault injection, traceability reports, security/accessibility tests, and generated output code review.
 - Distinguish **requirements tracker** (stable IDs, status, evidence) from **STRIDE security model**. A machine-readable tracker and CI checker are now required; Markdown alone is insufficient.
+
+## 13. Full Elsa capability strategy — native activity escape hatch (2026-10-14)
+
+**Design decision:** ClarifyDSL offers concise forms for common workflows while retaining access to *all installed Elsa activity types* by referencing native activities and their versioned configuration. This does **not** imply that Clarify can presently execute every Elsa activity. Runtime parity requires a typed Elsa adapter, plugin inventory, and validation against the installed Elsa 3.x version.
+
+Supported proposed syntax:
+
+```clarify
+workflow Shipping for Order {
+ version 1
+ start when Order.Submitted
+ step ValidateOrder
+ elsa "Elsa.Http.SendHttpRequest" as SendRequest config "activities/send-request.json"
+ wait Approval from Manager
+}
+```
+
+The compiler treats native activity configuration as **opaque versioned Elsa-specific data**; it must not interpret arbitrary JSON as executable code or silently discard unknown fields. A native adapter resolves type identity via Elsa's registered activity descriptors, validates properties and inputs using the actual Elsa SDK, and produces the Elsa definition. Missing types, incompatible plugin versions, unknown ports, or unsafe config paths are build errors. Native configuration round-trips without modification; designer shows a property editor when metadata exists and a raw configuration editor otherwise. Stable node IDs, source ownership, and explicit migration between Elsa releases are mandatory.
+
+### Supported surface target (not yet implementation claim)
+Sequences, decisions, loops, parallel/fork/join, timers, HTTP and event triggers, bookmarks and approvals, variables/expressions, exception flows, compensation, reusable workflows, custom C# activities, external activity packages and Elsa Studio-authored definitions. Some features may require native blocks rather than concise DSL syntax. No silent loss when importing/exporting unsupported Elsa constructs.
+
+### Dependency/ownership boundary
+`ClarifyDSL` -> `typed intermediate plan` -> `Elsa adapter` -> `Elsa runtime`. Elsa remains an optional generated-app dependency. The present JavaScript parser is a prototype; production should use a versioned .NET compiler model with real Elsa metadata inspection and contract tests. The custom `WorkflowRunner` is not the production Elsa backend.
+
+### Acceptance gates
+1. Every built-in and installed third-party Elsa activity can be represented as an explicitly typed native node, or produces a documented incompatibility diagnostic.
+2. Arbitrary native node metadata survives parse/serialize/visual edits exactly, with stable IDs.
+3. Compile an Elsa workflow with a native activity plus custom C# activity and execute it inside an Elsa 3 host.
+4. Elsa Studio import/export roundtrip preserves supported semantics, or explains every unsupported transformation.
+5. Verified SQLite restart, approval, timer, parallel join, retry and error handling; authenticated decisions; Testcontainers parity.
