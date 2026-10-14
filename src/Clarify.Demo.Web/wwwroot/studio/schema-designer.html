@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Clarify Dictionary Designer</title>
+<style>
+body{margin:0;background:#f3f6fb;color:#21324a;font:14px/1.45 system-ui,sans-serif}header{background:#172a44;color:white;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px}h1{margin:0;font-size:21px}button,input,select{font:inherit;padding:8px;border:1px solid #b8c8de;border-radius:6px}button{background:#fff;cursor:pointer}button.primary{background:#275da9;color:#fff;border-color:#275da9}main{padding:20px;max-width:1250px;margin:auto}.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:18px}.tools span{flex:1}#canvas{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:16px}.entity{background:#fff;border:1px solid #cbd7e7;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px #122e4a0a}.entity h2{background:#2d557d;color:white;margin:0;padding:13px 16px;font-size:16px}.entity table{width:100%;border-collapse:collapse}.entity td{padding:7px 13px;border-bottom:1px solid #e7edf5}.entity td:last-child{text-align:right;color:#667994}.entity footer{padding:12px}.rel{background:white;border-radius:12px;padding:16px;margin-top:20px;border:1px solid #d4e1ee}.rel li{padding:5px}.notice{background:#fff5df;border-left:4px solid #bb8d37;padding:10px 14px;margin:12px 0}#errors{color:#a32332;white-space:pre-wrap}dialog{border:1px solid #bdcede;border-radius:12px;max-width:95vw}dialog form{display:grid;gap:12px;min-width:min(370px,80vw)}dialog label{display:grid;gap:4px}dialog menu{display:flex;gap:10px;justify-content:end;padding:0}textarea{width:100%;height:130px;resize:vertical}
+</style></head><body>
+<header><h1>Clarify · Data Dictionary Designer</h1><span>Visual schema prototype</span></header>
+<main><p>Define tables and fields, then connect relationships. Download the dictionary for source control and generation.</p>
+<div class="notice">Prototype: edits remain in this browser until you export JSON. No database migrations or generated application changes occur automatically.</div>
+<div class="tools"><button class="primary" id="add-entity">+ Entity</button><button id="add-relation">+ Relationship</button><span></span><button id="reset">Reload schema</button><button class="primary" id="export">Export dictionary</button></div>
+<p id="errors" role="alert"></p><section id="canvas" aria-label="Schema entities"></section><section class="rel"><h2>Relationships</h2><ul id="relationships"></ul></section>
+</main><dialog id="edit"></dialog>
+<script type="module">
+import {validate,addEntity,addField,addRelationship} from "./schema.mjs";
+const $=id=>document.getElementById(id),schemaUrl="./dictionary.json";
+let model=await fetch(schemaUrl).then(r=>r.json());
+try{const saved=localStorage.getItem("clarify-schema-prototype");if(saved)model=JSON.parse(saved)}catch{}
+function el(tag,text){const n=document.createElement(tag);n.textContent=text;return n}
+function render(){const errors=validate(model);$("errors").textContent=errors.join("\n");const canvas=$("canvas");canvas.replaceChildren();
+for(const entity of model.entities){const box=el("article","");box.className="entity";box.append(el("h2",entity.name));const table=document.createElement("table");
+for(const f of entity.fields){const tr=document.createElement("tr");tr.append(el("td",f.name+(f.primaryKey?" 🔑":"")),el("td",f.type+(f.required?" · required":"")));table.append(tr)}
+box.append(table);const foot=el("footer","");const b=el("button","+ Field");b.onclick=()=>fieldDialog(entity.name);foot.append(b);box.append(foot);canvas.append(box)}
+const ul=$("relationships");ul.replaceChildren();for(const r of model.relationships||[]){ul.append(el("li",r.from+"."+r.foreignKey+" → "+r.to+" (many-to-one; delete "+r.onDelete+")"))}
+try{localStorage.setItem("clarify-schema-prototype",JSON.stringify(model))}catch{}}
+function dialog(title,parts,save){const d=$("edit");d.replaceChildren();const f=document.createElement("form");f.method="dialog";f.append(el("h2",title));const controls=[];
+for(const part of parts){const label=el("label",part.label),input=part.options?document.createElement("select"):document.createElement("input");
+if(part.options){for(const option of part.options){const item=el("option",option);item.value=option;input.append(item)}}else input.value=part.value||"";
+input.name=part.name;input.required=true;label.append(input);controls.push(input);f.append(label)}
+const menu=el("menu","");const cancel=el("button","Cancel");cancel.type="button";cancel.onclick=()=>d.close();const submit=el("button","Create");submit.className="primary";submit.type="submit";menu.append(cancel,submit);f.append(menu);f.onsubmit=e=>{e.preventDefault();const values=Object.fromEntries(controls.map(x=>[x.name,x.value]));try{model=save(values);d.close();render()}catch(err){$("errors").textContent=err.message}};d.append(f);d.showModal()}
+function fieldDialog(name){dialog("New field in "+name,[{name:"name",label:"Field name"},{name:"type",label:"Type",options:["string","int","long","date","bool","decimal","money"]},{name:"required",label:"Required",options:["false","true"]}],v=>addField(model,name,{name:v.name,type:v.type,required:v.required==="true"}))}
+$("add-entity").onclick=()=>dialog("New entity",[{name:"name",label:"Entity name"}],v=>addEntity(model,v.name));
+$("add-relation").onclick=()=>dialog("Connect entities",[{name:"from",label:"Child entity",options:model.entities.map(x=>x.name)},{name:"to",label:"Parent entity",options:model.entities.map(x=>x.name)},{name:"foreignKey",label:"Foreign key field"},{name:"onDelete",label:"Delete behavior",options:["restrict","cascade","set-null"]}],v=>addRelationship(model,v.from,v.to,v.foreignKey,v.onDelete));
+$("reset").onclick=async()=>{if(!confirm("Discard local dictionary changes?"))return;model=await fetch(schemaUrl).then(r=>r.json());render()};
+$("export").onclick=()=>{const errors=validate(model);if(errors.length){$("errors").textContent=errors.join("\n");return}const blob=new Blob([JSON.stringify(model,null,2)+"\n"],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dictionary.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+render();
+</script></body></html>
