@@ -206,3 +206,141 @@ Each accepted requirement must map to one or more test IDs (e.g. `TST-DCT-001`),
 ## Reference acceptance scenario
 
 The Clarion-inspired order-entry tutorial is the cross-layer acceptance fixture: customers, products, orders, order lines, lookups, validation, calculations with fixed-point money, transactionally consistent save, master-detail browse, invoice report, and regeneration-preserved customization.
+
+## Expert review: five iterative passes (2026-10-14)
+
+All additions below are **Proposed**; no code has been implemented or verified. Each entry inherits the traceability policy above. Passes are cumulative, and each pass addresses weaknesses identified in the previous state.
+
+### Pass 1: RAD usability and complete developer journey
+**Gap identified:** The initial plan assumes that generating CRUD is sufficient. Real users need an end-to-end no-code path, discoverability, defaults, debugging, and recoverable editing.
+
+| ID | Priority | Status | Requirement | Acceptance approach |
+|---|---|---|---|---|
+| REV1-001 | P0 | Proposed | Guided zero-to-working-app experience measured in minutes | Traceable automated test or documented practical review |
+| REV1-002 | P0 | Proposed | Sample application import and tutorial walkthrough | Traceable automated test or documented practical review |
+| REV1-003 | P0 | Proposed | Application navigation/menu designer | Traceable automated test or documented practical review |
+| REV1-004 | P0 | Proposed | Role-aware navigation generation | Traceable automated test or documented practical review |
+| REV1-005 | P0 | Proposed | Bulk edit and spreadsheet-style entry | Traceable automated test or documented practical review |
+| REV1-006 | P0 | Proposed | Saved searches and named filters | Traceable automated test or documented practical review |
+| REV1-007 | P1 | Proposed | Keyboard shortcuts and data-entry tab order | Traceable automated test or documented practical review |
+| REV1-008 | P1 | Proposed | Interactive lookup with dependent filtering | Traceable automated test or documented practical review |
+| REV1-009 | P1 | Proposed | Form state preservation on validation failure | Traceable automated test or documented practical review |
+| REV1-010 | P1 | Proposed | Cross-page undo/redo and project snapshots | Traceable automated test or documented practical review |
+| REV1-011 | P1 | Proposed | User-customizable list columns and saved views | Traceable automated test or documented practical review |
+| REV1-012 | P1 | Proposed | Context-sensitive IDE diagnostics and documentation | Traceable automated test or documented practical review |
+| REV1-013 | P1 | Proposed | Import wizard with field mapping and preview | Traceable automated test or documented practical review |
+| REV1-014 | P1 | Proposed | Export wizard with filtered or selected rows | Traceable automated test or documented practical review |
+| REV1-015 | P1 | Proposed | Runtime localization and accessibility verification | Traceable automated test or documented practical review |
+| REV1-016 | P1 | Proposed | Legacy Clarion/DOS data dictionary import feasibility study | Traceable automated test or documented practical review |
+
+### Pass 2: Relational modeling and production DBA review
+**Gap identified:** The model needs full relational semantics and deliberate treatment of physical database behavior, rather than assuming EF Core abstracts it all.
+
+| ID | Priority | Status | Requirement | Acceptance approach |
+|---|---|---|---|---|
+| REV2-001 | P0 | Proposed | Natural/surrogate/composite key strategy and key change policy | Traceable automated test or documented practical review |
+| REV2-002 | P0 | Proposed | Nullable unique constraints with provider parity diagnostics | Traceable automated test or documented practical review |
+| REV2-003 | P0 | Proposed | Check constraints and generated column support | Traceable automated test or documented practical review |
+| REV2-004 | P0 | Proposed | Provider-specific collation and case-insensitive comparison | Traceable automated test or documented practical review |
+| REV2-005 | P0 | Proposed | Unicode normalization and string length semantics | Traceable automated test or documented practical review |
+| REV2-006 | P0 | Proposed | Precision scale overflow and money rounding tests | Traceable automated test or documented practical review |
+| REV2-007 | P1 | Proposed | Identity sequences and safe numbering under concurrency | Traceable automated test or documented practical review |
+| REV2-008 | P1 | Proposed | Date-only datetime-offset UTC and timezone rules | Traceable automated test or documented practical review |
+| REV2-009 | P1 | Proposed | Join entities many-to-many and relationship payload | Traceable automated test or documented practical review |
+| REV2-010 | P1 | Proposed | Index include columns partial indexes and query plans | Traceable automated test or documented practical review |
+| REV2-011 | P1 | Proposed | Database views and read-only entities | Traceable automated test or documented practical review |
+| REV2-012 | P1 | Proposed | Computed columns and stored server expressions | Traceable automated test or documented practical review |
+| REV2-013 | P1 | Proposed | Triggers stored procedures and hand-owned database objects | Traceable automated test or documented practical review |
+| REV2-014 | P1 | Proposed | Transaction isolation and deadlock retry policy | Traceable automated test or documented practical review |
+| REV2-015 | P1 | Proposed | Delete/archive/soft-delete and legal retention semantics | Traceable automated test or documented practical review |
+| REV2-016 | P1 | Proposed | Concurrency conflict visual resolution UI | Traceable automated test or documented practical review |
+| REV2-017 | P1 | Proposed | Query execution plan and missing-index inspection | Traceable automated test or documented practical review |
+| REV2-018 | P1 | Proposed | Backup restore point-in-time recovery runbooks | Traceable automated test or documented practical review |
+| REV2-019 | P1 | Proposed | Data migration preview backfill validation and expand-contract | Traceable automated test or documented practical review |
+| REV2-020 | P1 | Proposed | Schema drift detection and out-of-band change policy | Traceable automated test or documented practical review |
+| REV2-021 | P1 | Proposed | Database credential and least-privilege deployment identities | Traceable automated test or documented practical review |
+| REV2-022 | P1 | Proposed | Provider-specific migration artifacts and review gates | Traceable automated test or documented practical review |
+
+### Pass 3: Business logic, reports and operational application needs
+**Gap identified:** A working business system needs more than CRUD and invoices: rules, workflow, selection, audit, scheduling, and reporting.
+
+| ID | Priority | Status | Requirement | Acceptance approach |
+|---|---|---|---|---|
+| REV3-001 | P0 | Proposed | Business rules declarative expressions and typed C# escape hatch | Traceable automated test or documented practical review |
+| REV3-002 | P0 | Proposed | Cross-record validation and transactional invariant enforcement | Traceable automated test or documented practical review |
+| REV3-003 | P0 | Proposed | State-machine and approval workflow generation | Traceable automated test or documented practical review |
+| REV3-004 | P0 | Proposed | Background jobs and retryable scheduled operations | Traceable automated test or documented practical review |
+| REV3-005 | P0 | Proposed | Attachments and blob lifecycle management | Traceable automated test or documented practical review |
+| REV3-006 | P0 | Proposed | Declarative search and full-text indexing | Traceable automated test or documented practical review |
+| REV3-007 | P1 | Proposed | Parameterized queries and safe custom SQL escape hatch | Traceable automated test or documented practical review |
+| REV3-008 | P1 | Proposed | Report datasets with SQL/expression designer | Traceable automated test or documented practical review |
+| REV3-009 | P1 | Proposed | Report grouping page breaks headers footers subtotals | Traceable automated test or documented practical review |
+| REV3-010 | P1 | Proposed | Label barcode QR and print-layout support | Traceable automated test or documented practical review |
+| REV3-011 | P1 | Proposed | CSV Excel PDF output fidelity and limits | Traceable automated test or documented practical review |
+| REV3-012 | P1 | Proposed | Report server-side execution and streaming | Traceable automated test or documented practical review |
+| REV3-013 | P1 | Proposed | Async long-report job status and cancellation | Traceable automated test or documented practical review |
+| REV3-014 | P1 | Proposed | Report versioning and reproducible historical outputs | Traceable automated test or documented practical review |
+| REV3-015 | P1 | Proposed | Audit-history browse diff and restore permissions | Traceable automated test or documented practical review |
+| REV3-016 | P1 | Proposed | Field-level permissions and row-policy enforcement | Traceable automated test or documented practical review |
+| REV3-017 | P1 | Proposed | Optimistic edit conflict with merge and override policy | Traceable automated test or documented practical review |
+| REV3-018 | P1 | Proposed | Notification and email integration extension seam | Traceable automated test or documented practical review |
+| REV3-019 | P1 | Proposed | Bulk business actions with approval and rollback | Traceable automated test or documented practical review |
+| REV3-020 | P1 | Proposed | Performance budget for 1M-row datasets and high-cardinality browses | Traceable automated test or documented practical review |
+
+### Pass 4: Extensibility, generation, source ownership, and Loom interoperability
+**Gap identified:** The existing design lacks precise guarantees around authored code, extension ordering, package compatibility, and generated app runtime independence.
+
+| ID | Priority | Status | Requirement | Acceptance approach |
+|---|---|---|---|---|
+| REV4-001 | P0 | Proposed | User-owned visual layout patches survive regeneration | Traceable automated test or documented practical review |
+| REV4-002 | P0 | Proposed | Round-trip visual editing with generated custom components | Traceable automated test or documented practical review |
+| REV4-003 | P0 | Proposed | Regeneration three-way diff and conflict resolution | Traceable automated test or documented practical review |
+| REV4-004 | P0 | Proposed | Generation rollback with transactional output staging | Traceable automated test or documented practical review |
+| REV4-005 | P0 | Proposed | Public stable intermediate representation and versioning | Traceable automated test or documented practical review |
+| REV4-006 | P0 | Proposed | Generator plugin API and compatibility matrix | Traceable automated test or documented practical review |
+| REV4-007 | P1 | Proposed | Build-time extension isolation and permissions | Traceable automated test or documented practical review |
+| REV4-008 | P1 | Proposed | Extensions contribute UI controls validators commands and reports | Traceable automated test or documented practical review |
+| REV4-009 | P1 | Proposed | Extension package template gallery and version pinning | Traceable automated test or documented practical review |
+| REV4-010 | P1 | Proposed | Extension dependency-cycle diagnostics | Traceable automated test or documented practical review |
+| REV4-011 | P1 | Proposed | Runtime compatibility without installed Studio | Traceable automated test or documented practical review |
+| REV4-012 | P1 | Proposed | Portable generated application deployment smoke test | Traceable automated test or documented practical review |
+| REV4-013 | P1 | Proposed | Generated code debug-symbol and source-map coverage | Traceable automated test or documented practical review |
+| REV4-014 | P1 | Proposed | Published Loom adapter version compatibility tests | Traceable automated test or documented practical review |
+| REV4-015 | P1 | Proposed | Loom optional integration feature parity capability matrix | Traceable automated test or documented practical review |
+| REV4-016 | P1 | Proposed | Avoid reimplementing Loom runtime services without business need | Traceable automated test or documented practical review |
+| REV4-017 | P1 | Proposed | Visual designer schema upgrade and old-project migration | Traceable automated test or documented practical review |
+| REV4-018 | P1 | Proposed | Git-first designer operations and meaningful merge diffs | Traceable automated test or documented practical review |
+
+### Pass 5: Adversarial acceptance, release readiness, and requirements governance
+**Gap identified:** A large list of proposed requirements isn't a test strategy or a credible beta gate; require traceable evidence and adversarial workload tests.
+
+| ID | Priority | Status | Requirement | Acceptance approach |
+|---|---|---|---|---|
+| REV5-001 | P0 | Proposed | Machine-readable requirements tracker schema and validation CLI | Traceable automated test or documented practical review |
+| REV5-002 | P0 | Proposed | Requirements baseline approval impact analysis and link graph | Traceable automated test or documented practical review |
+| REV5-003 | P0 | Proposed | Requirement-to-test bidirectional traceability report | Traceable automated test or documented practical review |
+| REV5-004 | P0 | Proposed | Objective time-to-first-working-app benchmark | Traceable automated test or documented practical review |
+| REV5-005 | P0 | Proposed | Nondeveloper guided usability tests and task success criteria | Traceable automated test or documented practical review |
+| REV5-006 | P0 | Proposed | Generated code code-review maintainability rubric | Traceable automated test or documented practical review |
+| REV5-007 | P1 | Proposed | Database provider contract suite shared across adapters | Traceable automated test or documented practical review |
+| REV5-008 | P1 | Proposed | Fault injection across transaction save and migration phases | Traceable automated test or documented practical review |
+| REV5-009 | P1 | Proposed | Testcontainers PostgreSQL and SQL Server CI parity suite | Traceable automated test or documented practical review |
+| REV5-010 | P1 | Proposed | NSubstitute strict expected-call-order contract tests | Traceable automated test or documented practical review |
+| REV5-011 | P1 | Proposed | Property-based data dictionary and migration fuzz tests | Traceable automated test or documented practical review |
+| REV5-012 | P1 | Proposed | Security authorization and tenant escape penetration tests | Traceable automated test or documented practical review |
+| REV5-013 | P1 | Proposed | Accessibility keyboard screen reader browser matrix | Traceable automated test or documented practical review |
+| REV5-014 | P1 | Proposed | Generated app deploy and offline-start test | Traceable automated test or documented practical review |
+| REV5-015 | P1 | Proposed | Backup restore drill and corruption recovery fixture | Traceable automated test or documented practical review |
+| REV5-016 | P1 | Proposed | Crash during regeneration and atomic recovery test | Traceable automated test or documented practical review |
+| REV5-017 | P1 | Proposed | 10x dataset performance soak and latency regression gates | Traceable automated test or documented practical review |
+| REV5-018 | P1 | Proposed | Clarion tutorial parity acceptance matrix per lesson | Traceable automated test or documented practical review |
+| REV5-019 | P1 | Proposed | Dependency lock SBOM licensing and security update policy | Traceable automated test or documented practical review |
+| REV5-020 | P1 | Proposed | Structured release readiness checklist and beta exit criteria | Traceable automated test or documented practical review |
+
+## Beta quality gates
+
+- New user can create an application with 3 related entities, perform master-detail edits, and print a grouped report without writing C#; track task completion and elapsed time.
+- Generated project compiles and runs standalone from a clean checkout and does not depend on Studio or Loom.
+- No data loss on power interruption during migration, regeneration or save under defined fault-injection scenarios.
+- Data integrity, schema changes, money handling, concurrency and row-level authorization are verified against each supported real DB backend.
+- All accepted P0 requirements have linked executable tests, review evidence or documented waivers; coverage statistics are reported honestly.
