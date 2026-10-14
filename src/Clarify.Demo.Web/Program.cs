@@ -1,4 +1,5 @@
 using Clarify.Forms.Shared;
+using Clarify.Observability;
 using Clarify.Demo.Data;
 using Microsoft.EntityFrameworkCore;
 using Clarify.Demo.Web.Components;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 var builder=WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+builder.Services.AddClarifyObservability(builder.Configuration);
 // Identity is a host service; Elsa may refer to the same stable user and role IDs.
 builder.Services.AddDbContext<ClarifyIdentityDb>(o =>
     o.UseSqlite($"Data Source={Path.Combine(builder.Environment.ContentRootPath, "clarify-identity.sqlite")}"));
