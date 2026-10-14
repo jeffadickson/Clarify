@@ -1,0 +1,64 @@
+@page "/orders"
+@using Clarify.Forms.Shared
+@inject IOrderStore Store
+@inject ICustomerStore Customers
+
+<h1>Order Entry</h1>
+<p>Create and edit orders with transactionally saved line items.</p>
+@if (error is not null) { <p role="alert">@error</p> }
+<div class="orders">
+<section>
+<h2>Orders</h2>
+<button @onclick="NewOrder">New order</button>
+@foreach (var o in orders) {
+ <p><button @onclick="() => Open(o.Id)">Order #@o.Id — @Money(o.TotalCents)</button></p>
+}
+</section>
+<section>
+<label>Customer
+<select @bind="order.CustomerId"><option value="0">Select</option>
+@foreach (var c in customers){<option value="@c.Id">@c.Name</option>}
+</select></label>
+<h3>Line items</h3>
+<table><thead><tr><th>Product</th><th>Qty</th><th>Unit</th><th>Total</th><th></th></tr></thead><tbody>
+@for(var i=0;i<order.Lines.Count;i++){
+ var index=i; var line=order.Lines[i];
+ <tr><td>@line.ProductName</td><td>@line.Quantity</td><td>@Money(line.UnitPriceCents)</td><td>@Money(line.TotalCents)</td>
+ <td><button @onclick="() => Remove(index)">Remove</button></td></tr>
+}
+</tbody></table>
+<select @bind="selectedProduct"><option value="0">Choose product</option>
+@foreach(var p in products){<option value="@p.Id">@p.Name — @Money(p.PriceCents)</option>}
+</select>
+<button @onclick="AddLine">Add line</button>
+<h3>Order total: @Money(order.TotalCents)</h3>
+<button disabled="@saving" @onclick="Save">Save order</button>
+</section>
+</div>
+<style>.orders{display:grid;grid-template-columns:1fr 3fr;gap:2rem}table{width:100%}td,th{padding:.5rem;border-bottom:1px solid #ddd}@media(max-width:700px){.orders{display:block}}</style>
+@code {
+ private OrderModel order=new();
+ private IReadOnlyList<OrderModel> orders=[];
+ private IReadOnlyList<ProductModel> products=[];
+ private IReadOnlyList<CustomerModel> customers=[];
+ private long selectedProduct;private bool saving;
+ private string? error;
+ protected override async Task OnInitializedAsync(){await Reload();}
+ private async Task Reload(){orders=await Store.OrdersAsync();products=await Store.ProductsAsync();customers=await Customers.ListAsync();}
+ private void NewOrder(){order=new();error=null;}
+ private async Task Open(long id){order=await Store.GetAsync(id)??new();}
+ private void Remove(int index){order.Lines.RemoveAt(index);}
+ private void AddLine(){
+  var product=products.FirstOrDefault(x=>x.Id==selectedProduct);
+  if(product is null){error="Choose a product.";return;}
+  order.Lines.Add(new OrderLineModel{ProductId=product.Id,ProductName=product.Name,UnitPriceCents=product.PriceCents,Quantity=1});
+ }
+ private async Task Save(){
+  if(saving)return;
+  saving=true;
+  try{var id=await Store.SaveAsync(order);await Reload();order=await Store.GetAsync(id)??new();error=null;}
+  catch(Exception ex){error=ex.Message;}
+  finally{saving=false;}
+ }
+ private static string Money(long cents)=>(cents/100m).ToString("C");
+}
