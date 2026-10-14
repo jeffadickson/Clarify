@@ -12,7 +12,7 @@ export function parseWorkflow(source) {
   let m;
   if((m=line.match(/^version\s+(\d+)$/))){version=Number(m[1]);continue}
   if((m=line.match(/^start\s+when\s+(\w+)\.(\w+)$/))){trigger={entity:m[1],event:m[2]};continue}
-  if((m=line.match(/^elsa\\s+"([A-Za-z_][A-Za-z0-9_.]*)"\\s+as\\s+(\\w+)\\s+config\\s+"([A-Za-z0-9_./-]+\\.json)"$/))){
+  if((m=line.match(/^elsa\s+"([A-Za-z_][A-Za-z0-9_.]*)"\s+as\s+(\w+)\s+config\s+"([A-Za-z0-9_./-]+\.json)"$/))){
    if(m[3].includes("..")||m[3].startsWith("/"))diagnostics.push({line:i+1,message:"Unsafe config path"});
    steps.push({kind:"native",type:m[1],name:m[2],config:m[3],line:i+1});continue;
   }
