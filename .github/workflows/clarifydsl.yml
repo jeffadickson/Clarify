@@ -1,0 +1,24 @@
+name: ClarifyDSL
+on:
+  push:
+    paths:
+      - 'designer/**'
+      - 'tools/generate-blazor.mjs'
+      - 'examples/**'
+      - 'blazor/**'
+      - '.github/workflows/clarifydsl.yml'
+  pull_request:
+jobs:
+  dsl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test designer/clarifydsl.test.mjs
+      - run: node tools/generate-blazor.mjs
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet build blazor/Clarify.Forms/Clarify.Forms.csproj --configuration Release
