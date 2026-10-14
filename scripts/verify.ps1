@@ -1,6 +1,6 @@
 $ErrorActionPreference='Stop'
 Set-Location (Join-Path $PSScriptRoot '..')
-node --test designer/clarifydsl.test.mjs
+node --test designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 node tools/generate-shared-blazor.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
