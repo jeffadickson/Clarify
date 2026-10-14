@@ -10,7 +10,7 @@ if [ -e artifacts/ClarifyElsaHost ]; then
   echo "artifacts/ClarifyElsaHost exists; refusing to overwrite" >&2
   exit 3
 fi
-dotnet new elsa-combined -n ClarifyElsaHost --feature-model static --studio-hosting server -o artifacts/ClarifyElsaHost
+dotnet new elsa-combined -n ClarifyElsaHost --feature-model static --studio-hosting server --persistence sqlite -o artifacts/ClarifyElsaHost
 dotnet restore artifacts/ClarifyElsaHost
 dotnet build artifacts/ClarifyElsaHost --no-restore -c Release
 echo "Official Elsa runtime+Studio compiled. Configure Development secrets using Elsa template instructions; then dotnet run --project artifacts/ClarifyElsaHost"
