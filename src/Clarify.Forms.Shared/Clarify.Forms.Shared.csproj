@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor"><PropertyGroup><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><AddRazorSupportForMvc>true</AddRazorSupportForMvc></PropertyGroup><ItemGroup><FrameworkReference Include="Microsoft.AspNetCore.App"/></ItemGroup><Target Name="RegenerateClarifyForms" BeforeTargets="CoreCompile" Condition="'$(DesignTimeBuild)' != 'true'">
+<Project Sdk="Microsoft.NET.Sdk.Razor"><PropertyGroup><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><AddRazorSupportForMvc>true</AddRazorSupportForMvc></PropertyGroup><ItemGroup><FrameworkReference Include="Microsoft.AspNetCore.App"/></ItemGroup><Target Name="RegenerateClarifyForms" BeforeTargets="PrepareForBuild" Condition="'$(DesignTimeBuild)' != 'true'">
   <!-- Run the same generator used by Clarify Studio before compiling Razor. -->
   <Exec Command="node &quot;$(MSBuildThisFileDirectory)../../tools/generate-shared-blazor.mjs&quot;" />
 </Target></Project>
