@@ -61,7 +61,7 @@ app.Use(async (ctx,next) => {
  }
  await next();
 });
-app.MapStudioSource();
+if (app.Environment.IsDevelopment()) app.MapStudioSource();
 // Demonstration-only API: unauthenticated workflow operations must never be exposed remotely.
 app.Use(async (ctx,next)=>{
  if(ctx.Request.Path.StartsWithSegments("/api/workflows") &&
