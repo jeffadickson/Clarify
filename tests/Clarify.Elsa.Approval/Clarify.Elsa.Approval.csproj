@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Elsa" Version="3.8.0"/>
+    <PackageReference Include="Elsa.Workflows.Runtime" Version="3.8.0"/>
+    <Compile Include="../../examples/elsa/WaitForManagerApproval.cs" Link="WaitForManagerApproval.cs"/>
+    <Compile Include="../../examples/elsa/ManagerApprovalController.cs" Link="ManagerApprovalController.cs"/>
+  </ItemGroup>
+</Project>
