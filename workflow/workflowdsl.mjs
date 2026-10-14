@@ -12,6 +12,10 @@ export function parseWorkflow(source) {
   let m;
   if((m=line.match(/^version\s+(\d+)$/))){version=Number(m[1]);continue}
   if((m=line.match(/^start\s+when\s+(\w+)\.(\w+)$/))){trigger={entity:m[1],event:m[2]};continue}
+  if((m=line.match(/^elsa\\s+"([A-Za-z_][A-Za-z0-9_.]*)"\\s+as\\s+(\\w+)\\s+config\\s+"([A-Za-z0-9_./-]+\\.json)"$/))){
+   if(m[3].includes("..")||m[3].startsWith("/"))diagnostics.push({line:i+1,message:"Unsafe config path"});
+   steps.push({kind:"native",type:m[1],name:m[2],config:m[3],line:i+1});continue;
+  }
   if((m=line.match(/^step\s+(\w+)$/))){steps.push({kind:"step",name:m[1],line:i+1});continue}
   if((m=line.match(/^wait\s+(\w+)\s+from\s+(\w+)$/))){const w={kind:"wait",event:m[1],role:m[2],line:i+1};steps.push(w);waits.push(w);continue}
   if((m=line.match(/^on\s+error\s*\{\s*retry\s+(\d+)\s+notify\s+(\w+)\s*\}$/))){retry=Number(m[1]);notify=m[2];continue}
@@ -21,7 +25,7 @@ export function parseWorkflow(source) {
  if(!Number.isSafeInteger(version)||version<1)diagnostics.push({line:1,message:"Missing positive workflow version"});
  if(!trigger)diagnostics.push({line:1,message:"Missing start when event"});
  if(steps.length===0)diagnostics.push({line:1,message:"No workflow activities"});
- if(steps.some(s=>s.kind==="step"&&!identifier.test(s.name)))diagnostics.push({line:1,message:"Invalid activity name"});
+ if(steps.some(s=>(s.kind==="step"||s.kind==="native")&&!identifier.test(s.name)))diagnostics.push({line:1,message:"Invalid activity name"});
  if(retry>100)diagnostics.push({line:1,message:"Retry budget exceeds maximum 100"});
  return {ok:diagnostics.length===0,diagnostics,name:header[1],entity:header[2],version,trigger,steps,waits,retry,notify};
 }
