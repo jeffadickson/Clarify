@@ -1,6 +1,6 @@
 $ErrorActionPreference='Stop'
 Set-Location (Join-Path $PSScriptRoot '..')
-node --test tests/studio-integration.test.mjs designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs workflow/elsa-catalog.test.mjs
+node --test designer/schema.test.mjs tests/studio-integration.test.mjs designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs workflow/elsa-catalog.test.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 node workflow/compile.mjs
 node --test tests/automatic-observability.test.mjs
