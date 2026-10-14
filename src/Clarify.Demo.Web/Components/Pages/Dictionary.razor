@@ -1,5 +1,6 @@
 @page "/studio/schema"
 @using System.Text.Json
+@inject IWebHostEnvironment Host
 <PageTitle>Clarify Dictionary</PageTitle>
 <div class="dict">
  <nav aria-label="Project navigation"><a href="/studio">← Form designer</a> · <a href="/customers">Run customers</a> · <a href="/orders">Run orders</a></nav>
@@ -21,7 +22,7 @@
 @code {
  private IReadOnlyList<DictionaryEntity> entities=[];
  protected override void OnInitialized(){
-   var json=System.IO.File.ReadAllText(System.IO.Path.Combine(AppContext.BaseDirectory,"dictionary.json"));
+   var json=System.IO.File.ReadAllText(System.IO.Path.Combine(Host.WebRootPath,"studio","dictionary.json"));
    using var root=JsonDocument.Parse(json);
    entities=root.RootElement.GetProperty("entities").EnumerateArray().Select(e=>
      new DictionaryEntity(e.GetProperty("name").GetString()??"",e.GetProperty("fields").EnumerateArray().Select(f=>
