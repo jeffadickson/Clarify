@@ -52,7 +52,7 @@ public sealed class ApplicationPermissionHandler(ClarifyIdentityDb db)
         ApplicationPermissionRequirement requirement,
         ApplicationPermissionResource resource)
     {
-        var userId=context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId=ClarifyPrincipalIds.GetStableId(context.User);
         if (string.IsNullOrEmpty(userId) || string.IsNullOrWhiteSpace(resource.ApplicationId) ||
             string.IsNullOrWhiteSpace(resource.Permission)) return;
 
