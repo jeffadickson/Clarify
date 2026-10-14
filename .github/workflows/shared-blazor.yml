@@ -21,7 +21,15 @@ jobs:
           dotnet-version: '8.0.x'
       - run: node --test designer/clarifydsl.test.mjs
       - run: node tools/generate-shared-blazor.mjs
+      - run: dotnet restore tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj
       - run: dotnet build src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release
+      - run: dotnet test tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj -c Release --logger trx
+      - run: dotnet publish src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release -o artifacts/web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clarify-web
+          path: artifacts/web
+          if-no-files-found: error
   desktop:
     runs-on: windows-latest
     continue-on-error: true
