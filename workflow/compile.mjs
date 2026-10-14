@@ -8,7 +8,7 @@ export function compileWorkflow(source){
  return {
   Name:d.name, Entity:d.entity,Version:d.version,
   Trigger:d.trigger.entity+"."+d.trigger.event,
-  Operations:d.steps.map(s=>({Kind:s.kind,Name:s.kind==="step"?s.name:s.event,Role:s.role||null})),
+  Operations:d.steps.map(s=>({Kind:s.kind,Name:s.kind==="step"?s.name:s.event,Role:s.role||null,NativeType:s.type||null,Config:s.config||null})),
   MaxRetries:d.retry
  };
 }
