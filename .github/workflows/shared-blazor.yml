@@ -19,7 +19,9 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - run: node --test designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs
+      - run: node --test designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs workflow/compile.test.mjs
+      - run: node workflow/compile.mjs
+      - run: git diff --exit-code -- examples/workflows/OrderApproval.plan.json
       - run: node tools/generate-shared-blazor.mjs
       - run: git diff --exit-code -- src/Clarify.Forms.Shared/CustomerFields.razor
       - run: dotnet restore tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj
