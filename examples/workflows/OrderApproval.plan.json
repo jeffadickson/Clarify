@@ -1,0 +1,29 @@
+{
+  "Name": "OrderApproval",
+  "Entity": "Order",
+  "Version": 1,
+  "Trigger": "Order.Submitted",
+  "Operations": [
+    {
+      "Kind": "step",
+      "Name": "ValidateOrder",
+      "Role": null
+    },
+    {
+      "Kind": "wait",
+      "Name": "Approval",
+      "Role": "Manager"
+    },
+    {
+      "Kind": "step",
+      "Name": "ReserveInventory",
+      "Role": null
+    },
+    {
+      "Kind": "step",
+      "Name": "PublishOrder",
+      "Role": null
+    }
+  ],
+  "MaxRetries": 3
+}
