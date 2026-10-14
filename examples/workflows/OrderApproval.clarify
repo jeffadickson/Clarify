@@ -1,0 +1,10 @@
+// Planned workflow syntax: not supported by ClarifyDSL parser yet.
+workflow OrderApproval for Order {
+  version 1
+  start when Order.Submitted
+  step ValidateOrder
+  wait Approval from Manager
+  step ReserveInventory
+  step PublishOrder
+  on error { retry 3 notify Administrator }
+}
