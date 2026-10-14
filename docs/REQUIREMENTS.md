@@ -460,3 +460,7 @@ Status: proposed until runtime tests and enforcement across generated pages. Des
 | AUTH-016 | P1 | Proposed | Permission-aware generated forms and menus | xUnit authorization tests, web API denial tests and audit evidence |
 | AUTH-017 | P1 | Proposed | Identity-aware Testcontainers acceptance tests | xUnit authorization tests, web API denial tests and audit evidence |
 | AUTH-018 | P1 | Proposed | No privileged role implicit cross-application access | xUnit authorization tests, web API denial tests and audit evidence |
+
+| AUTH-019 | P0 | Proposed | Application-configurable Public, OptionalLogin or LoginRequired mode | Route and authorization integration tests |
+| AUTH-020 | P0 | Proposed | Public mode cannot bypass protected administrative or workflow actions | Unauthorized HTTP mutation tests |
+| AUTH-021 | P1 | Proposed | Anonymous commands require explicit policy, abuse protection and rate limiting | Security tests |
