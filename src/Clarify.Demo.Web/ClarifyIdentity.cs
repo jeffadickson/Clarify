@@ -12,7 +12,37 @@ public sealed class ClarifyUser : IdentityUser
     public string? DisplayName { get; set; }
 }
 public sealed class ClarifyIdentityDb(DbContextOptions<ClarifyIdentityDb> options)
-    : IdentityDbContext<ClarifyUser>(options);
+    : IdentityDbContext<ClarifyUser>(options)
+{
+    public DbSet<ClarifyApplication> Applications => Set<ClarifyApplication>();
+    public DbSet<ClarifyApplicationMembership> ApplicationMemberships => Set<ClarifyApplicationMembership>();
+    public DbSet<ClarifyApplicationRole> ApplicationRoles => Set<ClarifyApplicationRole>();
+    public DbSet<ClarifyMembershipRole> MembershipRoles => Set<ClarifyMembershipRole>();
+    public DbSet<ClarifyRolePermission> RolePermissions => Set<ClarifyRolePermission>();
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        builder.Entity<ClarifyApplication>().HasKey(x=>x.Id);
+        builder.Entity<ClarifyApplicationRole>().HasKey(x=>new {x.ApplicationId,x.Name});
+        builder.Entity<ClarifyApplicationMembership>().HasKey(x=>new {x.ApplicationId,x.UserId});
+        builder.Entity<ClarifyMembershipRole>().HasKey(x=>new {x.ApplicationId,x.UserId,x.RoleName});
+        builder.Entity<ClarifyRolePermission>().HasKey(x=>new {x.ApplicationId,x.RoleName,x.Permission});
+        builder.Entity<ClarifyApplicationMembership>()
+            .HasOne<ClarifyApplication>().WithMany().HasForeignKey(x=>x.ApplicationId).OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<ClarifyApplicationRole>()
+            .HasOne<ClarifyApplication>().WithMany().HasForeignKey(x=>x.ApplicationId).OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<ClarifyMembershipRole>()
+            .HasOne<ClarifyApplicationMembership>().WithMany()
+            .HasForeignKey(x=>new {x.ApplicationId,x.UserId}).OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<ClarifyMembershipRole>()
+            .HasOne<ClarifyApplicationRole>().WithMany()
+            .HasForeignKey(x=>new {x.ApplicationId,Name=x.RoleName}).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<ClarifyRolePermission>()
+            .HasOne<ClarifyApplicationRole>().WithMany()
+            .HasForeignKey(x=>new {x.ApplicationId,Name=x.RoleName}).OnDelete(DeleteBehavior.Cascade);
+    }
+}
 
 public static class ClarifyPolicies
 {
