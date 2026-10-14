@@ -1,4 +1,6 @@
 using Clarify.Forms.Shared;
+using Clarify.Observability;
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace Clarify.Demo.Data;
@@ -42,6 +44,9 @@ public sealed class SqliteOrderStore(IDbContextFactory<SalesDb> sales,IDbContext
   Lines=x.Lines.Select(l=>new OrderLineModel{ProductId=l.ProductId,ProductName=names.GetValueOrDefault(l.ProductId,"Unknown"),Quantity=l.Quantity,UnitPriceCents=l.UnitPriceCents}).ToList()
  };
  public async Task<long> SaveAsync(OrderModel request,CancellationToken ct=default) {
+  using var activity=ClarifyTelemetry.StartOperation("clarify.order.save","Order");
+  var started=Stopwatch.GetTimestamp();
+  try {
   if(request.CustomerId<1||request.Lines.Count==0||request.Lines.Any(x=>x.Quantity<1||x.Quantity>100000))
     throw new ArgumentException("Select a customer and at least one valid order line.");
   await using(var db=await customers.CreateDbContextAsync(ct))
@@ -66,6 +71,14 @@ public sealed class SqliteOrderStore(IDbContextFactory<SalesDb> sales,IDbContext
   }).ToList();
   foreach(var line in order.Lines) _=checked(line.UnitPriceCents*line.Quantity);
   await salesDb.SaveChangesAsync(ct);await tx.CommitAsync(ct);
+  ClarifyTelemetry.Saves.Add(1,new KeyValuePair<string,object?>("entity","Order"));
   return order.Id;
+  } catch(Exception ex) {
+   ClarifyTelemetry.SaveFailures.Add(1,new KeyValuePair<string,object?>("entity","Order"));
+   activity?.SetStatus(ActivityStatusCode.Error,ex.GetType().Name);
+   throw;
+  } finally {
+   ClarifyTelemetry.SaveDuration.Record(Stopwatch.GetElapsedTime(started).TotalMilliseconds,new KeyValuePair<string,object?>("entity","Order"));
+  }
  }
 }
