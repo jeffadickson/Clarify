@@ -2,6 +2,7 @@ using Clarify.Forms.Shared;
 using Clarify.Demo.Data;
 using Microsoft.EntityFrameworkCore;
 using Clarify.Demo.Web.Components;
+using Clarify.Demo.Web;
 var builder=WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 var file=Path.Combine(builder.Environment.ContentRootPath,"clarify-customers.sqlite");
@@ -43,6 +44,24 @@ using(var scope=app.Services.CreateScope()){
   await sales.SaveChangesAsync();
  }
 }
+// Source mutation endpoints are restricted to Development on loopback.
+app.Use(async (ctx,next) => {
+ if (ctx.Request.Path.StartsWithSegments("/api/studio")) {
+  var remote=ctx.Connection.RemoteIpAddress;
+  if (!app.Environment.IsDevelopment() || remote is null ||
+      !System.Net.IPAddress.IsLoopback(remote) ||
+      (ctx.Request.Method != "GET" &&
+       (!ctx.Request.HasJsonContentType() ||
+        ctx.Request.Headers.Origin.Count != 1 ||
+        !Uri.TryCreate(ctx.Request.Headers.Origin.ToString(),UriKind.Absolute,out var origin) ||
+        origin.Host != ctx.Request.Host.Host || origin.Port != ctx.Request.Host.Port))) {
+    ctx.Response.StatusCode=403;
+    return;
+  }
+ }
+ await next();
+});
+app.MapStudioSource();
 // Demonstration-only API: unauthenticated workflow operations must never be exposed remotely.
 app.Use(async (ctx,next)=>{
  if(ctx.Request.Path.StartsWithSegments("/api/workflows") &&
