@@ -41,3 +41,33 @@ Elsa owns workflow execution and human task state. Clarify/host identity maps st
 
 ## Existing code
 `ApplicationPermissions.cs`, `ClarifyIdentity.cs` and `Program.cs` contain the first EF Core/Identity model and registration. These are scaffolding, **not a verified production authorization feature**. The anonymous demonstration customer/order pages need application-level authorization before deployment. Migration scripts, role management UI, claim/release and audit logging are still outstanding.
+
+## Public, optional-login and protected applications
+
+Authentication is **not compulsory** for every generated application. Each application declares an access mode:
+
+| Mode | Public pages | Personal features | Mutations / administration |
+|---|---|---|---|
+| `Public` | Anonymous access allowed | Only if explicitly provided | Must follow explicit permission policy |
+| `OptionalLogin` | Anonymous access allowed | Requires authenticated user | Explicit grants required |
+| `LoginRequired` | Sign-in required | Authenticated | Explicit grants required |
+
+Suggested ClarifyDSL:
+
+```clarify
+application PublicCatalog {
+    access public
+}
+application CommunityPortal {
+    access optionalLogin
+}
+application Sales {
+    access loginRequired
+}
+```
+
+Until the DSL compiler supports this syntax, the host configuration can specify `Clarify:Applications:<appId>:AccessMode`. The default is **LoginRequired**. Public configuration is **not** a blanket bypass of per-operation authorization. Workflows with human approvals, account administration, database writes and project-source editing require their own explicitly enforced access rules.
+
+Potential unauthenticated applications include public directories, public read-only dashboards and kiosk displays. Deliberately anonymous input applications may be supported through a separately specified public-command policy, abuse controls, CSRF protection and rate limits; do not accidentally make CRUD write endpoints public.
+
+Current implementation: `ApplicationSecurityProfiles.cs` defines policy metadata and parsing, not automatic authorization of every generated route. Route enforcement and permission-aware generation are still outstanding.
