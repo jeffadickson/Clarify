@@ -13,3 +13,11 @@ test('Studio form opens integrated editor and runtime',()=>{
  assert.match(page,/src="\/studio\/designer.html"/);
  assert.match(page,/href="\/customers"/);
 });
+
+test('graphical dictionary uses same validated model as design library',()=>{
+ assert.equal(read('src/Clarify.Demo.Web/wwwroot/studio/schema.mjs'),read('designer/schema.mjs'));
+ const schema=JSON.parse(read('examples/order-entry/dictionary.json'));
+ assert.equal(schema.relationships.length,3);
+ const page=read('src/Clarify.Demo.Web/Components/Pages/Dictionary.razor');
+ assert.match(page,/schema-designer.html/);
+});
