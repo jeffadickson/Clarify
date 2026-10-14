@@ -1,0 +1,32 @@
+@page "/studio"
+@using Microsoft.AspNetCore.Components
+<PageTitle>Clarify Studio</PageTitle>
+<div class="studio">
+ <aside class="rail" aria-label="Project navigation">
+  <div class="brand"><strong>Clarify</strong><span>Studio · RAD workspace</span></div>
+  <nav aria-label="Project tools">
+   <a href="/studio" aria-current="page">Form designer</a>
+   <a href="/studio/schema">Data dictionary</a>
+   <a href="/customers">Run · Customers</a>
+   <a href="/orders">Run · Orders</a>
+  </nav>
+  <p class="hint">Order Entry sample project</p>
+ </aside>
+ <main>
+  <header class="heading">
+   <div><p class="eyebrow">DESIGN / CUSTOMER EDITOR</p><h1>Form designer</h1><p>Move controls visually or edit ClarifyDSL. Both views stay synchronized.</p></div>
+   <a class="preview" href="/customers">Open running form →</a>
+  </header>
+  <div class="notice" role="note">Prototype editor. Changes are stored in this browser until exported; they do not yet regenerate deployed Razor components.</div>
+  <iframe title="Clarify visual form designer" src="/studio/designer.html" class="designer-frame"></iframe>
+ </main>
+</div>
+<style>
+.studio{display:grid;grid-template-columns:228px minmax(0,1fr);min-height:100vh;background:#f4f6fa;color:#1b2b42;font:15px/1.5 system-ui,sans-serif}
+.rail{background:#17263d;color:#f5f7ff;padding:22px 14px}.brand{padding:5px 12px 25px;display:grid;gap:1px}.brand strong{font-size:24px;letter-spacing:-.6px}.brand span{font-size:12px;color:#a5b8cf}
+.rail nav{display:grid;gap:5px}.rail a{color:#cbd8e9;text-decoration:none;padding:10px 12px;border-radius:8px}.rail a[aria-current]{color:white;background:#355378;border-left:3px solid #8bb9fb}.rail a:hover{background:#2b4463;color:white}
+.hint{font-size:12px;color:#acbfd5;padding:20px 12px}
+main{min-width:0;padding:28px 30px}.heading{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:20px}.eyebrow{font-size:11px;letter-spacing:1.2px;font-weight:700;color:#5277a3;margin:0}.heading h1{font-size:28px;margin:4px 0}.heading p{margin:2px 0;color:#687d94}.preview{background:#24559a;color:white;text-decoration:none;border-radius:8px;padding:10px 14px;white-space:nowrap}
+.notice{border-left:3px solid #bc8733;padding:10px 13px;background:#fff8e9;margin-bottom:14px;font-size:13px}.designer-frame{display:block;width:100%;height:790px;border:1px solid #d7e1ed;border-radius:12px;background:white}
+@media(max-width:850px){.studio{display:block}.rail{padding:8px}.rail nav{display:flex;overflow:auto}.brand,.hint{display:none}main{padding:15px}.heading{display:block}.preview{display:inline-block;margin-top:12px}.designer-frame{height:1000px}}
+</style>
