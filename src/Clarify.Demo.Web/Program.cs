@@ -7,6 +7,8 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 var file=Path.Combine(builder.Environment.ContentRootPath,"clarify-customers.sqlite");
 builder.Services.AddDbContextFactory<CustomerDb>(o=>o.UseSqlite($"Data Source={file}"));
 builder.Services.AddScoped<ICustomerStore,SqliteCustomerStore>();
+builder.Services.AddDbContextFactory<SalesDb>(o=>o.UseSqlite("Data Source=clarify-sales.sqlite"));
+builder.Services.AddScoped<IOrderStore,SqliteOrderStore>();
 builder.Services.AddDbContextFactory<ApprovalDb>(o=>o.UseSqlite($"Data Source={Path.Combine(builder.Environment.ContentRootPath,"clarify-workflows.sqlite")}"));
 builder.Services.AddScoped<ApprovalWorkflowService>();
 builder.Services.AddDbContextFactory<WorkflowRuntimeDb>(o=>o.UseSqlite($"Data Source={Path.Combine(builder.Environment.ContentRootPath,"clarify-runtime.sqlite")}"));
@@ -31,6 +33,11 @@ using(var scope=app.Services.CreateScope()){
  var factory=scope.ServiceProvider.GetRequiredService<IDbContextFactory<WorkflowRuntimeDb>>();
  await using var db=await factory.CreateDbContextAsync();
  await db.Database.EnsureCreatedAsync(); // proof of concept; migrations required
+}
+using(var scope=app.Services.CreateScope()){
+ var dbFactory=scope.ServiceProvider.GetRequiredService<IDbContextFactory<SalesDb>>();
+ await using var sales=await dbFactory.CreateDbContextAsync();
+ await sales.Database.EnsureCreatedAsync();
 }
 // Demonstration-only API: unauthenticated workflow operations must never be exposed remotely.
 app.Use(async (ctx,next)=>{
