@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Clarify Workflow Studio</title><style>body{font:15px system-ui;color:#233;background:#eef2f8;margin:0}header{background:#152b49;color:white;padding:20px}main{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:20px}section{background:white;border-radius:12px;padding:20px}textarea{height:500px;width:100%;box-sizing:border-box;background:#10233f;color:white;padding:12px;font:14px ui-monospace,monospace}.node{padding:13px;margin:10px;border:1px solid #aec6e8;border-radius:8px;background:#f2f6ff}.wait{border-color:#c89c45;background:#fff6df}button{cursor:pointer;padding:7px;margin:3px}#errors{color:#b22;white-space:pre-wrap}@media(max-width:800px){main{grid-template-columns:1fr}}</style></head><body><header><h1>Clarify — Workflow Designer</h1><div>ClarifyDSL ⇄ activity sequence preview</div></header><main><section><h2>Graphical workflow</h2><div id="nodes"></div><p id="errors" role="alert"></p></section><section><h2>Workflow DSL</h2><textarea id="dsl" spellcheck="false"></textarea><p>Update the DSL to refresh the diagram. Use arrow controls to change step order in source.</p></section></main><script type="module">
+import{parseWorkflow,moveActivity}from"./workflowdsl.mjs";
+const $=id=>document.getElementById(id);
+let source=`workflow OrderApproval for Order {
+ version 1
+ start when Order.Submitted
+ step ValidateOrder
+ wait Approval from Manager
+ step ReserveInventory
+ step PublishOrder
+ on error { retry 3 notify Administrator }
+}`;
+let valid=null;function update(s){source=s;$("dsl").value=s;const p=parseWorkflow(s);$("errors").textContent=p.diagnostics.map(x=>"Line "+x.line+": "+x.message).join("\n");if(!p.ok)return;valid=p;const root=$("nodes");root.replaceChildren();for(const [i,step] of p.steps.entries()){const el=document.createElement("div");el.className="node "+(step.kind==="wait"?"wait":"");el.textContent=step.kind==="wait"?"Wait: "+step.event+" from "+step.role:"Step: "+step.name;if(step.kind==="step"){for(const [dir,label] of [[-1,"↑"],[1,"↓"]]){const b=document.createElement("button");b.textContent=label;b.setAttribute("aria-label","Move "+step.name+" "+(dir<0?"up":"down"));b.onclick=()=>{try{update(moveActivity(source,step.name,dir))}catch(e){$("errors").textContent=e.message}};el.append(b)}}root.append(el)}}
+$("dsl").oninput=e=>update(e.target.value);update(source);
+</script></body></html>
