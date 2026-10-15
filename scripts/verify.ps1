@@ -28,3 +28,12 @@ node tools/export-dsl-parity-fixtures.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 dotnet test tests/Clarify.Dsl.Tests/Clarify.Dsl.Tests.csproj -c Release
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+node --test tests/documentation-generation.test.mjs
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+node tools/audit-csharp-docs.mjs --report --strict-generated
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+dotnet tool restore
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+dotnet docfx docs/docfx.json
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
