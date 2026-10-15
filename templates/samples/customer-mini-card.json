@@ -24,7 +24,15 @@
         "Name",
         "City"
       ],
-      "title": "Customer quick card"
+      "title": "Customer quick card",
+      "controls": {
+        "Name": {
+          "kind": "text",
+          "validation": {
+            "maxLength": 160
+          }
+        }
+      }
     }
   ]
 }
