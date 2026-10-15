@@ -1,0 +1,25 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.product-pricing",
+  "version": "0.1.0",
+  "title": "Product pricing",
+  "category": "forms",
+  "description": "Sample forms pattern for Product. This currently generates editable form DSL; data persistence uses existing generated application plumbing.",
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 6,
+      "fields": [
+        "Price",
+        "Name"
+      ],
+      "title": "Product pricing"
+    }
+  ]
+}
