@@ -21,3 +21,11 @@ test('graphical dictionary uses same validated model as design library',()=>{
  const page=read('src/Clarify.Demo.Web/Components/Pages/Dictionary.razor');
  assert.match(page,/schema-designer.html/);
 });
+
+test('Studio dependency analyzer matches canonical implementation',()=>{
+ assert.equal(read('src/Clarify.Demo.Web/wwwroot/studio/dependencies.mjs'),read('designer/dependencies.mjs'));
+ const html=read('src/Clarify.Demo.Web/wwwroot/studio/schema-designer.html');
+ assert.match(html,/dependency-summary/);
+ assert.match(html,/export-impact/);
+ assert.match(html,/kind:"external"/);
+});
