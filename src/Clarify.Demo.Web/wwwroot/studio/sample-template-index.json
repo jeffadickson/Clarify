@@ -1,0 +1,102 @@
+[
+  {
+    "slug": "customer-contact",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "customer-address",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "customer-directory",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "customer-search",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "customer-intake",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "customer-profile",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "product-editor",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-pricing",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-catalog",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-search",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "order-entry",
+    "entity": "Order",
+    "detail": null
+  },
+  {
+    "slug": "order-summary",
+    "entity": "Order",
+    "detail": null
+  },
+  {
+    "slug": "order-browse",
+    "entity": "Order",
+    "detail": null
+  },
+  {
+    "slug": "order-filter",
+    "entity": "Order",
+    "detail": null
+  },
+  {
+    "slug": "orderline-editor",
+    "entity": "OrderLine",
+    "detail": null
+  },
+  {
+    "slug": "orderline-pricing",
+    "entity": "OrderLine",
+    "detail": null
+  },
+  {
+    "slug": "orderline-browse",
+    "entity": "OrderLine",
+    "detail": null
+  },
+  {
+    "slug": "orderline-fulfillment",
+    "entity": "OrderLine",
+    "detail": null
+  },
+  {
+    "slug": "customer-orders",
+    "entity": "Customer",
+    "detail": "Order"
+  },
+  {
+    "slug": "order-items",
+    "entity": "Order",
+    "detail": "OrderLine"
+  }
+]
