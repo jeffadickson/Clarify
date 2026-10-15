@@ -40,3 +40,13 @@
 ## Evidence policy
 
 'Committed' means source is present in GitHub; it does **not** mean green build or working production deployment. GitHub combined statuses and PR-filtered runs for the last inspected commit were empty. CI availability and results need independent verification before marking acceptance gates complete. No percentage-complete estimate is meaningful until the integrated end-to-end pipeline is passing.
+
+## Final documentation and browser-testing increment
+- DocFX 2.81.0 is pinned in `.config/dotnet-tools.json`, alongside existing `dotnet-ef`.
+- `Directory.Build.props` turns on XML documentation output for all .NET projects.
+- Core EF Core, async repository, Blazor Customer component and Elsa workflow generators were updated to emit `///` documentation; checked-in generated files were synchronized.
+- `tools/audit-csharp-docs.mjs` creates an inventory of missing public comments, with a generated-source gate.
+- Shared Blazor CI now installs Chromium Playwright and invokes the ER tests, then runs DocFX and uploads the generated docs/coverage report when successful.
+- `docs/CSHARP-DOCUMENTATION.md` formalizes the code-writing and code-generation documentation standard; issue #41 tracks whole-codebase completion.
+
+**Still not closed:** there is no observed passing full .NET/Playwright/DocFX pipeline, and the handwritten API XML documentation backlog has not been measured or eliminated by a successful repository-wide audit. Issues #38, #39, #40 and #41 remain open on these explicit verification/quality gates.
