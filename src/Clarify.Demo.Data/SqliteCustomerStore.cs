@@ -19,6 +19,21 @@ public sealed class CustomerDb(DbContextOptions<CustomerDb> options): DbContext(
  }
 }
 public sealed class SqliteCustomerStore(IDbContextFactory<CustomerDb> factory): ICustomerStore {
+ /// <summary>
+ /// Stable, bounded asynchronous browse. Uses Id as a tie-breaker to avoid
+ /// ambiguous ordering for customers sharing the same name.
+ /// </summary>
+ public async Task<CustomerPageResult> PageAsync(int page,int pageSize,CancellationToken ct=default) {
+  if(page<0 || pageSize is < 1 or > 200 || (long)page*pageSize>int.MaxValue-pageSize-1)
+   throw new ArgumentOutOfRangeException(nameof(page),"Page and size must be bounded.");
+  await using var db=await factory.CreateDbContextAsync(ct);
+  var rows=await db.Customers.AsNoTracking()
+   .OrderBy(x=>x.Name).ThenBy(x=>x.Id)
+   .Skip(page*pageSize).Take(pageSize+1)
+   .Select(x=>new CustomerModel{Id=x.Id,Name=x.Name,Email=x.Email,City=x.City})
+   .ToListAsync(ct);
+  return new CustomerPageResult(rows.Take(pageSize).ToList(),page,pageSize,rows.Count>pageSize);
+ }
  public async Task<IReadOnlyList<CustomerModel>> ListAsync(CancellationToken ct=default) {
   await using var db=await factory.CreateDbContextAsync(ct);
   return await db.Customers.AsNoTracking().OrderBy(x=>x.Name).Select(x=>new CustomerModel{Id=x.Id,Name=x.Name,Email=x.Email,City=x.City}).ToListAsync(ct);
