@@ -5,6 +5,8 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 node workflow/compile.mjs
 node --test tests/automatic-observability.test.mjs
 node tools/generate-observability.mjs
+node --test tests/async-generator.test.mjs
+node tools/generate-async-contracts.mjs
 node tools/generate-shared-blazor.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 dotnet restore src/Clarify.Demo.Web/Clarify.Demo.Web.csproj
