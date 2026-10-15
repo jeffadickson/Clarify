@@ -25,7 +25,18 @@
         "Name",
         "Email"
       ],
-      "title": "Customer city directory"
+      "title": "Customer city directory",
+      "controls": {
+        "City": {
+          "kind": "dropdown",
+          "choices": [
+            "Los Angeles",
+            "Pasadena",
+            "Glendale",
+            "Other"
+          ]
+        }
+      }
     }
   ]
 }
