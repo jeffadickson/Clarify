@@ -32,3 +32,14 @@ test('product and order line templates carry typed money and engineering metadat
  const result=instantiateTemplate(line,dictionary,{Entity:'OrderLine'});
  assert.ok(result.files[0].source.includes('"dotnet":"NodaMoney.Money"'));
 });
+
+test('visual position editing retains money and quantity declarations',async()=>{
+ const product=read('templates/samples/product-editor.json');
+ const output=instantiateTemplate(product,dictionary,{Entity:'Product'});
+ const before=output.files[0].source;
+ const {patchField}=await import('../designer/clarifydsl.mjs');
+ const after=patchField(before,dictionary,'Length',{x:2,y:2,w:5,h:1});
+ assert.ok(after.includes('"dotnet":"UnitsNet.Length"'));
+ assert.ok(after.includes('"currency":"USD"'));
+ assert.match(after,/Length at \(2,2\) span \(5,1\)/);
+});
