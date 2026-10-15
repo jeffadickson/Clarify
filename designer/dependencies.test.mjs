@@ -57,3 +57,15 @@ test('moving entity to another database requires review',()=>{
  assert.ok(result.changes.some(x=>x.kind==='move-database'));
  assert.ok(result.errors.length);
 });
+
+test('multi-database sample validates without pretending a native FK exists',()=>{
+ const model=JSON.parse(readFileSync(new URL('../examples/multi-database/dictionary.json',import.meta.url),'utf8'));
+ const graph=analyzeDependencies(model);
+ assert.deepEqual(graph.errors,[]);
+ assert.deepEqual(graph.databases,['inventory','sales']);
+ assert.ok(graph.edges.some(e=>e.kind==='external-reference'));
+ assert.ok(graph.warnings.some(w=>w.includes('no native foreign key')));
+ const invalid=structuredClone(model);
+ invalid.entities[0].database='unknown';
+ assert.match(analyzeDependencies(invalid).errors.join('; '),/Unregistered database/);
+});
