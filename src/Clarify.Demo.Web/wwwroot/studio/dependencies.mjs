@@ -69,6 +69,15 @@ export function analyzeDependencies(model){
 export function impactOfChange(before,after){
  const previous=analyzeDependencies(before),next=analyzeDependencies(after);
  const oldEntities=allEntities(before),newEntities=allEntities(after),changes=[];
+ for(const [name,current] of newEntities){
+  if(!oldEntities.has(name))changes.push({kind:"add-entity",target:name,risk:"manual-review"});
+  else{
+   const prior=new Set((oldEntities.get(name).fields||[]).map(f=>f.name));
+   for(const field of current.fields||[]){
+    if(!prior.has(field.name))changes.push({kind:"add-field",target:key(name,field.name),risk:"manual-review"});
+   }
+  }
+ }
  for(const [name,old] of oldEntities){
   const current=newEntities.get(name);
   if(!current){changes.push({kind:"remove-entity",target:name,risk:"destructive"});continue}
@@ -88,6 +97,9 @@ export function impactOfChange(before,after){
    changes.push({kind:"remove-relationship",target:relKey(r),risk:"manual-review"});
  }
  const oldRelations=new Map((before.relationships||[]).map(r=>[relKey(r),r]));
+ for(const r of after.relationships||[]){
+  if(!oldRelations.has(relKey(r)))changes.push({kind:"add-relationship",target:relKey(r),risk:"manual-review"});
+ }
  for(const r of after.relationships||[]){
   const old=oldRelations.get(relKey(r));
   if(old && (old.onDelete!==r.onDelete||old.kind!==r.kind))
