@@ -1,7 +1,7 @@
 {
   "format": "clarify-template/v1",
   "id": "clarify.sample.orderline-fulfillment",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Order line fulfillment",
   "category": "forms",
   "description": "Sample forms pattern for OrderLine. This currently generates editable form DSL; data persistence uses existing generated application plumbing.",
@@ -22,5 +22,10 @@
       ],
       "title": "Order line fulfillment"
     }
-  ]
+  ],
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  }
 }
