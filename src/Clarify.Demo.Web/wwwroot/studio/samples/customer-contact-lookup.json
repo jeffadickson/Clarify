@@ -22,7 +22,8 @@
       "columns": 8,
       "fields": [
         "Email",
-        "Name"
+        "Name",
+        "City"
       ],
       "title": "Customer contact lookup",
       "controls": {
@@ -31,6 +32,14 @@
           "validation": {
             "maxLength": 254
           }
+        },
+        "City": {
+          "kind": "radio",
+          "choices": [
+            "Los Angeles",
+            "Pasadena",
+            "Other"
+          ]
         }
       }
     }
