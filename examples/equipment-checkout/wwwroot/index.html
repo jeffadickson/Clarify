@@ -68,15 +68,15 @@ async function reload(){
  const personValue=people.value,itemValue=equipment.value;
  people.replaceChildren(option('','Choose borrower'));
  equipment.replaceChildren(option('','Choose available item'));
- const active=new Set(snapshot.loans.filter(x=>!x.returned).map(x=>x.equipment));
+ const active=new Set(snapshot.loans.filter(x=>!x.returned).map(x=>x.equipmentId));
  for(const p of snapshot.people)people.append(option(p.id,p.name));
- for(const e of snapshot.equipment)if(!active.has(e.name))equipment.append(option(e.id,e.name+' · '+e.serialNumber));
+ for(const e of snapshot.equipment)if(!active.has(e.id))equipment.append(option(e.id,e.name+' · '+e.serialNumber));
  people.value=personValue;equipment.value=itemValue;
  $('equipment-count').textContent=snapshot.equipment.length+' items';
  $('loan-count').textContent=snapshot.loans.length+' records';
  const inventoryRows=snapshot.equipment.map(e=>{
   const tr=document.createElement('tr');cell(tr,e.name);cell(tr,e.serialNumber);
-  const td=cell(tr,'');const label=document.createElement('span'),out=active.has(e.name);
+  const td=cell(tr,'');const label=document.createElement('span'),out=active.has(e.id);
   label.className='tag'+(out?' out':'');label.textContent=out?'Checked out':'Available';td.append(label);return tr;
  });
  $('inventory').replaceChildren(table(['Item','Serial','Status'],inventoryRows));
