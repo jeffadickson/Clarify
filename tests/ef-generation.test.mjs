@@ -42,3 +42,9 @@ test('one-to-one references generate a unique index',()=>{
  assert.match(source,/HasOne<Customer>\(\)\.WithOne\(\)/);
  assert.match(source,/HasIndex\(x => x.CustomerId\)\.IsUnique\(\)/);
 });
+
+test('checked-in EF Core source matches deterministic generator output',()=>{
+ const generated=generateEfModels(fixture).files[0].source;
+ const checkedIn=readFileSync(new URL('../examples/relational-generation/generated/SalesDbContext.g.cs',import.meta.url),'utf8');
+ assert.equal(generated,checkedIn);
+});
