@@ -11,12 +11,13 @@ export function instantiateTemplate(template,dictionary,bindings){
   bound[p.name]=entities.get(name);
  }
  const output=[];
+ const instance={id:template.id,version:template.version,bindings:Object.fromEntries(Object.entries(bound).map(([k,v])=>[k,v.name]))};
  for(const recipe of template.forms||[]){
   const parent=bound[recipe.entity];
   if(!parent)throw Error("Unbound entity: "+recipe.entity);
   const columns=recipe.columns||12;
   if(!Number.isInteger(columns)||columns<1||columns>24)throw Error("Invalid grid columns");
-  const lines=[`form ${parent.name}Editor for ${parent.name} {`,`  title "${parent.name} Editor"`,`  grid columns ${columns} {`];
+  const lines=[`// @clarify-template ${JSON.stringify({...instance,formEntity:parent.name})}`,`form ${parent.name}Editor for ${parent.name} {`,`  title "${parent.name} Editor"`,`  grid columns ${columns} {`];
   const fields=parent.fields.filter(f=>!f.primaryKey);
   fields.forEach((field,i)=>{
    if(!ident.test(field.name))throw Error("Invalid field name");
