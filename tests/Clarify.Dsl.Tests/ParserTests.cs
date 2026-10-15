@@ -22,7 +22,7 @@ public sealed class ParserTests
         Assert.True(result.Success, string.Join("; ", result.Diagnostics.Select(x => x.Message)));
         Assert.Equal(3, result.Form!.Fields.Count);
         Assert.Equal("Customer", result.Form.Entity);
-        Assert.Equal(4, result.Form.Fields[0].Range.Line);
+        Assert.Equal(5, result.Form.Fields[0].Range.Line);
     }
 
     [Fact]
