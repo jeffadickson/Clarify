@@ -50,3 +50,9 @@
 - `docs/CSHARP-DOCUMENTATION.md` formalizes the code-writing and code-generation documentation standard; issue #41 tracks whole-codebase completion.
 
 **Still not closed:** there is no observed passing full .NET/Playwright/DocFX pipeline, and the handwritten API XML documentation backlog has not been measured or eliminated by a successful repository-wide audit. Issues #38, #39, #40 and #41 remain open on these explicit verification/quality gates.
+
+## Example application increment: Equipment Checkout
+
+A standalone Equipment Checkout example is committed at `examples/equipment-checkout`: a semantic dictionary, deterministic generated EF Core model/foreign keys, a handwritten .NET 10 async HTTP host, SQLite CRUD business rules, and an accessible responsive browser UI. Seed data includes people and devices. Test fixtures and an isolated HTTP smoke are integrated in CI. See [sample README](../examples/equipment-checkout/README.md) and issue #42.
+
+**Maturity:** an illustrative independently runnable application, **not** an automatically generated full UI/application from Clarify templates. The actual .NET build and HTTP smoke remain unverified in this environment; production-grade concurrency, auth and reviewed migrations are still required.
