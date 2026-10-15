@@ -1,7 +1,7 @@
 {
   "format": "clarify-template/v1",
   "id": "clarify.sample.product-search",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Product search",
   "category": "forms",
   "description": "Sample forms pattern for Product. This currently generates editable form DSL; data persistence uses existing generated application plumbing.",
@@ -20,5 +20,10 @@
       ],
       "title": "Product search"
     }
-  ]
+  ],
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  }
 }
