@@ -17,8 +17,8 @@ export function instantiateTemplate(template,dictionary,bindings){
   if(!parent)throw Error("Unbound entity: "+recipe.entity);
   const columns=recipe.columns||12;
   if(!Number.isInteger(columns)||columns<1||columns>24)throw Error("Invalid grid columns");
-  const lines=[`// @clarify-template ${JSON.stringify({...instance,formEntity:parent.name})}`,`form ${parent.name}Editor for ${parent.name} {`,`  title "${parent.name} Editor"`,`  grid columns ${columns} {`];
-  const fields=parent.fields.filter(f=>!f.primaryKey);
+  const lines=[`// @clarify-template ${JSON.stringify({...instance,formEntity:parent.name})}`,`form ${parent.name}Editor for ${parent.name} {`,`  title "${String(recipe.title||parent.name+" Editor").replaceAll('"',"'")}"`,`  grid columns ${columns} {`];
+  const fields=recipe.fields ? recipe.fields.map(name=>{const f=parent.fields.find(f=>f.name===name);if(!f)throw Error("Unknown template field: "+parent.name+"."+name);return f}) : parent.fields.filter(f=>!f.primaryKey);
   fields.forEach((field,i)=>{
    if(!ident.test(field.name))throw Error("Invalid field name");
    const width=Math.floor(columns/2);
