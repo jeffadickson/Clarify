@@ -1,7 +1,7 @@
 {
   "format": "clarify-template/v1",
   "id": "clarify.sample.product-catalog",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Product catalog",
   "category": "browse",
   "description": "Sample browse pattern for Product. This currently generates editable form DSL; browse behavior is not implemented yet.",
@@ -17,9 +17,16 @@
       "columns": 12,
       "fields": [
         "Name",
-        "Price"
+        "Price",
+        "Length",
+        "Mass"
       ],
       "title": "Product catalog"
     }
-  ]
+  ],
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  }
 }
