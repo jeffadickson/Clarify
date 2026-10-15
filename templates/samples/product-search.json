@@ -1,0 +1,24 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.product-search",
+  "version": "0.1.0",
+  "title": "Product search",
+  "category": "forms",
+  "description": "Sample forms pattern for Product. This currently generates editable form DSL; data persistence uses existing generated application plumbing.",
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 12,
+      "fields": [
+        "Name"
+      ],
+      "title": "Product search"
+    }
+  ]
+}
