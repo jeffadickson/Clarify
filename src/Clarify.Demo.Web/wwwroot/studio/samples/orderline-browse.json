@@ -1,7 +1,7 @@
 {
   "format": "clarify-template/v1",
   "id": "clarify.sample.orderline-browse",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Order line listing",
   "category": "browse",
   "description": "Sample browse pattern for OrderLine. This currently generates editable form DSL; browse behavior is not implemented yet.",
@@ -23,5 +23,10 @@
       ],
       "title": "Order line listing"
     }
-  ]
+  ],
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  }
 }
