@@ -18,6 +18,20 @@ app.Use(async (context, next) =>
         context.Response.StatusCode = 403;
         return;
     }
+    if (!HttpMethods.IsGet(context.Request.Method) &&
+        !HttpMethods.IsHead(context.Request.Method))
+    {
+        // Local demo APIs must not accept cross-origin browser writes.
+        var origin = context.Request.Headers.Origin.ToString();
+        if (!string.IsNullOrEmpty(origin) &&
+            (!Uri.TryCreate(origin, UriKind.Absolute, out var uri) ||
+             !string.Equals(uri.Host, context.Request.Host.Host, StringComparison.OrdinalIgnoreCase) ||
+             uri.Port != context.Request.Host.Port))
+        {
+            context.Response.StatusCode = 403;
+            return;
+        }
+    }
     await next();
 });
 app.UseDefaultFiles();
@@ -57,7 +71,7 @@ app.MapGet("/api/snapshot", async (IDbContextFactory<CheckoutDbContext> factory,
         join e in db.EquipmentRows on l.EquipmentId equals e.Id
         join p in db.PersonRows on l.PersonId equals p.Id
         orderby l.Id descending
-        select new LoanView(l.Id, e.Name, p.Name, l.CheckedOut, l.Returned)
+        select new LoanView(l.Id, e.Id, e.Name, p.Name, l.CheckedOut, l.Returned)
     ).ToListAsync(ct);
     return Results.Ok(new { people, equipment, loans });
 });
@@ -134,8 +148,9 @@ public sealed record EquipmentInput(string Name, string SerialNumber);
 public sealed record LoanInput(long PersonId, long EquipmentId);
 /// <summary>Joined presentation view of one checkout transaction.</summary>
 /// <param name="Id">Loan identifier.</param>
+/// <param name="EquipmentId">Stable equipment identifier.</param>
 /// <param name="Equipment">Equipment name.</param>
 /// <param name="Person">Borrower name.</param>
 /// <param name="CheckedOut">Date of checkout.</param>
 /// <param name="Returned">Whether item has been returned.</param>
-public sealed record LoanView(long Id, string Equipment, string Person, DateOnly CheckedOut, bool Returned);
+public sealed record LoanView(long Id, long EquipmentId, string Equipment, string Person, DateOnly CheckedOut, bool Returned);
