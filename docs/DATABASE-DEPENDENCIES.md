@@ -46,3 +46,17 @@ The runnable test fixture is `examples/multi-database/dictionary.json`. Database
 
 ## Acceptance tests
 `designer/dependencies.test.mjs` covers existing order relationships, external reference classification, cross-database cascades, nullable FK rules, type mismatch, cascade cycles, destructive impact, additive impact and the multi-provider fixture. Tests are wired into the existing local verification scripts and GitHub Actions. Actual green CI results have not yet been observed.
+
+## 2026-10-15 — EF Core model generation increment
+
+The first **real relational source generator** now exists in `designer/ef-models.mjs`. It generates C# entity classes, one `DbContext` per logical database, primary keys, required fields, string length limits, decimal precision, typed FK relationships, FK indexes, one-to-one uniqueness and EF Core delete behaviors.
+
+The CLI `node tools/generate-ef-models.mjs` produces `examples/relational-generation/generated/SalesDbContext.g.cs` from `examples/relational-generation/dictionary.json`. Studio's dictionary designer can **Preview generated EF Core** and download the generated C# for supported models. The pure generator and its browser copy must remain identical.
+
+`tests/ef-generation.test.mjs` verifies native relationships, delete rules, indexes, explicit key enforcement, cross-database isolation and exact generated-source reproducibility. A separate `RelationalGeneration.Smoke.csproj` executes an in-memory SQLite acceptance scenario: insert Customer/Product/Order/OrderLine, reject deletion of a referenced Customer, and cascade-delete OrderLine when Order is deleted. Local verification and CI are configured to run this smoke.
+
+**Intentional restrictions:** this first generator requires exactly one explicit typed primary key per entity, and supports scalar `string`, `int`, `long`, `decimal`, `bool` and `date`. The original sample dictionary omits explicit keys and includes rich money/unit fields; it therefore cannot yet be generated through this strict path. Rich NodaMoney/UnitsNet mappings need the next generator increment. We reject unsupported types rather than silently produce incorrect SQL storage.
+
+This is EF Core **model generation**, not EF Core migrations. No production schema is changed and no migration is applied. Generated C# lives in a separate generated directory; user-authored C# is not overwritten. The generated SQLite smoke uses `EnsureCreated` only on an isolated ephemeral database, never an existing deployment.
+
+Actual green .NET compilation and SQLite execution have not been observed in this environment; the test has been committed to CI.
