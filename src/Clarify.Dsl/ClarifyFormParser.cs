@@ -6,12 +6,37 @@ using static Parlot.Fluent.Parsers;
 namespace Clarify.Dsl;
 
 /// <summary>Source ranges use zero-based offsets and one-based lines/columns.</summary>
+/// <summary>Offset and location of a recognized DSL source construct.</summary>
+/// <param name="Start">Zero-based source offset.</param>
+/// <param name="Length">Number of source characters.</param>
+/// <param name="Line">One-based line.</param>
+/// <param name="Column">One-based column.</param>
 public sealed record SourceRange(int Start, int Length, int Line, int Column);
+/// <summary>A field and grid position in a parsed form.</summary>
+/// <param name="Name">Dictionary field name.</param>
+/// <param name="X">One-based grid column.</param>
+/// <param name="Y">One-based grid row.</param>
+/// <param name="Width">Columns spanned.</param>
+/// <param name="Height">Rows spanned.</param>
+/// <param name="Range">Original source location.</param>
 public sealed record FormField(string Name, int X, int Y, int Width, int Height, SourceRange Range);
+/// <summary>Parsed form identity and placed dictionary fields.</summary>
+/// <param name="Name">Form name.</param>
+/// <param name="Entity">Bound dictionary entity.</param>
+/// <param name="Fields">Placed fields in source order.</param>
 public sealed record FormDefinition(string Name, string Entity, IReadOnlyList<FormField> Fields);
+/// <summary>Source-located native parser diagnostic.</summary>
+/// <param name="Code">Stable diagnostic identifier.</param>
+/// <param name="Message">Human-readable problem description.</param>
+/// <param name="Line">One-based source line.</param>
+/// <param name="Column">One-based source column.</param>
 public sealed record Diagnostic(string Code, string Message, int Line, int Column);
+/// <summary>Parsed form or diagnostics when parsing fails.</summary>
+/// <param name="Form">Parsed form when valid; otherwise null.</param>
+/// <param name="Diagnostics">Parser diagnostics.</param>
 public sealed record FormParseResult(FormDefinition? Form, IReadOnlyList<Diagnostic> Diagnostics)
 {
+    /// <summary>True if the form parsed without diagnostics.</summary>
     public bool Success => Form is not null && Diagnostics.Count == 0;
 }
 
@@ -47,6 +72,10 @@ public static class ClarifyFormParser
     private static readonly Regex Block = new(
         @"^(group|grid|row|stack|tabs|tab|actions)\b.*\{$", RegexOptions.Compiled);
 
+    /// <summary>Parses one Clarify form while retaining field source offsets.</summary>
+    /// <param name="source">Original DSL source to parse.</param>
+    /// <returns>A form model or source-located diagnostics.</returns>
+    /// <exception cref="ArgumentNullException">Source is null.</exception>
     public static FormParseResult Parse(string source)
     {
         ArgumentNullException.ThrowIfNull(source);
