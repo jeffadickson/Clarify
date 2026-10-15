@@ -40,10 +40,12 @@ async function loadProject(){
 }
 async function initialize(){
  const params=new URLSearchParams(location.search);
- if(params.get('template')==='master-detail'){
+ if(params.get('sample')||params.get('template')==='master-detail'){
   try{
-   const template=await fetch('./master-detail-template.json').then(r=>r.json());
-   const generated=instantiateTemplate(template,schema,{Parent:params.get('parent'),Child:params.get('child')});
+   const isSample=Boolean(params.get('sample'));
+   const template=await fetch(isSample?'./samples/'+encodeURIComponent(params.get('sample'))+'.json':'./master-detail-template.json').then(r=>r.json());
+   const bindings=isSample?{Entity:params.get('parent'),...(params.get('child')?{Detail:params.get('child')}:{} )}:{Parent:params.get('parent'),Child:params.get('child')};
+   const generated=instantiateTemplate(template,schema,bindings);
    const chosen=generated.files.find(f=>f.entity===params.get('form'));
    if(!chosen)throw Error('Unknown template form selection');
    $('entity').value=chosen.entity;
