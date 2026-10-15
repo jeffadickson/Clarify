@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clarify · Equipment Checkout</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#24364d;background:#edf3f8}
+*{box-sizing:border-box}body{margin:0}header{background:#1c3656;color:white;padding:23px max(24px,calc((100% - 1120px)/2))}
+header h1{font-size:25px;margin:0}header p{color:#cdddf1;margin:5px 0 0}
+main{max-width:1120px;margin:24px auto;padding:0 18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+section{background:white;border:1px solid #d5e0eb;border-radius:12px;padding:20px}
+section.wide{grid-column:1/-1}h2{font-size:18px;margin:0 0 15px}
+label{display:grid;gap:5px;margin:12px 0;color:#354d68;font-weight:550}
+input,select,button{font:inherit;padding:10px;border:1px solid #b7cadd;border-radius:7px;width:100%}
+button{background:#285f9e;color:white;border-color:#285f9e;cursor:pointer;font-weight:600}
+button.secondary{background:#fff;color:#285f9e;width:auto}
+button:disabled{opacity:.6;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #8ebbea}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #e4ebf2}th{color:#657990;font-size:12px}
+.tag{font-size:12px;border-radius:15px;padding:4px 9px;background:#dcece4;color:#236547}
+.tag.out{background:#f9e7d5;color:#8d4f17}
+.actions{display:flex;gap:9px;align-items:center}.actions button{width:auto}
+#notice{min-height:23px;margin:0 0 14px;color:#9d2c2c}
+.count{color:#687d94;font-size:13px;font-weight:400}
+footer{max-width:1120px;margin:25px auto;padding:0 18px;color:#63778d;font-size:12px}
+@media(max-width:730px){.grid{grid-template-columns:1fr}section.wide{grid-column:auto}table{font-size:12px}th,td{padding:7px 4px}}
+</style></head>
+<body><header><h1>Equipment Checkout</h1><p>Clarify sample application · Dictionary-driven EF Core · Async CRUD</p></header>
+<main><p role="alert" id="notice"></p><div class="grid">
+<section><h2>Check out equipment</h2>
+<form id="checkout">
+<label>Borrower <select name="personId" id="person-select" required></select></label>
+<label>Equipment <select name="equipmentId" id="equipment-select" required></select></label>
+<button type="submit">Check out selected item</button>
+</form></section>
+<section><h2>Add a person</h2>
+<form id="person-form">
+<label>Name <input name="name" maxlength="120" required placeholder="Full name"></label>
+<label>Email <input name="email" type="email" maxlength="200" placeholder="Optional"></label>
+<button type="submit">Add person</button>
+</form></section>
+<section><h2>Add equipment</h2>
+<form id="equipment-form">
+<label>Equipment <input name="name" maxlength="120" required placeholder="Example: Power supply"></label>
+<label>Serial number <input name="serialNumber" maxlength="80" required placeholder="PSU-100"></label>
+<button type="submit">Add equipment</button>
+</form></section>
+<section><h2>Inventory <span class="count" id="equipment-count"></span></h2>
+<div id="inventory"></div></section>
+<section class="wide"><h2>Checkout history <span class="count" id="loan-count"></span></h2>
+<div id="history"></div></section>
+</div></main>
+<footer>This demonstration runs on localhost without authentication. Do not deploy it publicly without application permissions, migrations, and concurrency controls.</footer>
+<script type="module">
+const $=id=>document.getElementById(id);
+async function api(path,options={}){
+ const res=await fetch(path,{...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});
+ const data=await res.json();
+ if(!res.ok)throw Error(data.error||'Request failed');
+ return data;
+}
+function option(value,label){const n=document.createElement('option');n.value=value;n.textContent=label;return n}
+function cell(row,value){const td=document.createElement('td');td.textContent=value;row.append(td);return td}
+function table(headers,rows){const t=document.createElement('table'),head=document.createElement('thead'),tr=document.createElement('tr');
+for(const title of headers){const th=document.createElement('th');th.textContent=title;tr.append(th)}head.append(tr);t.append(head);
+const body=document.createElement('tbody');for(const r of rows)body.append(r);t.append(body);return t}
+async function reload(){
+ const snapshot=await api('/api/snapshot');
+ const people=$('person-select'),equipment=$('equipment-select');
+ const personValue=people.value,itemValue=equipment.value;
+ people.replaceChildren(option('','Choose borrower'));
+ equipment.replaceChildren(option('','Choose available item'));
+ const active=new Set(snapshot.loans.filter(x=>!x.returned).map(x=>x.equipment));
+ for(const p of snapshot.people)people.append(option(p.id,p.name));
+ for(const e of snapshot.equipment)if(!active.has(e.name))equipment.append(option(e.id,e.name+' · '+e.serialNumber));
+ people.value=personValue;equipment.value=itemValue;
+ $('equipment-count').textContent=snapshot.equipment.length+' items';
+ $('loan-count').textContent=snapshot.loans.length+' records';
+ const inventoryRows=snapshot.equipment.map(e=>{
+  const tr=document.createElement('tr');cell(tr,e.name);cell(tr,e.serialNumber);
+  const td=cell(tr,'');const label=document.createElement('span'),out=active.has(e.name);
+  label.className='tag'+(out?' out':'');label.textContent=out?'Checked out':'Available';td.append(label);return tr;
+ });
+ $('inventory').replaceChildren(table(['Item','Serial','Status'],inventoryRows));
+ const loanRows=snapshot.loans.map(l=>{
+  const tr=document.createElement('tr');cell(tr,l.equipment);cell(tr,l.person);cell(tr,l.checkedOut);
+  const td=cell(tr,'');if(!l.returned){
+   const button=document.createElement('button');button.className='secondary';button.textContent='Return item';
+   button.onclick=()=>perform(()=>api('/api/loans/'+l.id+'/return',{method:'POST'}));
+   td.append(button);
+  }else{td.textContent='Returned'}
+  return tr;
+ });
+ $('history').replaceChildren(table(['Item','Borrower','Checked out','Action'],loanRows));
+}
+async function perform(action){$('notice').textContent='';try{await action();await reload()}catch(error){$('notice').textContent=error.message}}
+$('checkout').onsubmit=e=>{e.preventDefault();const data=new FormData(e.currentTarget);
+ perform(()=>api('/api/loans',{method:'POST',body:JSON.stringify({personId:Number(data.get('personId')),equipmentId:Number(data.get('equipmentId'))})}))};
+$('person-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget,data=new FormData(form);
+ perform(async()=>{await api('/api/people',{method:'POST',body:JSON.stringify(Object.fromEntries(data))});form.reset()})};
+$('equipment-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget,data=new FormData(form);
+ perform(async()=>{await api('/api/equipment',{method:'POST',body:JSON.stringify(Object.fromEntries(data))});form.reset()})};
+reload().catch(error=>$('notice').textContent=error.message);
+</script></body></html>
