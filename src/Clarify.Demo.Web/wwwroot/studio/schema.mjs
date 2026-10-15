@@ -14,7 +14,7 @@ export function validate(model){
    if(!identifier.test(f.name))errors.push("Invalid field: "+e.name+"."+f.name);
    if(names.has(f.name))errors.push("Duplicate field: "+e.name+"."+f.name);
    names.add(f.name);
-   if(!["string","int","long","date","bool","decimal","money"].includes(f.type))
+   if(!["string","int","long","date","bool","decimal","money","length","mass","temperature","pressure"].includes(f.type))
     errors.push("Unsupported type: "+e.name+"."+f.name);
   }
  }
