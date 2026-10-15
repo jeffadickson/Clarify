@@ -10,7 +10,13 @@ export function renderControl(field,config,property,id){
  const attrs=(kind==='text'||kind==='textarea')&&validation.maxLength?' maxlength="'+validation.maxLength+'"':'';
  if(kind==='text')return '<InputText id="'+id+'" '+bind+attrs+' />';
  if(kind==='textarea')return '<InputTextArea id="'+id+'" '+bind+attrs+' />';
- if(kind==='number')return '<InputNumber id="'+id+'" '+bind+' />';
+ if(kind==='number'){
+  if(['money','length','mass','pressure','temperature'].includes(field.type))
+   throw Error('Rich quantity editor requires generated typed binding: '+field.type);
+  const min=validation.min!==undefined?' min="'+validation.min+'"':'';
+  const max=validation.max!==undefined?' max="'+validation.max+'"':'';
+  return '<InputNumber id="'+id+'" '+bind+min+max+' />';
+ }
  if(kind==='date')return '<InputDate id="'+id+'" '+bind+' />';
  if(kind==='checkbox')return '<InputCheckbox id="'+id+'" '+bind+' />';
  if(kind==='dropdown')return '<InputSelect id="'+id+'" '+bind+'><option value="">Select…</option>'+choices.map(x=>'<option value="'+x+'">'+x+'</option>').join('')+'</InputSelect>';
