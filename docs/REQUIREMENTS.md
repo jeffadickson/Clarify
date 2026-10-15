@@ -537,3 +537,20 @@ Design: [CLARION-LANGUAGE-HELPERS.md](CLARION-LANGUAGE-HELPERS.md). These are pr
 | EXPR-008 | P0 | Proposed | No arbitrary code execution from DSL expressions | Typed expression, SQL translation, security and parity tests |
 | EXPR-009 | P1 | Proposed | Benchmark interpreted versus generated compiled expressions | Typed expression, SQL translation, security and parity tests |
 | EXPR-010 | P2 | Proposed | Legacy Clarion data conversion adapters isolated | Typed expression, SQL translation, security and parity tests |
+
+## Standard domain value types
+
+Design: [STANDARD-VALUE-TYPES.md](STANDARD-VALUE-TYPES.md). Status reflects committed source, not observed passing builds.
+
+| ID | Priority | Status | Requirement | Verification |
+|---|---|---|---|---|
+| TYPE-001 | P0 | Implemented (unverified) | NodaMoney and UnitsNet available in all generated .NET applications | EF Core persistence, generator and provider tests |
+| TYPE-002 | P0 | Implemented (unverified) | Money persists amount and ISO currency separately | EF Core persistence, generator and provider tests |
+| TYPE-003 | P0 | Implemented (unverified) | Physical quantities persist canonical units | EF Core persistence, generator and provider tests |
+| TYPE-004 | P0 | Implemented (unverified) | Dictionary supports money length mass pressure temperature | EF Core persistence, generator and provider tests |
+| TYPE-005 | P0 | Implemented (unverified) | Typed EF Core persistence survives database reopen | EF Core persistence, generator and provider tests |
+| TYPE-006 | P0 | Proposed | Generated forms display preferred currency and measurement units | EF Core persistence, generator and provider tests |
+| TYPE-007 | P1 | Proposed | SQL filtering/sorting on persisted scalar values | EF Core persistence, generator and provider tests |
+| TYPE-008 | P1 | Proposed | Explicit rounding and currency-conversion policies | EF Core persistence, generator and provider tests |
+| TYPE-009 | P1 | Proposed | Migrations from legacy cents storage preserve values | EF Core persistence, generator and provider tests |
+| TYPE-010 | P1 | Proposed | Provider parity tests for SQLite PostgreSQL SQL Server | EF Core persistence, generator and provider tests |
