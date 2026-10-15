@@ -1,0 +1,32 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.line-item-audit",
+  "version": "0.2.0",
+  "title": "Line item review",
+  "category": "forms",
+  "description": "Sample forms layout for OrderLine. Generates editable DSL, not business logic.",
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  },
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 8,
+      "fields": [
+        "OrderId",
+        "ProductId",
+        "Quantity",
+        "UnitPrice"
+      ],
+      "title": "Line item review"
+    }
+  ]
+}
