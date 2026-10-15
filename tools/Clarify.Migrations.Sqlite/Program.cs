@@ -104,6 +104,9 @@ static async Task ExecuteAsync(string[] args)
         if (RequiredProperty(operation, "sql") != expected)
             throw new InvalidOperationException("Operation SQL does not match safe generated DDL");
     }
+    // Atomically reserve a new backup filename so an existing backup cannot
+    // be overwritten by a concurrent invocation.
+    using (var reservation = new FileStream(backupPath, FileMode.CreateNew, FileAccess.Write, FileShare.None)) { }
     // SQLite online backup API is used instead of copying an open database file.
     await using (var backup = new SqliteConnection(new SqliteConnectionStringBuilder {
         DataSource = backupPath, Mode = SqliteOpenMode.ReadWriteCreate
