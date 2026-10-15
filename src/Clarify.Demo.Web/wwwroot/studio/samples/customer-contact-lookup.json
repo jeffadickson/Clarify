@@ -24,7 +24,15 @@
         "Email",
         "Name"
       ],
-      "title": "Customer contact lookup"
+      "title": "Customer contact lookup",
+      "controls": {
+        "Email": {
+          "kind": "text",
+          "validation": {
+            "maxLength": 254
+          }
+        }
+      }
     }
   ]
 }
