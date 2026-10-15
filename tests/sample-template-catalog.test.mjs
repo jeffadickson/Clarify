@@ -9,9 +9,26 @@ test('all 20 templates have executable, parsable forms and served assets',()=>{
   const source=read('templates/samples/'+item.slug+'.json');
   const served=read('src/Clarify.Demo.Web/wwwroot/studio/samples/'+item.slug+'.json');
   assert.deepEqual(served,source,item.slug+' served manifest drift');
+  assert.equal(source.version,'0.2.0',item.slug+' requires typed template version');
+  assert.equal(source.valueTypes.money,'NodaMoney.Money');
+  assert.equal(source.valueTypes.quantities,'UnitsNet');
   const binds={Entity:item.entity,...(item.detail?{Detail:item.detail}:{})};
   const generated=instantiateTemplate(source,dictionary,binds);
   assert.ok(generated.files.length>0,item.slug);
   for(const file of generated.files){const parsed=parse(file.source,dictionary);assert.equal(parsed.ok,true,item.slug+': '+parsed.errors.join('; '))}
  }
+});
+
+test('product and order line templates carry typed money and engineering metadata',()=>{
+ const product=read('templates/samples/product-editor.json');
+ const productResult=instantiateTemplate(product,dictionary,{Entity:'Product'});
+ const source=productResult.files[0].source;
+ for(const type of ['money','length','mass','pressure','temperature'])
+  assert.ok(source.includes('"type":"'+type+'"'),type);
+ assert.ok(source.includes('"currency":"USD"'));
+ assert.ok(source.includes('"dotnet":"NodaMoney.Money"'));
+ assert.ok(source.includes('"dotnet":"UnitsNet.Length"'));
+ const line=read('templates/samples/orderline-pricing.json');
+ const result=instantiateTemplate(line,dictionary,{Entity:'OrderLine'});
+ assert.ok(result.files[0].source.includes('"dotnet":"NodaMoney.Money"'));
 });
