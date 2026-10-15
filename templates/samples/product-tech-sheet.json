@@ -1,0 +1,33 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.product-tech-sheet",
+  "version": "0.2.0",
+  "title": "Product technical specification",
+  "category": "forms",
+  "description": "Sample forms layout for Product. Generates editable DSL, not business logic.",
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  },
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 12,
+      "fields": [
+        "Name",
+        "Length",
+        "Mass",
+        "Pressure",
+        "Temperature"
+      ],
+      "title": "Product technical specification"
+    }
+  ]
+}
