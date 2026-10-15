@@ -554,3 +554,22 @@ Design: [STANDARD-VALUE-TYPES.md](STANDARD-VALUE-TYPES.md). Status reflects comm
 | TYPE-008 | P1 | Proposed | Explicit rounding and currency-conversion policies | EF Core persistence, generator and provider tests |
 | TYPE-009 | P1 | Proposed | Migrations from legacy cents storage preserve values | EF Core persistence, generator and provider tests |
 | TYPE-010 | P1 | Proposed | Provider parity tests for SQLite PostgreSQL SQL Server | EF Core persistence, generator and provider tests |
+
+## Standard form controls and validation
+
+Design: [FIELD-CONTROLS-AND-VALIDATION.md](FIELD-CONTROLS-AND-VALIDATION.md). Current implementation is partial and has not passed observed CI.
+
+| ID | Priority | Status | Requirement | Verification |
+|---|---|---|---|---|
+| CTRL-001 | P0 | Implemented (unverified) | Standard text, multiline, number, date and checkbox editors | DSL, generator, xUnit, browser and security tests |
+| CTRL-002 | P0 | Implemented (unverified) | Dropdown, radio and button-selection controls | DSL, generator, xUnit, browser and security tests |
+| CTRL-003 | P0 | Implemented (unverified) | Dictionary and DSL-driven control type inference and overrides | DSL, generator, xUnit, browser and security tests |
+| CTRL-004 | P0 | Implemented (unverified) | Two-way graphical control editor with metadata preservation | DSL, generator, xUnit, browser and security tests |
+| CTRL-005 | P0 | Implemented (unverified) | Choice list validation and type compatibility | DSL, generator, xUnit, browser and security tests |
+| CTRL-006 | P0 | Implemented (unverified) | Min/max numeric and maxLength string validation metadata | DSL, generator, xUnit, browser and security tests |
+| CTRL-007 | P0 | Implemented (unverified) | Generated Blazor input controls and ValidationMessage wiring | DSL, generator, xUnit, browser and security tests |
+| CTRL-008 | P0 | Proposed | Authoritative server-side generated validation for all configured rules | DSL, generator, xUnit, browser and security tests |
+| CTRL-009 | P0 | Proposed | Relational searchable lookups with async paging and authorization | DSL, generator, xUnit, browser and security tests |
+| CTRL-010 | P1 | Proposed | Cross-field and asynchronous custom C# validation hooks | DSL, generator, xUnit, browser and security tests |
+| CTRL-011 | P1 | Proposed | NodaMoney and UnitsNet input widgets with conversion and precision | DSL, generator, xUnit, browser and security tests |
+| CTRL-012 | P1 | Proposed | Accessibility and keyboard tests for choice controls | DSL, generator, xUnit, browser and security tests |
