@@ -501,3 +501,22 @@ These requirements describe the target; instrumentation beyond HTTP/Customer sav
 | TPL-008 | P1 | Proposed | Data/application/report template categories | End-to-end templates |
 | TPL-009 | P1 | Proposed | Offline package library and opt-in trusted NuGet extensions | Security tests |
 | TPL-010 | P0 | Proposed | Stable generated element IDs and instance metadata | Snapshot and diff tests |
+
+## Async-first generated application requirements
+
+Async is the default for I/O and cancellation is propagated. This is not a promise of faster individual SQL queries. C# authors can still implement synchronous calculations and custom components.
+
+| ID | Priority | Status | Requirement | Verification |
+|---|---|---|---|---|
+| ASYNC-001 | P0 | Implemented (unverified) | Async-first generated database access | Generated code, xUnit and load tests |
+| ASYNC-002 | P0 | Implemented (unverified) | Propagate CancellationToken through generated APIs | Generated code, xUnit and load tests |
+| ASYNC-003 | P0 | Implemented (unverified) | Bounded stable asynchronous browse paging | Generated code, xUnit and load tests |
+| ASYNC-004 | P0 | Implemented (unverified) | Cancel obsolete Blazor browse requests | Generated code, xUnit and load tests |
+| ASYNC-005 | P0 | Proposed | Async validation and extension hooks with ordered execution | Generated code, xUnit and load tests |
+| ASYNC-006 | P0 | Proposed | No blocking .Result or Wait in generated I/O paths | Generated code, xUnit and load tests |
+| ASYNC-007 | P1 | Proposed | Async report streaming and bounded memory | Generated code, xUnit and load tests |
+| ASYNC-008 | P1 | Proposed | Background jobs with durable queue and status | Generated code, xUnit and load tests |
+| ASYNC-009 | P1 | Proposed | Load tests measuring concurrency, throughput and latency | Generated code, xUnit and load tests |
+| ASYNC-010 | P1 | Implemented (unverified) | Async-safe DbContext lifetime and concurrency | Generated code, xUnit and load tests |
+| ASYNC-011 | P1 | Proposed | Telemetry for cancellation and request latency | Generated code, xUnit and load tests |
+| ASYNC-012 | P1 | Proposed | Graceful shutdown and cancellation for long jobs | Generated code, xUnit and load tests |
