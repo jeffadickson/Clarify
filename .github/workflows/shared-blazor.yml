@@ -27,7 +27,7 @@ jobs:
       - run: node --test tests/automatic-observability.test.mjs
       - run: node tools/generate-observability.mjs
       - run: git diff --exit-code -- src/Clarify.Demo.Web/GeneratedObservability.cs
-      - run: node --test tests/async-generator.test.mjs
+      - run: node --test tests/standard-value-types.test.mjs tests/async-generator.test.mjs
       - run: node tools/generate-async-contracts.mjs
       - run: git diff --exit-code -- examples/generated/AsyncStores.g.cs
       - run: node tools/generate-shared-blazor.mjs
