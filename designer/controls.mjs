@@ -16,7 +16,7 @@ export function validateControl(field,config){
   if(!Array.isArray(choices)||choices.length<2||choices.some(x=>typeof x!=="string"||!x.trim()))
    errors.push(kind+" requires at least two non-empty choices");
   if(new Set(choices).size!==choices.length)errors.push("Duplicate choices");
-  if(!["string","int","long"].includes(field.type))errors.push("Choice control requires string or integer field");
+  if(field.type!=="string")errors.push("Choice control currently requires string field");
  }
  if(kind==="checkbox"&&field.type!=="bool")errors.push("Checkbox requires bool");
  if(kind==="date"&&field.type!=="date")errors.push("Date control requires date");
