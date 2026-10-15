@@ -1,0 +1,25 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.customer-search",
+  "version": "0.1.0",
+  "title": "Customer search form",
+  "category": "forms",
+  "description": "Sample forms pattern for Customer. This currently generates editable form DSL; data persistence uses existing generated application plumbing.",
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 6,
+      "fields": [
+        "Name",
+        "Email"
+      ],
+      "title": "Customer search form"
+    }
+  ]
+}
