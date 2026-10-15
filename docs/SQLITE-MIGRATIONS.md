@@ -33,7 +33,7 @@ The ID is for the checked-in sample plan only. A different schema or migration p
 - No SQL is run without an explicit CLI invocation. There is no production auto-migration on application startup.
 - The migration plan ID uses a deterministic non-cryptographic fingerprint to detect accidental modifications. It is **not** a signature or access-control mechanism. The operator's OS/database permissions remain authoritative.
 - The executor verifies names/types of the expected SQLite columns, but does not yet compare every index, constraint, collation or schema object. It must not be described as comprehensive schema-drift protection.
-- Backup is made using SQLite's online backup API rather than copying an open database file. Backup existence is checked, but restore automation and adversarial race hardening are not yet implemented.
+- Backup is made using SQLite's online backup API rather than copying an open database file. The backup filename is reserved with an atomic create-new operation to avoid overwriting an existing backup; restore automation and comprehensive concurrency hardening are not yet implemented.
 - For other database providers, use reviewed EF Core migrations with their own snapshots and provider-specific SQL. The current planner does not pretend to generate them.
 - Current dictionary change tracking uses names rather than immutable field IDs. A rename is treated as potentially destructive and **blocked**.
 - Generated entity source uses explicit `ToTable("Entity")` naming to keep schema names stable for migration planning.
