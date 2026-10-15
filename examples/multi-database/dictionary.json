@@ -1,0 +1,65 @@
+{
+  "defaultDatabase": "sales",
+  "databases": [
+    {
+      "id": "sales",
+      "provider": "postgresql"
+    },
+    {
+      "id": "inventory",
+      "provider": "sqlserver"
+    }
+  ],
+  "entities": [
+    {
+      "name": "Order",
+      "database": "sales",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "long",
+          "primaryKey": true,
+          "required": true
+        },
+        {
+          "name": "ProductId",
+          "type": "long",
+          "required": true
+        },
+        {
+          "name": "Quantity",
+          "type": "int",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "database": "inventory",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "long",
+          "primaryKey": true,
+          "required": true
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "from": "Order",
+      "to": "Product",
+      "foreignKey": "ProductId",
+      "principalKey": "Id",
+      "cardinality": "one-to-many",
+      "kind": "external",
+      "onDelete": "restrict"
+    }
+  ]
+}
