@@ -1,0 +1,30 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.line-cost-summary",
+  "version": "0.2.0",
+  "title": "Line cost summary",
+  "category": "forms",
+  "description": "Sample forms layout for OrderLine. Generates editable DSL, not business logic.",
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  },
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 12,
+      "fields": [
+        "Quantity",
+        "UnitPrice"
+      ],
+      "title": "Line cost summary"
+    }
+  ]
+}
