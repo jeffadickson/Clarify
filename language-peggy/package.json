@@ -1,0 +1,12 @@
+{
+  "name": "@clarify/parser",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "peggy --format es --output generated/clarify-parser.mjs clarify.peggy",
+    "test": "npm run generate && node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "peggy": "4.2.0"
+  }
+}
