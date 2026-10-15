@@ -2,13 +2,16 @@
 // This deliberately generates SOURCE only. It never connects to a database or
 // invokes EF migrations. All entities require explicit, typed primary keys.
 import {analyzeDependencies} from '../designer/dependencies.mjs';
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {resolve,dirname,join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 const ident=/^[A-Za-z_][A-Za-z0-9_]*$/;
 const scalar={string:'string',int:'int',long:'long',decimal:'decimal',bool:'bool',date:'DateOnly'};
 const esc=s=>String(s).replaceAll('\\','\\\\').replaceAll('"','\\"');
 const storage=(model,e)=>e.database||model.defaultDatabase||'default';
 const toClass=id=>id.split(/[_-]/).map(x=>x[0].toUpperCase()+x.slice(1)).join('');
-const nullable=f=>f.required||f.primaryKey?'':(f.type==='string'?'?':'?');
+const nullable=f=>f.required||f.primaryKey?'':'?';
 function column(f){
  if(!scalar[f.type])throw Error('Unsupported generated field type '+f.type+' for '+f.name+'; use typed mapping generator before release');
  return '    public '+scalar[f.type]+nullable(f)+' '+f.name+' { get; set; }'+(f.type==='string'&&f.required?' = "";':'');
@@ -85,4 +88,24 @@ export function generateEfModels(dictionary){
   result.push({database:db,path:'generated/'+className+'.g.cs',source:lines.join('\\n').replaceAll('\\n','\n')});
  }
  return {files:result,warnings:analysis.warnings};
+}
+
+/**
+ * Generates into a dedicated output directory. Never overwrites developer-owned
+ * source or applies a database migration. This CLI is a reference integration
+ * for a later project-aware generator.
+ */
+const self=fileURLToPath(import.meta.url);
+if(process.argv[1] && resolve(process.argv[1])===self){
+ const root=resolve(dirname(self),'..');
+ const input=resolve(root,process.argv[2]||'examples/relational-generation/dictionary.json');
+ const outputDir=resolve(root,process.argv[3]||'examples/relational-generation/generated');
+ const result=generateEfModels(JSON.parse(readFileSync(input,'utf8')));
+ mkdirSync(outputDir,{recursive:true});
+ for(const file of result.files){
+  const target=join(outputDir,file.path.split('/').at(-1));
+  writeFileSync(target,file.source,'utf8');
+  console.log('Generated '+target);
+ }
+ for(const warning of result.warnings)console.warn('Clarify warning: '+warning);
 }
