@@ -573,3 +573,21 @@ Design: [FIELD-CONTROLS-AND-VALIDATION.md](FIELD-CONTROLS-AND-VALIDATION.md). Cu
 | CTRL-010 | P1 | Proposed | Cross-field and asynchronous custom C# validation hooks | DSL, generator, xUnit, browser and security tests |
 | CTRL-011 | P1 | Proposed | NodaMoney and UnitsNet input widgets with conversion and precision | DSL, generator, xUnit, browser and security tests |
 | CTRL-012 | P1 | Proposed | Accessibility and keyboard tests for choice controls | DSL, generator, xUnit, browser and security tests |
+
+## Database dependency requirements
+
+See docs/DATABASE-DEPENDENCIES.md. Implementation is source-level only until verified.
+
+| ID | Priority | Status | Requirement | Verification |
+|---|---|---|---|---|
+| DEP-001 | P0 | Implemented | Dependency graph for entities, fields and relationships | Dependency tests and database integration |
+| DEP-002 | P0 | Implemented | Validate native and external database references | Dependency tests and database integration |
+| DEP-003 | P0 | Implemented | Reject cascade cycles and invalid set-null rules | Dependency tests and database integration |
+| DEP-004 | P0 | Implemented | Validate registered database providers and logical IDs | Dependency tests and database integration |
+| DEP-005 | P0 | Implemented | Preview schema changes and affected dependencies | Dependency tests and database integration |
+| DEP-006 | P0 | Proposed | Generate reviewed EF Core foreign keys and migrations | Dependency tests and database integration |
+| DEP-007 | P0 | Proposed | Implement external reference integrity and reconciliation | Dependency tests and database integration |
+| DEP-008 | P1 | Proposed | Include forms reports workflows and C# in impact analysis | Dependency tests and database integration |
+| DEP-009 | P1 | Proposed | Generate dependent async lookups | Dependency tests and database integration |
+| DEP-010 | P1 | Proposed | Stable IDs and safe rename migration | Dependency tests and database integration |
+| DEP-011 | P1 | Proposed | Database rollback and provider integration tests | Dependency tests and database integration |
