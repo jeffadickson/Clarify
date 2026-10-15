@@ -7,12 +7,15 @@ body{margin:0;background:#f3f6fb;color:#21324a;font:14px/1.45 system-ui,sans-ser
 <div class="notice">Prototype: edits remain in this browser until you export JSON. No database migrations or generated application changes occur automatically.</div>
 <div class="tools"><button class="primary" id="add-entity">+ Entity</button><button id="add-relation">+ Relationship</button><span></span><button id="reset">Reload schema</button><button class="primary" id="export">Export dictionary</button></div>
 <p id="errors" role="alert"></p>
-<section class="rel" aria-label="Dependency impact analysis"><h2>Database dependencies and migration impact</h2><p class="small">Review required for destructive changes, cross-database references, and relationship policy changes. No SQL is executed.</p><div id="dependency-summary"></div><ul id="impact-list"></ul><button id="export-impact">Export impact report</button></section>
+<section class="rel" aria-label="Dependency impact analysis"><h2>Database dependencies and migration impact</h2><p class="small">Review required for destructive changes, cross-database references, and relationship policy changes. No SQL is executed.</p><div id="dependency-summary"></div><ul id="impact-list"></ul><button id="export-impact">Export impact report</button>
+<button id="preview-ef">Preview generated EF Core</button>
+<div id="ef-preview" aria-live="polite"></div></section>
 <section id="canvas" aria-label="Schema entities"></section><section class="rel"><h2>Relationships</h2><ul id="relationships"></ul></section>
 </main><dialog id="edit"></dialog>
 <script type="module">
 import {validate,addEntity,addField,addRelationship} from "./schema.mjs";
 import {analyzeDependencies,impactOfChange} from "./dependencies.mjs";
+import {generateEfModels} from "./ef-models.mjs";
 const $=id=>document.getElementById(id),schemaUrl="./dictionary.json";
 const baseline=await fetch(schemaUrl).then(r=>r.json());
 let model=structuredClone(baseline);
@@ -43,5 +46,17 @@ $("add-entity").onclick=()=>dialog("New entity",[{name:"name",label:"Entity name
 $("add-relation").onclick=()=>dialog("Connect entities",[{name:"from",label:"Child entity",options:model.entities.map(x=>x.name)},{name:"to",label:"Parent entity",options:model.entities.map(x=>x.name)},{name:"foreignKey",label:"Foreign key field"},{name:"onDelete",label:"Delete behavior",options:["restrict","cascade","set-null"]},{name:"kind",label:"Relationship enforcement",options:["native","external"]}],v=>addRelationship(model,v.from,v.to,v.foreignKey,v.onDelete,v.kind));
 $("reset").onclick=async()=>{if(!confirm("Discard local dictionary changes?"))return;model=structuredClone(baseline);localStorage.removeItem("clarify-schema-prototype");render()};
 $("export").onclick=()=>{const errors=[...validate(model),...analyzeDependencies(model).errors];if(errors.length){$("errors").textContent=errors.join("\n");return}const blob=new Blob([JSON.stringify(model,null,2)+"\n"],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dictionary.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+$("preview-ef").onclick=()=>{
+ const panel=$("ef-preview");panel.replaceChildren();
+ try{
+  const generated=generateEfModels(model);
+  for(const file of generated.files){
+   const h=el("h3",file.path),pre=el("pre",file.source),download=el("button","Download "+file.path.split("/").at(-1));
+   pre.style.cssText="max-height:400px;overflow:auto;background:#13263d;color:#e9f2ff;padding:12px;border-radius:6px";
+   download.onclick=()=>{const blob=new Blob([file.source],{type:"text/plain"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=file.path.split("/").at(-1);a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+   panel.append(h,pre,download);
+  }
+ }catch(e){panel.append(el("p","EF Core preview unavailable: "+e.message))}
+};
 render();
 </script></body></html>
