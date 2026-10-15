@@ -36,3 +36,12 @@ test('Studio EF generator matches canonical pure generator',()=>{
  assert.match(html,/preview-ef/);
  assert.match(html,/generateEfModels\(model\)/);
 });
+
+test('Studio migration preview uses canonical safe planner and fixture',()=>{
+ assert.equal(read('src/Clarify.Demo.Web/wwwroot/studio/sqlite-migrations.mjs'),read('designer/sqlite-migrations.mjs'));
+ assert.equal(read('src/Clarify.Demo.Web/wwwroot/studio/relational-dictionary.json'),read('examples/relational-generation/dictionary.json'));
+ const html=read('src/Clarify.Demo.Web/wwwroot/studio/schema-designer.html');
+ assert.match(html,/preview-migration/);
+ assert.match(html,/planSqliteAdditiveMigration\(baseline,model/);
+ assert.match(html,/relational-demo/);
+});
