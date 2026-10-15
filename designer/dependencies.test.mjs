@@ -69,3 +69,13 @@ test('multi-database sample validates without pretending a native FK exists',()=
  invalid.entities[0].database='unknown';
  assert.match(analyzeDependencies(invalid).errors.join('; '),/Unregistered database/);
 });
+
+test('new fields and relationships appear in migration preview',()=>{
+ const before=structuredClone(sample),after=structuredClone(sample);
+ after.entities.find(e=>e.name==='Customer').fields.push({name:'Region',type:'string'});
+ after.relationships.push({from:'Order',to:'Product',foreignKey:'ProductId',onDelete:'restrict'});
+ const impact=impactOfChange(before,after);
+ assert.ok(impact.changes.some(c=>c.kind==='add-field'&&c.target==='Customer.Region'));
+ assert.ok(impact.changes.some(c=>c.kind==='add-relationship'));
+ assert.equal(impact.requiresReview,true);
+});
