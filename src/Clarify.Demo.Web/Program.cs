@@ -37,14 +37,10 @@ using(var scope=app.Services.CreateScope()){
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapApplicationAccess();
-// Preview parser stays read-only and available only for local development.
-if (app.Environment.IsDevelopment() &&
-    System.Net.IPAddress.IsLoopback(app.Urls.Count > 0
-        ? new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, 0).Address
-        : System.Net.IPAddress.Loopback))
-{
+// Preview parser stays read-only and is registered in Development only.
+// The endpoint independently restricts calls to actual loopback clients.
+if (app.Environment.IsDevelopment())
     app.MapNativeDslPreview();
-}
 // Local-only Identity API for experimenting with users, sign-in and roles.
 // Do not expose open registration in production; use an administrator-controlled
 // enrollment flow or external OIDC provider.
