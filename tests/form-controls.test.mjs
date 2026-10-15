@@ -40,3 +40,18 @@ test('Blazor renderer supports all standard field controls',()=>{
  assert.match(renderControl({name:'Count',type:'int'},{kind:'number'},'Count','count'),/InputNumber/);
  assert.match(renderControl({name:'Date',type:'date'},{kind:'date'},'Date','date'),/InputDate/);
 });
+
+test('real gallery samples expose choice controls and validation rules',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const {instantiateTemplate}=await import('../designer/templates.mjs');
+ const root=new URL('../',import.meta.url);
+ const dictionary=JSON.parse(readFileSync(new URL('examples/order-entry/dictionary.json',root)));
+ for(const slug of ['customer-city-directory','customer-data-review','order-date-entry','line-quantity-check']){
+  const manifest=JSON.parse(readFileSync(new URL('templates/samples/'+slug+'.json',root)));
+  const entity=slug.startsWith('customer')?'Customer':slug.startsWith('order-')?'Order':'OrderLine';
+  const generated=instantiateTemplate(manifest,dictionary,{Entity:entity});
+  const parsed=parse(generated.files[0].source,dictionary);
+  assert.equal(parsed.ok,true,slug+': '+parsed.errors.join('; '));
+  assert.ok(parsed.controls.some(c=>c.control),slug);
+ }
+});
