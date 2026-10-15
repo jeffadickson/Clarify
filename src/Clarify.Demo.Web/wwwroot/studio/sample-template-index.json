@@ -98,5 +98,105 @@
     "slug": "order-items",
     "entity": "Order",
     "detail": "OrderLine"
+  },
+  {
+    "slug": "customer-mini-card",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "customer-city-directory",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "customer-contact-lookup",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "customer-data-review",
+    "entity": "Customer",
+    "detail": null
+  },
+  {
+    "slug": "product-measurements",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-dimensions",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-weight",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-pressure-check",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-thermal",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-price-tag",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-tech-sheet",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "product-unit-conversion",
+    "entity": "Product",
+    "detail": null
+  },
+  {
+    "slug": "order-customer-lookup",
+    "entity": "Order",
+    "detail": null
+  },
+  {
+    "slug": "order-date-entry",
+    "entity": "Order",
+    "detail": null
+  },
+  {
+    "slug": "order-review",
+    "entity": "Order",
+    "detail": null
+  },
+  {
+    "slug": "order-batch-browse",
+    "entity": "Order",
+    "detail": null
+  },
+  {
+    "slug": "line-quantity-check",
+    "entity": "OrderLine",
+    "detail": null
+  },
+  {
+    "slug": "line-unit-price",
+    "entity": "OrderLine",
+    "detail": null
+  },
+  {
+    "slug": "line-item-audit",
+    "entity": "OrderLine",
+    "detail": null
+  },
+  {
+    "slug": "line-cost-summary",
+    "entity": "OrderLine",
+    "detail": null
   }
 ]
