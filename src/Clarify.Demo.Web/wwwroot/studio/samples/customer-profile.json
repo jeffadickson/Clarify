@@ -1,0 +1,26 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.customer-profile",
+  "version": "0.1.0",
+  "title": "Customer profile",
+  "category": "forms",
+  "description": "Sample forms pattern for Customer. This currently generates editable form DSL; data persistence uses existing generated application plumbing.",
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 12,
+      "fields": [
+        "Name",
+        "Email",
+        "City"
+      ],
+      "title": "Customer profile"
+    }
+  ]
+}
