@@ -3,20 +3,46 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 namespace Clarify.Generated;
+/// <summary>A bounded page of records and whether another page exists.</summary>
+/// <typeparam name="T">Entity model type.</typeparam>
+/// <param name="Items">Records in this page.</param>
+/// <param name="Page">Zero-based page index.</param>
+/// <param name="PageSize">Maximum records per page.</param>
+/// <param name="HasNext">Whether additional records exist.</param>
 public sealed record BrowsePage<T>(IReadOnlyList<T> Items, int Page, int PageSize, bool HasNext);
 /// <summary>Cancellation-aware browse for Customer.</summary>
 public interface ICustomerAsyncBrowse {
+    /// <summary>Retrieves a bounded, cancellation-aware page of Customer records.</summary>
+    /// <param name="page">Zero-based page number.</param>
+    /// <param name="pageSize">Maximum number of records.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Page results and continuation indicator.</returns>
     Task<BrowsePage<CustomerModel>> PageAsync(int page, int pageSize, CancellationToken ct = default);
 }
 /// <summary>Cancellation-aware browse for Product.</summary>
 public interface IProductAsyncBrowse {
+    /// <summary>Retrieves a bounded, cancellation-aware page of Product records.</summary>
+    /// <param name="page">Zero-based page number.</param>
+    /// <param name="pageSize">Maximum number of records.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Page results and continuation indicator.</returns>
     Task<BrowsePage<ProductModel>> PageAsync(int page, int pageSize, CancellationToken ct = default);
 }
 /// <summary>Cancellation-aware browse for Order.</summary>
 public interface IOrderAsyncBrowse {
+    /// <summary>Retrieves a bounded, cancellation-aware page of Order records.</summary>
+    /// <param name="page">Zero-based page number.</param>
+    /// <param name="pageSize">Maximum number of records.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Page results and continuation indicator.</returns>
     Task<BrowsePage<OrderModel>> PageAsync(int page, int pageSize, CancellationToken ct = default);
 }
 /// <summary>Cancellation-aware browse for OrderLine.</summary>
 public interface IOrderLineAsyncBrowse {
+    /// <summary>Retrieves a bounded, cancellation-aware page of OrderLine records.</summary>
+    /// <param name="page">Zero-based page number.</param>
+    /// <param name="pageSize">Maximum number of records.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>Page results and continuation indicator.</returns>
     Task<BrowsePage<OrderLineModel>> PageAsync(int page, int pageSize, CancellationToken ct = default);
 }
