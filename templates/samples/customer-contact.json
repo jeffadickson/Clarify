@@ -1,7 +1,7 @@
 {
   "format": "clarify-template/v1",
   "id": "clarify.sample.customer-contact",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Customer contact card",
   "category": "forms",
   "description": "Sample forms pattern for Customer. This currently generates editable form DSL; data persistence uses existing generated application plumbing.",
@@ -22,5 +22,10 @@
       ],
       "title": "Customer contact card"
     }
-  ]
+  ],
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  }
 }
