@@ -31,3 +31,11 @@ No parser replacement was made to implement this diagram.
 
 Source integration smoke is in `tests/studio-integration.test.mjs`;
 browser interaction and visual regression tests remain acceptance gates.
+
+## October 2026 navigation increment
+
+The additive ER view now has **Auto layout, Zoom in, Zoom out, Fit, Reset positions** and SVG export controls. A pure deterministic relationship-aware layout engine (`designer/er-layout.mjs`) places parent entities before children and routes connectors orthogonally. Manual placements persist in browser localStorage under `clarify-er-positions` without modifying the source dictionary. Arrow keys move a focused entity 16 diagram units; dragging moves it with the pointer. Empty-canvas dragging pans.
+
+These behaviors are tested by `tests/er-layout.test.mjs` and source-parity checks in `tests/studio-integration.test.mjs`. The diagram's JavaScript syntax and the layout module were checked directly. Actual browser behavior remains pending Playwright verification.
+
+**Limitations:** layout is deterministic layered placement, not a full Sugiyama crossing-minimization algorithm; connector crossings can remain on dense schemas. Layout persistence is browser-local, not saved project metadata. Zoom/pan usability and keyboard accessibility need independent browser testing.
