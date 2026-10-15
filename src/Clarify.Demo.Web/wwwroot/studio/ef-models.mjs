@@ -11,7 +11,7 @@ const toClass=id=>id.split(/[_-]/).map(x=>x[0].toUpperCase()+x.slice(1)).join(''
 const nullable=f=>f.required||f.primaryKey?'':'?';
 function column(f){
  if(!scalar[f.type])throw Error('Unsupported generated field type '+f.type+' for '+f.name+'; use typed mapping generator before release');
- return '    public '+scalar[f.type]+nullable(f)+' '+f.name+' { get; set; }'+(f.type==='string'&&f.required?' = "";':'');
+ return '    /// <summary>Dictionary field '+f.name+' ('+f.type+').</summary>\\n    public '+scalar[f.type]+nullable(f)+' '+f.name+' { get; set; }'+(f.type==='string'&&f.required?' = "";':'');
 }
 export function generateEfModels(dictionary){
  const analysis=analyzeDependencies(dictionary);
@@ -50,7 +50,9 @@ export function generateEfModels(dictionary){
   }
   lines.push('/// <summary>EF Core context for logical database '+db+'.</summary>');
   lines.push('public sealed class '+className+'(DbContextOptions<'+className+'> options) : DbContext(options) {');
-  for(const e of scoped)lines.push('    public DbSet<'+e.name+'> '+e.name+'Rows => Set<'+e.name+'>();');
+  for(const e of scoped){lines.push('    /// <summary>Query and update '+e.name+' records.</summary>');lines.push('    public DbSet<'+e.name+'> '+e.name+'Rows => Set<'+e.name+'>();');}
+  lines.push('    /// <summary>Configures generated keys, columns and relationships.</summary>');
+  lines.push('    /// <param name="model">EF Core model builder.</param>');
   lines.push('    protected override void OnModelCreating(ModelBuilder model) {');
   for(const e of scoped){
    const pk=e.fields.find(f=>f.primaryKey);
