@@ -18,3 +18,20 @@ Every package has an ID, semantic version, category, entity bindings, selected f
 Open `/studio/templates.html`, choose a template, select its bound entity (and detail entity when applicable), click Generate preview, then Edit visually. Download customized DSL from the designer.
 
 Next: richer typed recipes for list/browse, nested master-detail grids, query/filter widgets, and safe persistence of template instances/overrides.
+
+## Version 0.2 — standard rich value types
+
+All 20 sample template manifests have been advanced to version **0.2.0** and declare NodaMoney and UnitsNet as the standard semantic type providers. This is a metadata-driven capability, not a new interpreter.
+
+The sample dictionary explicitly defines USD for Product.Price and OrderLine.UnitPrice, and adds Product.Length, Product.Mass, Product.Pressure and Product.Temperature with preferred display units. The Product Editor, Product Pricing and Product Catalog templates demonstrate those fields; the OrderLine pricing template demonstrates money.
+
+The template engine reads each bound field's semantic type from the dictionary and emits `// @clarify-type` metadata adjacent to its ClarifyDSL declaration. For example:
+
+```text
+// @clarify-type {"field":"Price","type":"money","dotnet":"NodaMoney.Money","storage":["amount","currency"],"currency":"USD"}
+Price at (1,1) span (6,1)
+```
+
+The form designer displays currency/unit hints on the canvas, and the dictionary editor accepts currency and display-unit metadata for newly added fields. Visual movement preserves the metadata comments.
+
+**Not yet implemented:** NodaMoney/UnitsNet input controls, conversion/rounding policy, automatic generated EF Core mappings and migrations from these template declarations. Do not confuse metadata propagation with fully operational strongly typed UI or database generation. The earlier standalone EF Core example and tests remain the persistence reference.
