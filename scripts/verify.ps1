@@ -5,7 +5,7 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 node workflow/compile.mjs
 node --test tests/automatic-observability.test.mjs
 node tools/generate-observability.mjs
-node --test tests/async-generator.test.mjs
+node --test tests/standard-value-types.test.mjs tests/async-generator.test.mjs
 node tools/generate-async-contracts.mjs
 node tools/generate-shared-blazor.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
