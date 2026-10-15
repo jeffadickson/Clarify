@@ -1,7 +1,36 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Clarify template gallery</title><style>body{background:#f4f7fb;color:#23334a;font:15px system-ui;margin:0}header{background:#203c60;color:white;padding:20px}main{max-width:1050px;margin:auto;padding:24px}section{background:white;padding:22px;border:1px solid #d6e2ed;border-radius:12px;margin-bottom:16px}label{display:block;margin:12px 0}select,button{font:inherit;padding:9px;border:1px solid #b6c8dd;border-radius:7px}button{background:#245da0;color:white;cursor:pointer}pre{white-space:pre-wrap;background:#142940;color:#e2efff;border-radius:8px;padding:15px;overflow:auto}#error{color:#ad2233}.small{color:#596d83}a{color:#265c99}</style></head><body><header><h1>Clarify · Template Library</h1>Reusable generator recipes · versioned and inspectable</header><main><p><a href="/studio/schema">← Data dictionary</a> · <a href="/studio">Visual form designer</a></p><section><h2>Master–detail editor</h2><p class="small">Choose the parent and child entities. Clarify verifies the relationship and generates editable form DSL. Custom C# is never modified.</p><label>Parent entity <select id="parent"></select></label><label>Child entity <select id="child"></select></label><button id="preview">Generate preview</button><p id="error" role="alert"></p></section><section><h2>Generated source</h2><div id="result" aria-live="polite">Select a relationship and generate a preview.</div></section></main><script type="module">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Clarify template gallery</title><style>body{background:#f4f7fb;color:#23334a;font:15px system-ui;margin:0}header{background:#203c60;color:white;padding:20px}main{max-width:1050px;margin:auto;padding:24px}section{background:white;padding:22px;border:1px solid #d6e2ed;border-radius:12px;margin-bottom:16px}label{display:block;margin:12px 0}select,button{font:inherit;padding:9px;border:1px solid #b6c8dd;border-radius:7px}button{background:#245da0;color:white;cursor:pointer}pre{white-space:pre-wrap;background:#142940;color:#e2efff;border-radius:8px;padding:15px;overflow:auto}#error{color:#ad2233}.small{color:#596d83}a{color:#265c99}</style></head><body><header><h1>Clarify · Template Library</h1>Reusable generator recipes · versioned and inspectable</header><main><p><a href="/studio/schema">← Data dictionary</a> · <a href="/studio">Visual form designer</a></p><section><h2>Template gallery — 20 examples</h2><label>Template <select id="template-select"></select></label><p id="template-description" class="small"></p><p class="small">Choose the parent and child entities. Clarify verifies the relationship and generates editable form DSL. Custom C# is never modified.</p><label>Parent entity <select id="parent"></select></label><label>Child entity <select id="child"></select></label><button id="preview">Generate preview</button><p id="error" role="alert"></p></section><section><h2>Generated source</h2><div id="result" aria-live="polite">Select a relationship and generate a preview.</div></section></main><script type="module">
 import{instantiateTemplate}from './templates.mjs';
-const [schema,template]=await Promise.all([fetch('./dictionary.json').then(r=>r.json()),fetch('./master-detail-template.json').then(r=>r.json())]);
-for(const id of ['parent','child']){const sel=document.getElementById(id);for(const e of schema.entities){const o=document.createElement('option');o.value=e.name;o.textContent=e.name;sel.append(o)}}
-document.getElementById('parent').value='Order';document.getElementById('child').value='OrderLine';
-document.getElementById('preview').onclick=()=>{const result=document.getElementById('result');result.replaceChildren();document.getElementById('error').textContent='';try{const output=instantiateTemplate(template,schema,{Parent:document.getElementById('parent').value,Child:document.getElementById('child').value});for(const file of output.files){const section=document.createElement('section'),h=document.createElement('h3'),pre=document.createElement('pre'),button=document.createElement('button');h.textContent=file.path;pre.textContent=file.source;button.textContent='Download '+file.path;button.onclick=()=>{const blob=new Blob([file.source],{type:'text/plain'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file.path.split('/').at(-1);a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};const edit=document.createElement('a');edit.textContent='Edit visually →';edit.href='/studio/designer.html?'+new URLSearchParams({template:'master-detail',parent:output.bindings.Parent,child:output.bindings.Child,form:file.entity}).toString();edit.style.marginLeft='16px';section.append(h,pre,button,edit);result.append(section)}}catch(e){document.getElementById('error').textContent=e.message}};
+const [schema,index]=await Promise.all([fetch('./dictionary.json').then(r=>r.json()),fetch('./sample-template-index.json').then(r=>r.json())]);
+const select=document.getElementById('template-select');
+for(const item of index){const opt=document.createElement('option');opt.value=item.slug;opt.textContent=item.slug.replaceAll('-',' ');select.append(opt)}
+const parent=document.getElementById('parent'),child=document.getElementById('child');
+for(const id of ['parent','child']){const sel=document.getElementById(id);for(const entity of schema.entities){const opt=document.createElement('option');opt.value=entity.name;opt.textContent=entity.name;sel.append(opt)}}
+let current;
+async function selectTemplate(){
+ current=index.find(x=>x.slug===select.value);
+ parent.value=current.entity;
+ child.value=current.detail||'OrderLine';
+ child.parentElement.hidden=!current.detail;
+ const manifest=await fetch('./samples/'+current.slug+'.json').then(r=>r.json());
+ document.getElementById('template-description').textContent=manifest.description;
+ document.getElementById('result').textContent='Choose bindings and Generate preview.';
+}
+select.onchange=selectTemplate;
+document.getElementById('preview').onclick=async()=>{
+ const result=document.getElementById('result');result.replaceChildren();document.getElementById('error').textContent='';
+ try{
+  const template=await fetch('./samples/'+current.slug+'.json').then(r=>r.json());
+  const bindings={Entity:parent.value};
+  if(current.detail)bindings.Detail=child.value;
+  const output=instantiateTemplate(template,schema,bindings);
+  for(const file of output.files){
+   const section=document.createElement('section'),h=document.createElement('h3'),pre=document.createElement('pre'),button=document.createElement('button'),edit=document.createElement('a');
+   h.textContent=file.path;pre.textContent=file.source;button.textContent='Download DSL';
+   button.onclick=()=>{const blob=new Blob([file.source],{type:'text/plain'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file.path.split('/').at(-1);a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+   edit.textContent='Edit visually →';edit.href='/studio/designer.html?'+new URLSearchParams({sample:current.slug,parent:bindings.Entity,child:bindings.Detail||'',form:file.entity}).toString();edit.style.marginLeft='16px';
+   section.append(h,pre,button,edit);result.append(section);
+  }
+ }catch(e){document.getElementById('error').textContent=e.message}
+};
+selectTemplate();
 </script></body></html>
