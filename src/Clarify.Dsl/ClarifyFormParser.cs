@@ -54,6 +54,8 @@ public static class ClarifyFormParser
         var fields = new List<FormField>();
         string? name = null, entity = null;
         var stack = new Stack<string>();
+        var seenForm = false;
+        var completed = false;
         var offset = 0;
         var rows = source.Split('\n');
         for (var index = 0; index < rows.Length; index++)
@@ -63,7 +65,11 @@ public static class ClarifyFormParser
             var line = index + 1;
             var column = Math.Max(1, raw.IndexOf(text, StringComparison.Ordinal) + 1);
             if (text.Length == 0) { offset += rows[index].Length + 1; continue; }
-            if (name is null)
+            if (completed)
+            {
+                errors.Add(new("DSL008", "Unexpected content after form", line, column));
+            }
+            else if (name is null)
             {
                 var header = Header.Match(text);
                 if (!header.Success)
@@ -73,12 +79,17 @@ public static class ClarifyFormParser
                     name = header.Groups["name"].Value;
                     entity = header.Groups["entity"].Value;
                     stack.Push("form");
+                    seenForm = true;
                 }
             }
             else if (text == "}")
             {
                 if (stack.Count == 0) errors.Add(new("DSL002", "Unexpected closing brace", line, column));
-                else stack.Pop();
+                else
+                {
+                    stack.Pop();
+                    if (stack.Count == 0) completed = true;
+                }
             }
             else if (Block.IsMatch(text)) stack.Push(text.Split(' ', 2)[0]);
             else if (text.StartsWith("title ", StringComparison.Ordinal) ||
@@ -107,7 +118,9 @@ public static class ClarifyFormParser
             offset += rows[index].Length + 1;
         }
         if (stack.Count != 0) errors.Add(new("DSL006", "Unclosed block", rows.Length, 1));
-        if (name is null) errors.Add(new("DSL007", "Missing form", 1, 1));
+        if (!seenForm) errors.Add(new("DSL007", "Missing form", 1, 1));
+        foreach (var group in fields.GroupBy(f => f.Name).Where(g => g.Count() > 1))
+            errors.Add(new("DSL009", "Duplicate field: " + group.Key, group.Last().Range.Line, group.Last().Range.Column));
         return new(errors.Count == 0 ? new(name!, entity!, fields) : null, errors);
     }
 }
