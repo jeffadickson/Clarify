@@ -18,3 +18,8 @@ bash scripts/smoke-sqlite-migrations.sh
 
 node tools/export-dsl-parity-fixtures.mjs
 dotnet test tests/Clarify.Dsl.Tests/Clarify.Dsl.Tests.csproj -c Release
+
+node --test tests/documentation-generation.test.mjs
+node tools/audit-csharp-docs.mjs --report --strict-generated
+dotnet tool restore
+dotnet docfx docs/docfx.json
