@@ -520,3 +520,20 @@ Async is the default for I/O and cancellation is propagated. This is not a promi
 | ASYNC-010 | P1 | Implemented (unverified) | Async-safe DbContext lifetime and concurrency | Generated code, xUnit and load tests |
 | ASYNC-011 | P1 | Proposed | Telemetry for cancellation and request latency | Generated code, xUnit and load tests |
 | ASYNC-012 | P1 | Proposed | Graceful shutdown and cancellation for long jobs | Generated code, xUnit and load tests |
+
+## Clarion-inspired helper and expression requirements
+
+Design: [CLARION-LANGUAGE-HELPERS.md](CLARION-LANGUAGE-HELPERS.md). These are proposed, not implemented.
+
+| ID | Priority | Status | Requirement | Verification |
+|---|---|---|---|---|
+| EXPR-001 | P0 | Proposed | Typed safe expression AST with diagnostics | Typed expression, SQL translation, security and parity tests |
+| EXPR-002 | P0 | Proposed | Culture-aware format and parse helpers | Typed expression, SQL translation, security and parity tests |
+| EXPR-003 | P0 | Proposed | String/date/conditional helper functions | Typed expression, SQL translation, security and parity tests |
+| EXPR-004 | P0 | Proposed | Query expressions translated to server-side SQL | Typed expression, SQL translation, security and parity tests |
+| EXPR-005 | P0 | Proposed | Consistent expression semantics in Studio and generated apps | Typed expression, SQL translation, security and parity tests |
+| EXPR-006 | P0 | Proposed | Registered typed user C# helper functions | Typed expression, SQL translation, security and parity tests |
+| EXPR-007 | P0 | Proposed | Explicit null and money rounding semantics | Typed expression, SQL translation, security and parity tests |
+| EXPR-008 | P0 | Proposed | No arbitrary code execution from DSL expressions | Typed expression, SQL translation, security and parity tests |
+| EXPR-009 | P1 | Proposed | Benchmark interpreted versus generated compiled expressions | Typed expression, SQL translation, security and parity tests |
+| EXPR-010 | P2 | Proposed | Legacy Clarion data conversion adapters isolated | Typed expression, SQL translation, security and parity tests |
