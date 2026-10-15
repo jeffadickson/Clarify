@@ -23,6 +23,12 @@ public static class ClarifySourcePatches
         var matches = before.Form!.Fields.Where(f => f.Name == fieldName).ToArray();
         if (matches.Length != 1)
             throw new InvalidOperationException("Field must occur exactly once: " + fieldName);
+        // Mirror visual editor collision checks for fields in this form.
+        if (before.Form.Fields.Any(other =>
+            other.Name != fieldName &&
+            x < other.X + other.Width && other.X < x + width &&
+            y < other.Y + other.Height && other.Y < y + height))
+            throw new InvalidOperationException("Field would overlap an existing control.");
         var span = matches[0].Range;
         var text = source.Substring(span.Start, span.Length);
         var match = Coordinates.Match(text);
