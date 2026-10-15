@@ -4,6 +4,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import{resolve,dirname}from'node:path';
 import{fileURLToPath}from'node:url';
 import{parse}from'../designer/clarifydsl.mjs';
+import{renderControl}from'./control-renderer.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const schema=JSON.parse(readFileSync(resolve(root,'examples/order-entry/dictionary.json'),'utf8'));
 const source=readFileSync(resolve(root,'examples/forms/Customer.clarify'),'utf8');
@@ -20,7 +21,7 @@ const lines=parsed.controls.map(f=>{
  const label=xmlEscape(f.name),prop=field.name,id='customer-'+cssEscape(f.name.toLowerCase());
  return '  <div style="grid-column: '+f.x+' / span '+f.w+'; grid-row: '+f.y+' / span '+f.h+'">\n'
  +'    <label for="'+id+'">'+label+'</label>\n'
- +'    <InputText id="'+id+'" @bind-Value="Model.'+prop+'" />\n'
+ +'    '+renderControl(field,f.control,prop,id)+'\n'
  +'    <ValidationMessage For="() => Model.'+prop+'" />\n'
  +'  </div>';
 });
