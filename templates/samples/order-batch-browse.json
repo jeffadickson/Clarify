@@ -1,0 +1,30 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.order-batch-browse",
+  "version": "0.2.0",
+  "title": "Order batch browse",
+  "category": "browse",
+  "description": "Sample browse layout for Order. Generates editable DSL, not business logic.",
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  },
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 12,
+      "fields": [
+        "Date",
+        "CustomerId"
+      ],
+      "title": "Order batch browse"
+    }
+  ]
+}
