@@ -1,7 +1,7 @@
 {
   "format": "clarify-template/v1",
   "id": "clarify.sample.product-pricing",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Product pricing",
   "category": "forms",
   "description": "Sample forms pattern for Product. This currently generates editable form DSL; data persistence uses existing generated application plumbing.",
@@ -17,9 +17,15 @@
       "columns": 6,
       "fields": [
         "Price",
-        "Name"
+        "Name",
+        "Mass"
       ],
       "title": "Product pricing"
     }
-  ]
+  ],
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  }
 }
