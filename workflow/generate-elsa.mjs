@@ -38,6 +38,8 @@ namespace Clarify.Examples.Elsa;
 // WriteLine steps only demonstrate dispatch; replace with idempotent C# activities.
 public sealed class GeneratedOrderApprovalWorkflow : WorkflowBase
 {
+    /// <summary>Constructs the generated Elsa activity graph.</summary>
+    /// <param name="builder">Workflow builder supplied by Elsa.</param>
     protected override void Build(IWorkflowBuilder builder)
     {
         builder.Root = new Sequence
