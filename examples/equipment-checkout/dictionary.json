@@ -1,0 +1,105 @@
+{
+  "defaultDatabase": "checkout",
+  "databases": [
+    {
+      "id": "checkout",
+      "provider": "sqlite"
+    }
+  ],
+  "entities": [
+    {
+      "name": "Person",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "long",
+          "primaryKey": true,
+          "required": true
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "required": true,
+          "maxLength": 120
+        },
+        {
+          "name": "Email",
+          "type": "string",
+          "maxLength": 200
+        }
+      ]
+    },
+    {
+      "name": "Equipment",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "long",
+          "primaryKey": true,
+          "required": true
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "required": true,
+          "maxLength": 120
+        },
+        {
+          "name": "SerialNumber",
+          "type": "string",
+          "required": true,
+          "maxLength": 80
+        }
+      ]
+    },
+    {
+      "name": "Loan",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "long",
+          "primaryKey": true,
+          "required": true
+        },
+        {
+          "name": "PersonId",
+          "type": "long",
+          "required": true
+        },
+        {
+          "name": "EquipmentId",
+          "type": "long",
+          "required": true
+        },
+        {
+          "name": "CheckedOut",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "Returned",
+          "type": "bool",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "from": "Loan",
+      "to": "Person",
+      "foreignKey": "PersonId",
+      "principalKey": "Id",
+      "cardinality": "one-to-many",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "Loan",
+      "to": "Equipment",
+      "foreignKey": "EquipmentId",
+      "principalKey": "Id",
+      "cardinality": "one-to-many",
+      "onDelete": "restrict"
+    }
+  ]
+}
