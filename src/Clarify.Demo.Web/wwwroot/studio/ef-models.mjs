@@ -54,7 +54,7 @@ export function generateEfModels(dictionary){
   lines.push('    protected override void OnModelCreating(ModelBuilder model) {');
   for(const e of scoped){
    const pk=e.fields.find(f=>f.primaryKey);
-   lines.push('        model.Entity<'+e.name+'>().HasKey(x => x.'+pk.name+');');
+   lines.push('        model.Entity<'+e.name+'>().ToTable("'+e.name+'").HasKey(x => x.'+pk.name+');');
    for(const f of e.fields){
     if(f.type==='string'&&f.required)lines.push('        model.Entity<'+e.name+'>().Property(x => x.'+f.name+').IsRequired();');
     if(f.maxLength!==undefined){
