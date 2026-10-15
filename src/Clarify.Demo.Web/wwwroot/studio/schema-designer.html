@@ -5,19 +5,20 @@ body{margin:0;background:#f3f6fb;color:#21324a;font:14px/1.45 system-ui,sans-ser
 <header><h1>Clarify · Data Dictionary Designer</h1><span>Visual schema prototype</span></header>
 <main><p>Define tables and fields, then connect relationships. Download the dictionary for source control and generation.</p>
 <div class="notice">Prototype: edits remain in this browser until you export JSON. No database migrations or generated application changes occur automatically.</div>
-<div class="tools"><button class="primary" id="add-entity">+ Entity</button><button id="add-relation">+ Relationship</button><span></span><button id="reset">Reload schema</button><button class="primary" id="export">Export dictionary</button></div>
+<div class="tools"><button class="primary" id="add-entity">+ Entity</button><button id="add-relation">+ Relationship</button><span></span><button id="reset">Reload schema</button><button id="relational-demo">Load relational demo</button><button class="primary" id="export">Export dictionary</button></div>
 <p id="errors" role="alert"></p>
 <section class="rel" aria-label="Dependency impact analysis"><h2>Database dependencies and migration impact</h2><p class="small">Review required for destructive changes, cross-database references, and relationship policy changes. No SQL is executed.</p><div id="dependency-summary"></div><ul id="impact-list"></ul><button id="export-impact">Export impact report</button>
-<button id="preview-ef">Preview generated EF Core</button>
-<div id="ef-preview" aria-live="polite"></div></section>
+<button id="preview-ef">Preview generated EF Core</button><button id="preview-migration">Preview safe SQLite migration</button>
+<div id="ef-preview" aria-live="polite"></div><div id="migration-preview" aria-live="polite"></div></section>
 <section id="canvas" aria-label="Schema entities"></section><section class="rel"><h2>Relationships</h2><ul id="relationships"></ul></section>
 </main><dialog id="edit"></dialog>
 <script type="module">
 import {validate,addEntity,addField,addRelationship} from "./schema.mjs";
 import {analyzeDependencies,impactOfChange} from "./dependencies.mjs";
 import {generateEfModels} from "./ef-models.mjs";
+import {planSqliteAdditiveMigration} from "./sqlite-migrations.mjs";
 const $=id=>document.getElementById(id),schemaUrl="./dictionary.json";
-const baseline=await fetch(schemaUrl).then(r=>r.json());
+let baseline=await fetch(schemaUrl).then(r=>r.json());
 let model=structuredClone(baseline);
 try{const saved=localStorage.getItem("clarify-schema-prototype");if(saved)model=JSON.parse(saved)}catch{}
 function el(tag,text){const n=document.createElement(tag);n.textContent=text;return n}
@@ -30,9 +31,9 @@ try{localStorage.setItem("clarify-schema-prototype",JSON.stringify(model))}catch
 function dialog(title,parts,save){const d=$("edit");d.replaceChildren();const f=document.createElement("form");f.method="dialog";f.append(el("h2",title));const controls=[];
 for(const part of parts){const label=el("label",part.label),input=part.options?document.createElement("select"):document.createElement("input");
 if(part.options){for(const option of part.options){const item=el("option",option);item.value=option;input.append(item)}}else input.value=part.value||"";
-input.name=part.name;input.required=true;label.append(input);controls.push(input);f.append(label)}
+input.name=part.name;input.required=!part.optional;label.append(input);controls.push(input);f.append(label)}
 const menu=el("menu","");const cancel=el("button","Cancel");cancel.type="button";cancel.onclick=()=>d.close();const submit=el("button","Create");submit.className="primary";submit.type="submit";menu.append(cancel,submit);f.append(menu);f.onsubmit=e=>{e.preventDefault();const values=Object.fromEntries(controls.map(x=>[x.name,x.value]));try{model=save(values);d.close();render()}catch(err){$("errors").textContent=err.message}};d.append(f);d.showModal()}
-function fieldDialog(name){dialog("New field in "+name,[{name:"name",label:"Field name"},{name:"type",label:"Type",options:["string","int","long","date","bool","decimal","money","length","mass","temperature","pressure"]},{name:"required",label:"Required",options:["false","true"]},{name:"unit",label:"Currency code (e.g. USD) or display unit (e.g. mm)",value:""}],v=>{
+function fieldDialog(name){dialog("New field in "+name,[{name:"name",label:"Field name"},{name:"type",label:"Type",options:["string","int","long","date","bool","decimal","money","length","mass","temperature","pressure"]},{name:"required",label:"Required",options:["false","true"]},{name:"unit",label:"Currency code (e.g. USD) or display unit (e.g. mm)",value:"",optional:true}],v=>{
  const field={name:v.name,type:v.type,required:v.required==="true"};
  if(v.type==="money"){
   if(!/^[A-Z]{3}$/.test(v.unit))throw Error("Money requires an ISO currency code such as USD");
@@ -44,8 +45,31 @@ function fieldDialog(name){dialog("New field in "+name,[{name:"name",label:"Fiel
 })}
 $("add-entity").onclick=()=>dialog("New entity",[{name:"name",label:"Entity name"}],v=>addEntity(model,v.name));
 $("add-relation").onclick=()=>dialog("Connect entities",[{name:"from",label:"Child entity",options:model.entities.map(x=>x.name)},{name:"to",label:"Parent entity",options:model.entities.map(x=>x.name)},{name:"foreignKey",label:"Foreign key field"},{name:"onDelete",label:"Delete behavior",options:["restrict","cascade","set-null"]},{name:"kind",label:"Relationship enforcement",options:["native","external"]}],v=>addRelationship(model,v.from,v.to,v.foreignKey,v.onDelete,v.kind));
+$("relational-demo").onclick=async()=>{
+ if(!confirm("Load the explicit-key SQLite relational demo? Current local changes will be replaced."))return;
+ baseline=await fetch("./relational-dictionary.json").then(r=>r.json());
+ model=structuredClone(baseline);
+ try{localStorage.removeItem("clarify-schema-prototype")}catch{}
+ render();
+};
 $("reset").onclick=async()=>{if(!confirm("Discard local dictionary changes?"))return;model=structuredClone(baseline);localStorage.removeItem("clarify-schema-prototype");render()};
 $("export").onclick=()=>{const errors=[...validate(model),...analyzeDependencies(model).errors];if(errors.length){$("errors").textContent=errors.join("\n");return}const blob=new Blob([JSON.stringify(model,null,2)+"\n"],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dictionary.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+$("preview-migration").onclick=()=>{
+ const panel=$("migration-preview");panel.replaceChildren();
+ try{
+  const plan=planSqliteAdditiveMigration(baseline,model,model.defaultDatabase||"sales");
+  panel.append(el("h3","Migration plan: "+plan.planId));
+  panel.append(el("p",plan.executable?"Additive plan available for explicit review. No SQL has been executed.":"Migration blocked: "+plan.blocked.join("; ")));
+  const pre=el("pre",JSON.stringify(plan,null,2));
+  pre.style.cssText="max-height:350px;overflow:auto;background:#13263d;color:#e9f2ff;padding:12px;border-radius:6px";
+  panel.append(pre);
+  if(plan.executable){
+   const download=el("button","Download migration plan");
+   download.onclick=()=>{const blob=new Blob([JSON.stringify(plan,null,2)+"\\n"],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=plan.planId+".migration.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+   panel.append(download);
+  }
+ }catch(e){panel.append(el("p","Migration preview unavailable: "+e.message))}
+};
 $("preview-ef").onclick=()=>{
  const panel=$("ef-preview");panel.replaceChildren();
  try{
