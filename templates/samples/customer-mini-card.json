@@ -1,0 +1,30 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.customer-mini-card",
+  "version": "0.2.0",
+  "title": "Customer quick card",
+  "category": "forms",
+  "description": "Test-data forms layout for Customer, exercising dictionary-driven field types. This generates editable ClarifyDSL; no standalone business behavior is implied.",
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  },
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 6,
+      "fields": [
+        "Name",
+        "City"
+      ],
+      "title": "Customer quick card"
+    }
+  ]
+}
