@@ -39,4 +39,35 @@ public sealed class ParserTests
         var result = ClarifyFormParser.Parse("form F for Customer {\n  grid columns 12 {\n  Name at (1,1) span (6,1)\n}");
         Assert.Contains(result.Diagnostics, x => x.Code == "DSL006");
     }
+    [Fact]
+    public void NativeVisualEditPreservesCommentsAndOtherFields()
+    {
+        var original = """
+            // @clarify-template {"id":"clarify.sample.example","version":"0.2.0"}
+            form CustomerEditor for Customer {
+              grid columns 12 {
+                // @clarify-control {"field":"Name","kind":"text"}
+                Name at (1,1) span (6,1) // author's comment
+                Email at (7,1) span (6,1)
+              }
+            }
+            """;
+        var updated=ClarifySourcePatches.MoveField(original,"Name",2,2,5,1);
+        Assert.Contains("Name at (2,2) span (5,1) // author's comment",updated);
+        Assert.Contains("Email at (7,1) span (6,1)",updated);
+        Assert.Contains("// @clarify-template",updated);
+        Assert.Contains("// @clarify-control",updated);
+        Assert.True(ClarifyFormParser.Parse(updated).Success);
+    }
+
+    [Fact]
+    public void NativeVisualEditRejectsUnsafeInput()
+    {
+        const string source="form F for Customer {\nName at (1,1) span (6,1)\n}\n";
+        Assert.Throws<ArgumentOutOfRangeException>(
+            ()=>ClarifySourcePatches.MoveField(source,"Name",0,1,6,1));
+        Assert.Throws<InvalidOperationException>(
+            ()=>ClarifySourcePatches.MoveField(source,"Missing",1,1,6,1));
+    }
+
 }
