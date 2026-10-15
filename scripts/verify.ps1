@@ -2,7 +2,7 @@ $ErrorActionPreference='Stop'
 Set-Location (Join-Path $PSScriptRoot '..')
 node --test tests/template-gallery-count.test.mjs tests/form-controls.test.mjs tests/sample-template-catalog.test.mjs designer/templates.test.mjs designer/dependencies.test.mjs designer/schema.test.mjs tests/er-layout.test.mjs tests/studio-integration.test.mjs designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs workflow/elsa-catalog.test.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-node --test tests/ef-generation.test.mjs tests/sqlite-migrations.test.mjs
+node --test tests/equipment-checkout.test.mjs tests/ef-generation.test.mjs tests/sqlite-migrations.test.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 node tools/generate-ef-models.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -22,6 +22,8 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 dotnet run --project examples/relational-generation/RelationalGeneration.Smoke.csproj -c Release
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 dotnet build tools/Clarify.Migrations.Sqlite/Clarify.Migrations.Sqlite.csproj -c Release
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+dotnet build examples/equipment-checkout/EquipmentCheckout.csproj -c Release
 exit $LASTEXITCODE
 
 node tools/export-dsl-parity-fixtures.mjs
