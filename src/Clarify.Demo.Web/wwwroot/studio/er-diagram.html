@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clarify Studio — Entity Relationship Diagram</title>
+<style>
+body{margin:0;background:#eef3f9;color:#21334a;font:14px/1.5 system-ui,sans-serif}
+header{background:#1b3454;color:white;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+h1{font-size:20px;margin:0}a{color:inherit}main{padding:18px;max-width:1400px;margin:auto}
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+button{border:1px solid #b5c5da;background:white;border-radius:7px;padding:8px 12px;cursor:pointer}
+button:focus-visible{outline:3px solid #3f85c6}
+#diagram{background:white;border:1px solid #cfdaea;border-radius:12px;width:100%;height:min(72vh,760px);display:block;touch-action:none}
+#status{color:#5a6d82}#warnings{color:#934d1f}
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:24px;border-top:3px solid #5584bb}
+.legend .external{border-top-style:dashed;border-color:#af7a45}
+aside{margin-top:12px}noscript{display:block;padding:15px}
+</style></head><body>
+<header><h1>Clarify · Database Relationship Diagram</h1><a href="/studio/schema">Back to Data Dictionary</a></header>
+<main><div class="toolbar">
+<button id="refresh">Reload local dictionary</button>
+<button id="download">Export SVG</button>
+<span id="status" role="status"></span></div>
+<svg id="diagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entity-relationship diagram showing tables, fields, and foreign-key connections"></svg>
+<div class="legend"><span><i></i> Native foreign key</span><span><i class="external"></i> Cross-database reference (application managed)</span><span>Drag tables to rearrange</span></div>
+<aside id="warnings" role="alert"></aside>
+<noscript>Enable JavaScript to view the schema diagram.</noscript></main>
+<script type="module">
+import {analyzeDependencies} from './dependencies.mjs';
+const svg=document.getElementById('diagram'),ns='http://www.w3.org/2000/svg';
+const make=(tag,attrs={},text)=>{const n=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;return n};
+let model,positions=new Map();
+const width=1180,nodeWidth=240;
+function loadLocal(base){try{const value=localStorage.getItem('clarify-schema-prototype');return value?JSON.parse(value):base}catch{return base}}
+function layout(entities){const columns=Math.max(1,Math.floor(width/280));positions=new Map(entities.map((e,i)=>[e.name,{x:25+(i%columns)*280,y:32+Math.floor(i/columns)*290}]))}
+const center=(name,field)=>{const p=positions.get(name);if(!p)return null;const e=model.entities.find(x=>x.name===name);const i=e?.fields.findIndex(x=>x.name===field)??-1;return {x:p.x+nodeWidth/2,y:p.y+48+(i>=0?i*24:0)}};
+function draw(){
+ const graph=analyzeDependencies(model);
+ svg.replaceChildren();
+ document.getElementById('status').textContent=model.entities.length+' entities · '+(model.relationships||[]).length+' relationships · '+graph.databases.length+' database(s)';
+ document.getElementById('warnings').textContent=[...graph.errors,...graph.warnings].join(' · ');
+ const maxRows=Math.max(...model.entities.map(e=>e.fields.length),1);
+ const rows=Math.ceil(model.entities.length/4);
+ svg.setAttribute('viewBox','0 0 '+width+' '+Math.max(540,rows*Math.max(290,90+maxRows*24)+50));
+ const paths=make('g',{'aria-hidden':'true'});svg.append(paths);
+ for(const r of model.relationships||[]){
+   const child=center(r.from,r.foreignKey),parent=center(r.to,r.principalKey||'Id');
+   if(!child||!parent)continue;
+   const a={x:positions.get(r.from).x,y:child.y},b={x:positions.get(r.to).x+nodeWidth,y:parent.y};
+   // Choose the shorter facing sides of each table.
+   if(a.x>b.x){a.x=positions.get(r.from).x;b.x=positions.get(r.to).x+nodeWidth}
+   else{a.x=positions.get(r.from).x+nodeWidth;b.x=positions.get(r.to).x}
+   const mid=(a.x+b.x)/2,external=r.kind==='external';
+   paths.append(make('path',{d:'M'+a.x+','+a.y+' H'+mid+' V'+b.y+' H'+b.x,
+      fill:'none',stroke:external?'#af7a45':'#5584bb','stroke-width':2.5,
+      ...(external?{'stroke-dasharray':'7 5'}:{})}));
+   paths.append(make('circle',{cx:a.x,cy:a.y,r:4,fill:external?'#af7a45':'#5584bb'}));
+   paths.append(make('circle',{cx:b.x,cy:b.y,r:4,fill:external?'#af7a45':'#5584bb'}));
+ }
+ for(const e of model.entities){
+   const p=positions.get(e.name),height=57+e.fields.length*24;
+   const group=make('g',{transform:'translate('+p.x+' '+p.y+')',tabindex:'0',role:'group','aria-label':e.name+' table'});
+   group.append(make('rect',{width:nodeWidth,height,rx:10,fill:'#fff',stroke:'#b9cadd','stroke-width':1.5}));
+   group.append(make('rect',{width:nodeWidth,height:35,rx:9,fill:'#2d527a'}));
+   group.append(make('text',{x:13,y:23,fill:'#fff','font-size':15,'font-weight':650},e.name));
+   group.append(make('text',{x:13,y:49,fill:'#617690','font-size':11},'Database: '+(e.database||model.defaultDatabase||'default')));
+   e.fields.forEach((f,i)=>{
+      const y=72+i*24;
+      group.append(make('text',{x:14,y,fill:'#273e59','font-size':12},(f.primaryKey?'🔑 ':'')+f.name));
+      group.append(make('text',{x:nodeWidth-12,y,fill:'#6b7e92','font-size':11,'text-anchor':'end'},f.type));
+   });
+   let drag=null;
+   group.addEventListener('pointerdown',event=>{if(event.button!==0)return;drag={x:event.clientX,y:event.clientY,...positions.get(e.name)};group.setPointerCapture(event.pointerId)});
+   group.addEventListener('pointermove',event=>{if(!drag)return;const bounds=svg.getBoundingClientRect(),scale=width/bounds.width;positions.set(e.name,{x:Math.max(0,drag.x+(event.clientX-drag.x)*scale),y:Math.max(0,drag.y+(event.clientY-drag.y)*scale)});draw()});
+   group.addEventListener('pointerup',()=>{drag=null});
+   svg.append(group);
+ }
+}
+async function reload(){const response=await fetch('./dictionary.json');if(!response.ok)throw Error('Failed to load dictionary');model=loadLocal(await response.json());layout(model.entities);draw()}
+document.getElementById('refresh').onclick=()=>reload().catch(e=>document.getElementById('warnings').textContent=e.message);
+document.getElementById('download').onclick=()=>{const blob=new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='clarify-er-diagram.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+reload().catch(e=>document.getElementById('warnings').textContent=e.message);
+</script></body></html>
