@@ -12,6 +12,15 @@ public static class ClarifySourcePatches
         @"\bat\s*\(\s*\d+\s*,\s*\d+\s*\)\s*span\s*\(\s*\d+\s*,\s*\d+\s*\)",
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+    /// <summary>Moves a single field using a minimal source text patch.</summary>
+    /// <param name="source">Valid original ClarifyDSL text.</param>
+    /// <param name="fieldName">Unique field to move.</param>
+    /// <param name="x">One-based column.</param>
+    /// <param name="y">One-based row.</param>
+    /// <param name="width">Column span.</param>
+    /// <param name="height">Row span.</param>
+    /// <returns>Patched text preserving unrelated source.</returns>
+    /// <exception cref="InvalidOperationException">Source or edit is ambiguous or invalid.</exception>
     public static string MoveField(
         string source, string fieldName, int x, int y, int width, int height)
     {
