@@ -3,7 +3,8 @@
 // This lightweight inventory tracks legacy debt; generated .g.cs code is gated.
 import {readdirSync,readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {resolve,join,relative,dirname} from 'node:path';
-const root=resolve(dirname(new URL(import.meta.url).pathname),'..');
+import {fileURLToPath} from 'node:url';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const targets=['src','tools','examples','tests'];
 const files=[];
 function visit(path){
