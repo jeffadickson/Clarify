@@ -35,3 +35,16 @@ Price at (1,1) span (6,1)
 The form designer displays currency/unit hints on the canvas, and the dictionary editor accepts currency and display-unit metadata for newly added fields. Visual movement preserves the metadata comments.
 
 **Not yet implemented:** NodaMoney/UnitsNet input controls, conversion/rounding policy, automatic generated EF Core mappings and migrations from these template declarations. Do not confuse metadata propagation with fully operational strongly typed UI or database generation. The earlier standalone EF Core example and tests remain the persistence reference.
+
+## Additional regression templates — gallery total 40
+
+Twenty more versioned `clarify-template/v1` packages (version `0.2.0`) are committed in `templates/samples`, mirrored into Studio assets and registered in `sample-template-index.json`.
+
+- **Customer (4):** quick card, city directory, contact lookup, data review
+- **Product (8):** measurements, dimensions, mass, pressure, thermal specification, price tag, technical specification, unit conversion preview
+- **Order (4):** customer lookup, date entry, review, batch browse
+- **OrderLine (4):** quantity inspection, unit price, item review, cost summary
+
+The samples exercise multiple grid widths, different field ordering and the money/length/mass/pressure/temperature semantic metadata. Existing catalog tests now expect **40** manifests, instantiate each template against the canonical dictionary, parse generated DSL and compare its Studio-served copy. A separate gallery count test verifies uniqueness.
+
+These are *test data and layout-generation examples*. Names such as "unit conversion preview" and "batch browse" do not imply that conversion widgets or browse/query execution are implemented. This is deliberate coverage for future typed UI, browse, template upgrade and C# preservation tests.
