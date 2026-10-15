@@ -6,19 +6,23 @@ body{margin:0;background:#f3f6fb;color:#21324a;font:14px/1.45 system-ui,sans-ser
 <main><p>Define tables and fields, then connect relationships. Download the dictionary for source control and generation.</p>
 <div class="notice">Prototype: edits remain in this browser until you export JSON. No database migrations or generated application changes occur automatically.</div>
 <div class="tools"><button class="primary" id="add-entity">+ Entity</button><button id="add-relation">+ Relationship</button><span></span><button id="reset">Reload schema</button><button class="primary" id="export">Export dictionary</button></div>
-<p id="errors" role="alert"></p><section id="canvas" aria-label="Schema entities"></section><section class="rel"><h2>Relationships</h2><ul id="relationships"></ul></section>
+<p id="errors" role="alert"></p>
+<section class="rel" aria-label="Dependency impact analysis"><h2>Database dependencies and migration impact</h2><p class="small">Review required for destructive changes, cross-database references, and relationship policy changes. No SQL is executed.</p><div id="dependency-summary"></div><ul id="impact-list"></ul><button id="export-impact">Export impact report</button></section>
+<section id="canvas" aria-label="Schema entities"></section><section class="rel"><h2>Relationships</h2><ul id="relationships"></ul></section>
 </main><dialog id="edit"></dialog>
 <script type="module">
 import {validate,addEntity,addField,addRelationship} from "./schema.mjs";
+import {analyzeDependencies,impactOfChange} from "./dependencies.mjs";
 const $=id=>document.getElementById(id),schemaUrl="./dictionary.json";
-let model=await fetch(schemaUrl).then(r=>r.json());
+const baseline=await fetch(schemaUrl).then(r=>r.json());
+let model=structuredClone(baseline);
 try{const saved=localStorage.getItem("clarify-schema-prototype");if(saved)model=JSON.parse(saved)}catch{}
 function el(tag,text){const n=document.createElement(tag);n.textContent=text;return n}
 function render(){const errors=validate(model);$("errors").textContent=errors.join("\n");const canvas=$("canvas");canvas.replaceChildren();
 for(const entity of model.entities){const box=el("article","");box.className="entity";box.append(el("h2",entity.name));const table=document.createElement("table");
 for(const f of entity.fields){const tr=document.createElement("tr");tr.append(el("td",f.name+(f.primaryKey?" 🔑":"")),el("td",f.type+(f.currency?" · "+f.currency:"")+(f.displayUnit?" · "+f.displayUnit:"")+(f.required?" · required":"")));table.append(tr)}
-box.append(table);const foot=el("footer","");const b=el("button","+ Field");b.onclick=()=>fieldDialog(entity.name);foot.append(b);box.append(foot);canvas.append(box)}
-const ul=$("relationships");ul.replaceChildren();for(const r of model.relationships||[]){ul.append(el("li",r.from+"."+r.foreignKey+" → "+r.to+" (many-to-one; delete "+r.onDelete+")"))}
+box.append(table);const foot=el("footer","");const dbButton=el("button","Database: "+(entity.database||model.defaultDatabase||"default"));dbButton.onclick=()=>dialog("Database for "+entity.name,[{name:"database",label:"Database connection identifier",value:entity.database||model.defaultDatabase||"default"}],v=>{const next=structuredClone(model);next.entities.find(e=>e.name===entity.name).database=v.database;return next});foot.append(dbButton);const b=el("button","+ Field");b.onclick=()=>fieldDialog(entity.name);foot.append(b);box.append(foot);canvas.append(box)}
+const ul=$("relationships");ul.replaceChildren();for(const r of model.relationships||[]){ul.append(el("li",r.from+"."+r.foreignKey+" → "+r.to+" ("+(r.kind==="external"?"external reference":"native FK")+"; delete "+r.onDelete+")"))}
 try{localStorage.setItem("clarify-schema-prototype",JSON.stringify(model))}catch{}}
 function dialog(title,parts,save){const d=$("edit");d.replaceChildren();const f=document.createElement("form");f.method="dialog";f.append(el("h2",title));const controls=[];
 for(const part of parts){const label=el("label",part.label),input=part.options?document.createElement("select"):document.createElement("input");
@@ -37,7 +41,7 @@ function fieldDialog(name){dialog("New field in "+name,[{name:"name",label:"Fiel
 })}
 $("add-entity").onclick=()=>dialog("New entity",[{name:"name",label:"Entity name"}],v=>addEntity(model,v.name));
 $("add-relation").onclick=()=>dialog("Connect entities",[{name:"from",label:"Child entity",options:model.entities.map(x=>x.name)},{name:"to",label:"Parent entity",options:model.entities.map(x=>x.name)},{name:"foreignKey",label:"Foreign key field"},{name:"onDelete",label:"Delete behavior",options:["restrict","cascade","set-null"]}],v=>addRelationship(model,v.from,v.to,v.foreignKey,v.onDelete));
-$("reset").onclick=async()=>{if(!confirm("Discard local dictionary changes?"))return;model=await fetch(schemaUrl).then(r=>r.json());render()};
-$("export").onclick=()=>{const errors=validate(model);if(errors.length){$("errors").textContent=errors.join("\n");return}const blob=new Blob([JSON.stringify(model,null,2)+"\n"],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dictionary.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+$("reset").onclick=async()=>{if(!confirm("Discard local dictionary changes?"))return;model=structuredClone(baseline);localStorage.removeItem("clarify-schema-prototype");render()};
+$("export").onclick=()=>{const errors=[...validate(model),...analyzeDependencies(model).errors];if(errors.length){$("errors").textContent=errors.join("\n");return}const blob=new Blob([JSON.stringify(model,null,2)+"\n"],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dictionary.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 render();
 </script></body></html>
