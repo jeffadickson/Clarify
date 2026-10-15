@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Standard Clarify value types: always available to generated apps. -->
+    <PackageReference Include="NodaMoney" Version="2.8.0" />
+    <PackageReference Include="UnitsNet" Version="5.75.1" />
+  </ItemGroup>
+</Project>
