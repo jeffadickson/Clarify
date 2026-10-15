@@ -58,3 +58,10 @@ test('ER diagram is additive to Studio and renders native and external edges',()
  assert.match(dictionary,/schema-designer.html/);
  assert.match(editor,/er-diagram.html/);
 });
+
+test('ER layout module parity and navigation controls',()=>{
+ assert.equal(read('src/Clarify.Demo.Web/wwwroot/studio/er-layout.mjs'),read('designer/er-layout.mjs'));
+ const source=read('src/Clarify.Demo.Web/wwwroot/studio/er-diagram.html');
+ for(const id of ['auto-layout','zoom-in','zoom-out','fit','reset-layout'])assert.ok(source.includes('id="'+id+'"'));
+ assert.match(source,/clarify-er-positions/);
+});
