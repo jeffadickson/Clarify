@@ -7,6 +7,12 @@
       "commands": [
         "dotnet-ef"
       ]
+    },
+    "docfx": {
+      "version": "2.81.0",
+      "commands": [
+        "docfx"
+      ]
     }
   }
 }
