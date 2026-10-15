@@ -25,6 +25,19 @@ static string SafeName(string name)
 static string RequiredProperty(JsonElement value, string property) =>
     value.GetProperty(property).GetString()
     ?? throw new InvalidOperationException("Missing " + property);
+// Recompute the planner's deterministic fingerprint to detect modified plans.
+// FNV-1a is an integrity/drift check, NOT a cryptographic signature.
+static string ComputePlanId(JsonElement plan)
+{
+    var canonical = JsonSerializer.Serialize(new {
+        precondition = plan.GetProperty("precondition"),
+        operations = plan.GetProperty("operations")
+    });
+    uint hash = 2166136261;
+    foreach (var ch in canonical)
+        hash = unchecked((hash ^ ch) * 16777619);
+    return "clarify-sqlite-" + hash.ToString("x8");
+}
 static async Task ExecuteAsync(string[] args)
 {
     var planPath = Path.GetFullPath(Required(args, "--plan"));
@@ -42,6 +55,10 @@ static async Task ExecuteAsync(string[] args)
         plan.GetProperty("blocked").GetArrayLength() != 0)
         throw new InvalidOperationException("Migration plan is not executable");
     var id = RequiredProperty(plan, "planId");
+    if (id != ComputePlanId(plan))
+        throw new InvalidOperationException("Plan content does not match its identifier");
+    if (RequiredProperty(plan.GetProperty("precondition"), "database") != RequiredProperty(plan, "database"))
+        throw new InvalidOperationException("Plan database and precondition disagree");
     if (approved != id)
         throw new InvalidOperationException("Approval must match the exact plan ID");
     var operations = plan.GetProperty("operations").EnumerateArray().ToArray();
