@@ -1,7 +1,7 @@
 {
   "format": "clarify-template/v1",
   "id": "clarify.sample.order-items",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Order items master-detail",
   "category": "master-detail",
   "description": "Sample master-detail pattern for Order. This currently generates editable form DSL; nested grids are not implemented yet.",
@@ -36,5 +36,10 @@
       "columns": 12,
       "title": "OrderLine details"
     }
-  ]
+  ],
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  }
 }
