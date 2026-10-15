@@ -24,3 +24,14 @@ Current master-detail generation emits two independent form layouts; it **does n
 
 ## Example
 Open `/studio/templates.html`, choose Parent=`Order` and Child=`OrderLine`; click **Generate preview**. Download the resulting DSL. The existing form designer must be extended to import this DSL and show editable layout controls.
+
+## 2026-10-14 — Visual designer handoff
+The template library now offers **Edit visually** for each generated form. Studio opens `/studio/designer.html?template=master-detail&parent=Order&child=OrderLine&form=Order`, instantiates the same declarative package and displays the result in the existing editable canvas and DSL source pane.
+
+Generated DSL carries a `// @clarify-template` comment with template ID, version, parameter bindings and form entity. The parser and layout patcher preserve this origin comment when moving controls.
+
+The designer offers **Download DSL** for any valid form. Template previews explicitly disable the development-only Customer project-source Save button: they must not overwrite unrelated application C# or form source. This is a preview/export workflow, not a completed project integration or three-way regeneration merge.
+
+`designer/templates.test.mjs` adds a test for parsing a template-generated form and preserving metadata after an editable layout patch.
+
+**Still outstanding:** actual child-grid widget; model-managed stable node IDs; importing exported DSL into arbitrary project form files; persistent template instances, safe upgrade/diff, C# extension generation and verified Playwright tests.
