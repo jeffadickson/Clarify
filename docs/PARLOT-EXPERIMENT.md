@@ -50,3 +50,7 @@ Do not assert that tests passed merely because the CI commands are committed.
 **Parity fixtures are generated build artifacts**; they are not an independent proof of semantic correctness. We must still verify both parser implementations against a full language specification, especially malformed syntax and unusual layouts.
 
 **Current release gate:** no observed .NET test execution yet. The compatibility suite is configured, but Parlot is not automatically promoted to Studio's canonical parser.
+
+## Additional hardening
+
+The native scanner now reports `DSL010` for invalid grid column declarations and `DSL011` for fields exceeding a grid width. xUnit regression cases are committed. Existing Studio source and editors are unchanged. The 40-template parity gate remains mandatory, and a passing .NET run has not been observed.
