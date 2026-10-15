@@ -24,7 +24,12 @@
         "Date",
         "CustomerId"
       ],
-      "title": "Order date entry"
+      "title": "Order date entry",
+      "controls": {
+        "Date": {
+          "kind": "date"
+        }
+      }
     }
   ]
 }
