@@ -16,6 +16,8 @@ test('core generated files include explanatory XML comments',()=>{
  const browse=read('examples/generated/AsyncStores.g.cs');
  assert.match(browse,/\/\/\/ <param name="ct">/);
  assert.match(browse,/\/\/\/ <returns>/);
+ const workflow=read('tests/Clarify.Elsa.Approval/GeneratedOrderApprovalWorkflow.cs');
+ assert.match(workflow,/\/\/\/ <summary>Constructs the generated Elsa activity graph/);
  const razor=read('src/Clarify.Forms.Shared/CustomerFields.razor');
  assert.match(razor,/\/\/\/ <summary>Customer record edited/);
 });
