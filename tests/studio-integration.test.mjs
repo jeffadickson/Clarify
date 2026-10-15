@@ -29,3 +29,10 @@ test('Studio dependency analyzer matches canonical implementation',()=>{
  assert.match(html,/export-impact/);
  assert.match(html,/options:\["native","external"\]/);
 });
+
+test('Studio EF generator matches canonical pure generator',()=>{
+ assert.equal(read('src/Clarify.Demo.Web/wwwroot/studio/ef-models.mjs'),read('designer/ef-models.mjs'));
+ const html=read('src/Clarify.Demo.Web/wwwroot/studio/schema-designer.html');
+ assert.match(html,/preview-ef/);
+ assert.match(html,/generateEfModels\(model\)/);
+});
