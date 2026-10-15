@@ -1,0 +1,26 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.customer-directory",
+  "version": "0.1.0",
+  "title": "Customer directory listing",
+  "category": "browse",
+  "description": "Sample browse pattern for Customer. This currently generates editable form DSL; browse behavior is not implemented yet.",
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 12,
+      "fields": [
+        "Name",
+        "City",
+        "Email"
+      ],
+      "title": "Customer directory listing"
+    }
+  ]
+}
