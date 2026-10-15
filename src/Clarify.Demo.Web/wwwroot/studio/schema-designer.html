@@ -16,7 +16,7 @@ try{const saved=localStorage.getItem("clarify-schema-prototype");if(saved)model=
 function el(tag,text){const n=document.createElement(tag);n.textContent=text;return n}
 function render(){const errors=validate(model);$("errors").textContent=errors.join("\n");const canvas=$("canvas");canvas.replaceChildren();
 for(const entity of model.entities){const box=el("article","");box.className="entity";box.append(el("h2",entity.name));const table=document.createElement("table");
-for(const f of entity.fields){const tr=document.createElement("tr");tr.append(el("td",f.name+(f.primaryKey?" 🔑":"")),el("td",f.type+(f.required?" · required":"")));table.append(tr)}
+for(const f of entity.fields){const tr=document.createElement("tr");tr.append(el("td",f.name+(f.primaryKey?" 🔑":"")),el("td",f.type+(f.currency?" · "+f.currency:"")+(f.displayUnit?" · "+f.displayUnit:"")+(f.required?" · required":"")));table.append(tr)}
 box.append(table);const foot=el("footer","");const b=el("button","+ Field");b.onclick=()=>fieldDialog(entity.name);foot.append(b);box.append(foot);canvas.append(box)}
 const ul=$("relationships");ul.replaceChildren();for(const r of model.relationships||[]){ul.append(el("li",r.from+"."+r.foreignKey+" → "+r.to+" (many-to-one; delete "+r.onDelete+")"))}
 try{localStorage.setItem("clarify-schema-prototype",JSON.stringify(model))}catch{}}
@@ -25,7 +25,16 @@ for(const part of parts){const label=el("label",part.label),input=part.options?d
 if(part.options){for(const option of part.options){const item=el("option",option);item.value=option;input.append(item)}}else input.value=part.value||"";
 input.name=part.name;input.required=true;label.append(input);controls.push(input);f.append(label)}
 const menu=el("menu","");const cancel=el("button","Cancel");cancel.type="button";cancel.onclick=()=>d.close();const submit=el("button","Create");submit.className="primary";submit.type="submit";menu.append(cancel,submit);f.append(menu);f.onsubmit=e=>{e.preventDefault();const values=Object.fromEntries(controls.map(x=>[x.name,x.value]));try{model=save(values);d.close();render()}catch(err){$("errors").textContent=err.message}};d.append(f);d.showModal()}
-function fieldDialog(name){dialog("New field in "+name,[{name:"name",label:"Field name"},{name:"type",label:"Type",options:["string","int","long","date","bool","decimal","money","length","mass","temperature","pressure"]},{name:"required",label:"Required",options:["false","true"]}],v=>addField(model,name,{name:v.name,type:v.type,required:v.required==="true"}))}
+function fieldDialog(name){dialog("New field in "+name,[{name:"name",label:"Field name"},{name:"type",label:"Type",options:["string","int","long","date","bool","decimal","money","length","mass","temperature","pressure"]},{name:"required",label:"Required",options:["false","true"]},{name:"unit",label:"Currency code (e.g. USD) or display unit (e.g. mm)",value:""}],v=>{
+ const field={name:v.name,type:v.type,required:v.required==="true"};
+ if(v.type==="money"){
+  if(!/^[A-Z]{3}$/.test(v.unit))throw Error("Money requires an ISO currency code such as USD");
+  field.currency=v.unit;
+ } else if(["length","mass","pressure","temperature"].includes(v.type) && v.unit.trim()){
+  field.displayUnit=v.unit.trim();
+ }
+ return addField(model,name,field);
+})}
 $("add-entity").onclick=()=>dialog("New entity",[{name:"name",label:"Entity name"}],v=>addEntity(model,v.name));
 $("add-relation").onclick=()=>dialog("Connect entities",[{name:"from",label:"Child entity",options:model.entities.map(x=>x.name)},{name:"to",label:"Parent entity",options:model.entities.map(x=>x.name)},{name:"foreignKey",label:"Foreign key field"},{name:"onDelete",label:"Delete behavior",options:["restrict","cascade","set-null"]}],v=>addRelationship(model,v.from,v.to,v.foreignKey,v.onDelete));
 $("reset").onclick=async()=>{if(!confirm("Discard local dictionary changes?"))return;model=await fetch(schemaUrl).then(r=>r.json());render()};
