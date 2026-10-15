@@ -70,4 +70,22 @@ public sealed class ParserTests
             ()=>ClarifySourcePatches.MoveField(source,"Missing",1,1,6,1));
     }
 
+    [Fact]
+    public void RejectsExtraContentAfterFormAndDuplicateFields()
+    {
+        var trailing = ClarifyFormParser.Parse("form F for Customer {\n}\nName at (1,1) span (6,1)");
+        Assert.Contains(trailing.Diagnostics, x => x.Code == "DSL008");
+        var duplicate = ClarifyFormParser.Parse(
+            "form F for Customer {\nName at (1,1) span (6,1)\nName at (7,1) span (6,1)\n}");
+        Assert.Contains(duplicate.Diagnostics, x => x.Code == "DSL009");
+    }
+
+    [Fact]
+    public void SourcePatchRejectsOverlappingFields()
+    {
+        const string source = "form F for Customer {\nName at (1,1) span (6,1)\nEmail at (7,1) span (6,1)\n}";
+        Assert.Throws<InvalidOperationException>(() =>
+            ClarifySourcePatches.MoveField(source, "Email", 1, 1, 6, 1));
+    }
+
 }
