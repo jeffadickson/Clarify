@@ -1,0 +1,33 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.master-detail",
+  "version": "0.1.0",
+  "title": "Master-detail forms",
+  "description": "Reusable parent/child editor layouts derived from dictionary relationships",
+  "parameters": [
+    {
+      "name": "Parent",
+      "kind": "entity"
+    },
+    {
+      "name": "Child",
+      "kind": "entity"
+    }
+  ],
+  "relationships": [
+    {
+      "parent": "Parent",
+      "child": "Child"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Parent",
+      "columns": 12
+    },
+    {
+      "entity": "Child",
+      "columns": 12
+    }
+  ]
+}
