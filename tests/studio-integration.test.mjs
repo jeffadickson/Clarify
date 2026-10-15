@@ -45,3 +45,16 @@ test('Studio migration preview uses canonical safe planner and fixture',()=>{
  assert.match(html,/planSqliteAdditiveMigration\(baseline,model/);
  assert.match(html,/relational-demo/);
 });
+
+test('ER diagram is additive to Studio and renders native and external edges',()=>{
+ const diagram=read('src/Clarify.Demo.Web/wwwroot/studio/er-diagram.html');
+ const dictionary=read('src/Clarify.Demo.Web/Components/Pages/Dictionary.razor');
+ const editor=read('src/Clarify.Demo.Web/wwwroot/studio/schema-designer.html');
+ assert.match(diagram,/analyzeDependencies/);
+ assert.match(diagram,/model.relationships/);
+ assert.match(diagram,/external-reference|external/);
+ assert.match(diagram,/Export SVG/);
+ assert.match(dictionary,/er-diagram.html/);
+ assert.match(dictionary,/schema-designer.html/);
+ assert.match(editor,/er-diagram.html/);
+});
