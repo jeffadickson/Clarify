@@ -5,7 +5,7 @@ body{margin:0;background:#f3f6fb;color:#21324a;font:14px/1.45 system-ui,sans-ser
 <header><h1>Clarify · Data Dictionary Designer</h1><span>Visual schema prototype</span></header>
 <main><p>Define tables and fields, then connect relationships. Download the dictionary for source control and generation.</p>
 <div class="notice">Prototype: edits remain in this browser until you export JSON. No database migrations or generated application changes occur automatically.</div>
-<div class="tools"><button class="primary" id="add-entity">+ Entity</button><button id="add-relation">+ Relationship</button><span></span><button id="reset">Reload schema</button><button id="relational-demo">Load relational demo</button><button class="primary" id="export">Export dictionary</button></div>
+<div class="tools"><button class="primary" id="add-entity">+ Entity</button><button id="add-relation">+ Relationship</button><span></span><button id="reset">Reload schema</button><button id="relational-demo">Load relational demo</button><a href="./er-diagram.html">View ER diagram →</a><button class="primary" id="export">Export dictionary</button></div>
 <p id="errors" role="alert"></p>
 <section class="rel" aria-label="Dependency impact analysis"><h2>Database dependencies and migration impact</h2><p class="small">Review required for destructive changes, cross-database references, and relationship policy changes. No SQL is executed.</p><div id="dependency-summary"></div><ul id="impact-list"></ul><button id="export-impact">Export impact report</button>
 <button id="preview-ef">Preview generated EF Core</button><button id="preview-migration">Preview safe SQLite migration</button>
