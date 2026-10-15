@@ -88,4 +88,15 @@ public sealed class ParserTests
             ClarifySourcePatches.MoveField(source, "Email", 1, 1, 6, 1));
     }
 
+    [Fact]
+    public void GridBoundsAndInvalidColumnsAreDiagnosed()
+    {
+        var outside=ClarifyFormParser.Parse(
+            "form F for Customer {\n grid columns 12 {\n Name at (11,1) span (6,1)\n }\n}");
+        Assert.Contains(outside.Diagnostics, d=>d.Code=="DSL011");
+        var invalid=ClarifyFormParser.Parse(
+            "form F for Customer {\n grid columns 0 {\n Name at (1,1) span (6,1)\n }\n}");
+        Assert.Contains(invalid.Diagnostics, d=>d.Code=="DSL010");
+    }
+
 }
