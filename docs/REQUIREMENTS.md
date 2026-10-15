@@ -486,3 +486,18 @@ These requirements describe the target; instrumentation beyond HTTP/Customer sav
 | OTEL-013 | P1 | Proposed | Audit trail distinct from telemetry | xUnit tracing and metric tests, OTLP smoke, security review |
 | OTEL-014 | P1 | Proposed | Unit tests of trace and metric emission | xUnit tracing and metric tests, OTLP smoke, security review |
 | OTEL-015 | P1 | Proposed | Collector-backed integration tests and redaction assertions | xUnit tracing and metric tests, OTLP smoke, security review |
+
+## Template ecosystem requirements
+
+| ID | Priority | Status | Requirement | Acceptance evidence |
+|---|---|---|---|---|
+| TPL-001 | P0 | Implemented (unverified) | Versioned declarative template manifest and typed bindings | Deterministic Node tests |
+| TPL-002 | P0 | Implemented (unverified) | Validate required dictionary relationships before template application | Positive/negative tests |
+| TPL-003 | P0 | Implemented (unverified) | Studio template preview and downloadable ClarifyDSL | Browser interaction tests pending |
+| TPL-004 | P0 | Proposed | Round-trip generated form DSL into visual editor | Playwright editing test |
+| TPL-005 | P0 | Proposed | Regeneration preserves user-owned C# and visual overrides | Golden regeneration tests |
+| TPL-006 | P0 | Proposed | Generate actual nested master-detail grid and CRUD | Functional SQLite acceptance |
+| TPL-007 | P1 | Proposed | Dependency/version compatibility and update diff | Migration conflict tests |
+| TPL-008 | P1 | Proposed | Data/application/report template categories | End-to-end templates |
+| TPL-009 | P1 | Proposed | Offline package library and opt-in trusted NuGet extensions | Security tests |
+| TPL-010 | P0 | Proposed | Stable generated element IDs and instance metadata | Snapshot and diff tests |
