@@ -1,0 +1,40 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.customer-orders",
+  "version": "0.1.0",
+  "title": "Customer orders master-detail",
+  "category": "master-detail",
+  "description": "Sample master-detail pattern for Customer. This currently generates editable form DSL; nested grids are not implemented yet.",
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    },
+    {
+      "name": "Detail",
+      "kind": "entity"
+    }
+  ],
+  "relationships": [
+    {
+      "parent": "Entity",
+      "child": "Detail"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 12,
+      "fields": [
+        "Name",
+        "Email"
+      ],
+      "title": "Customer orders master-detail"
+    },
+    {
+      "entity": "Detail",
+      "columns": 12,
+      "title": "Order details"
+    }
+  ]
+}
