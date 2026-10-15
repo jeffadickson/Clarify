@@ -1,0 +1,30 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.product-pressure-check",
+  "version": "0.2.0",
+  "title": "Product pressure specification",
+  "category": "forms",
+  "description": "Test-data forms layout for Product, exercising dictionary-driven field types. This generates editable ClarifyDSL; no standalone business behavior is implied.",
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  },
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 8,
+      "fields": [
+        "Pressure",
+        "Name"
+      ],
+      "title": "Product pressure specification"
+    }
+  ]
+}
