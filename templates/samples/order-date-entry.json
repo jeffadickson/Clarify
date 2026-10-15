@@ -1,0 +1,30 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.order-date-entry",
+  "version": "0.2.0",
+  "title": "Order date entry",
+  "category": "forms",
+  "description": "Sample forms layout for Order. Generates editable DSL, not business logic.",
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  },
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 8,
+      "fields": [
+        "Date",
+        "CustomerId"
+      ],
+      "title": "Order date entry"
+    }
+  ]
+}
