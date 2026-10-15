@@ -16,4 +16,5 @@ dotnet test tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj -c Release
 dotnet run --project examples/relational-generation/RelationalGeneration.Smoke.csproj -c Release
 bash scripts/smoke-sqlite-migrations.sh
 
+node tools/export-dsl-parity-fixtures.mjs
 dotnet test tests/Clarify.Dsl.Tests/Clarify.Dsl.Tests.csproj -c Release
