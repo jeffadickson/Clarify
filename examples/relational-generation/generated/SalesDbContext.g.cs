@@ -5,40 +5,60 @@ namespace Clarify.Generated;
 
 /// <summary>Dictionary-owned entity Customer.</summary>
 public sealed class Customer {
+    /// <summary>Dictionary field Id (long).</summary>
     public long Id { get; set; }
+    /// <summary>Dictionary field Name (string).</summary>
     public string Name { get; set; } = "";
+    /// <summary>Dictionary field Email (string).</summary>
     public string? Email { get; set; }
 }
 
 /// <summary>Dictionary-owned entity Product.</summary>
 public sealed class Product {
+    /// <summary>Dictionary field Id (long).</summary>
     public long Id { get; set; }
+    /// <summary>Dictionary field Name (string).</summary>
     public string Name { get; set; } = "";
+    /// <summary>Dictionary field PriceCents (long).</summary>
     public long PriceCents { get; set; }
 }
 
 /// <summary>Dictionary-owned entity Order.</summary>
 public sealed class Order {
+    /// <summary>Dictionary field Id (long).</summary>
     public long Id { get; set; }
+    /// <summary>Dictionary field CustomerId (long).</summary>
     public long CustomerId { get; set; }
+    /// <summary>Dictionary field Date (date).</summary>
     public DateOnly Date { get; set; }
 }
 
 /// <summary>Dictionary-owned entity OrderLine.</summary>
 public sealed class OrderLine {
+    /// <summary>Dictionary field Id (long).</summary>
     public long Id { get; set; }
+    /// <summary>Dictionary field OrderId (long).</summary>
     public long OrderId { get; set; }
+    /// <summary>Dictionary field ProductId (long).</summary>
     public long ProductId { get; set; }
+    /// <summary>Dictionary field Quantity (int).</summary>
     public int Quantity { get; set; }
+    /// <summary>Dictionary field UnitPriceCents (long).</summary>
     public long UnitPriceCents { get; set; }
 }
 
 /// <summary>EF Core context for logical database sales.</summary>
 public sealed class SalesDbContext(DbContextOptions<SalesDbContext> options) : DbContext(options) {
+    /// <summary>Query and update Customer records.</summary>
     public DbSet<Customer> CustomerRows => Set<Customer>();
+    /// <summary>Query and update Product records.</summary>
     public DbSet<Product> ProductRows => Set<Product>();
+    /// <summary>Query and update Order records.</summary>
     public DbSet<Order> OrderRows => Set<Order>();
+    /// <summary>Query and update OrderLine records.</summary>
     public DbSet<OrderLine> OrderLineRows => Set<OrderLine>();
+    /// <summary>Configures generated keys, columns and relationships.</summary>
+    /// <param name="model">EF Core model builder.</param>
     protected override void OnModelCreating(ModelBuilder model) {
         model.Entity<Customer>().ToTable("Customer").HasKey(x => x.Id);
         model.Entity<Customer>().Property(x => x.Name).IsRequired();
