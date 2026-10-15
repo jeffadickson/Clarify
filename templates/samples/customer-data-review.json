@@ -25,7 +25,23 @@
         "Email",
         "City"
       ],
-      "title": "Customer data review"
+      "title": "Customer data review",
+      "controls": {
+        "City": {
+          "kind": "buttons",
+          "choices": [
+            "Los Angeles",
+            "Pasadena",
+            "Other"
+          ]
+        },
+        "Name": {
+          "kind": "text",
+          "validation": {
+            "maxLength": 160
+          }
+        }
+      }
     }
   ]
 }
