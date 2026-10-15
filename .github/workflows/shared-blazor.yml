@@ -22,7 +22,7 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - run: node --test tests/template-gallery-count.test.mjs tests/form-controls.test.mjs tests/sample-template-catalog.test.mjs designer/templates.test.mjs designer/dependencies.test.mjs designer/schema.test.mjs tests/er-layout.test.mjs tests/studio-integration.test.mjs designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs
-      - run: node --test tests/ef-generation.test.mjs tests/sqlite-migrations.test.mjs
+      - run: node --test tests/equipment-checkout.test.mjs tests/ef-generation.test.mjs tests/sqlite-migrations.test.mjs
       - run: node tools/generate-ef-models.mjs
       - run: git diff --exit-code -- examples/relational-generation/generated/SalesDbContext.g.cs
       - run: node workflow/compile.mjs
@@ -44,6 +44,7 @@ jobs:
       - run: dotnet test tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj -c Release --logger trx
       - run: dotnet run --project examples/relational-generation/RelationalGeneration.Smoke.csproj -c Release
       - run: bash scripts/smoke-sqlite-migrations.sh
+      - run: bash scripts/smoke-equipment-checkout.sh
       - name: Smoke running web host and Studio
         run: bash scripts/smoke-web.sh
       - run: dotnet publish src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release -o artifacts/web
