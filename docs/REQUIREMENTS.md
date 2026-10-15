@@ -591,3 +591,20 @@ See docs/DATABASE-DEPENDENCIES.md. Implementation is source-level only until ver
 | DEP-009 | P1 | Proposed | Generate dependent async lookups | Dependency tests and database integration |
 | DEP-010 | P1 | Proposed | Stable IDs and safe rename migration | Dependency tests and database integration |
 | DEP-011 | P1 | Proposed | Database rollback and provider integration tests | Dependency tests and database integration |
+
+## EF Core relational source generation
+
+Implementation: designer/ef-models.mjs; example: examples/relational-generation. Tests: tests/ef-generation.test.mjs and relational SQLite smoke. Source implementation is not equivalent to observed green CI.
+
+| ID | Priority | Status | Requirement | Verification |
+|---|---|---|---|---|
+| EFGEN-001 | P0 | Implemented | Generate EF Core POCO entities and per-database DbContext | Node golden tests and SQLite .NET smoke |
+| EFGEN-002 | P0 | Implemented | Generate native foreign keys and delete behaviors | Node golden tests and SQLite .NET smoke |
+| EFGEN-003 | P0 | Implemented | Generate FK indexes and one-to-one uniqueness | Node golden tests and SQLite .NET smoke |
+| EFGEN-004 | P0 | Implemented | Reject missing keys, incompatible types and cross-database native FKs | Node golden tests and SQLite .NET smoke |
+| EFGEN-005 | P0 | Implemented | Deterministic generated C# and Studio preview | Node golden tests and SQLite .NET smoke |
+| EFGEN-006 | P0 | In Progress | SQLite relational integration smoke and CI build | Node golden tests and SQLite .NET smoke |
+| EFGEN-007 | P0 | Proposed | Generate NodaMoney and UnitsNet relational mappings | Node golden tests and SQLite .NET smoke |
+| EFGEN-008 | P0 | Proposed | Generate reviewed EF Core migrations and rollback plan | Node golden tests and SQLite .NET smoke |
+| EFGEN-009 | P1 | In Progress | Preserve user-authored C# and avoid destructive regeneration | Node golden tests and SQLite .NET smoke |
+| EFGEN-010 | P1 | Proposed | Support composite keys and alternate principal keys | Node golden tests and SQLite .NET smoke |
