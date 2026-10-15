@@ -37,6 +37,7 @@ jobs:
       - run: git diff --exit-code -- src/Clarify.Forms.Shared/CustomerFields.razor
       - run: dotnet restore tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj
       - run: dotnet build src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release
+      - run: node tools/export-dsl-parity-fixtures.mjs
       - run: dotnet test tests/Clarify.Dsl.Tests/Clarify.Dsl.Tests.csproj -c Release --logger trx
       - run: dotnet test tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj -c Release --logger trx
       - run: dotnet run --project examples/relational-generation/RelationalGeneration.Smoke.csproj -c Release
