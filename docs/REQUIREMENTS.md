@@ -625,3 +625,19 @@ See docs/SQLITE-MIGRATIONS.md. Implemented means committed source, not verified 
 | MIG-008 | P0 | Proposed | Generate provider-specific EF Core migrations for PostgreSQL/SQL Server | Node planner tests, SQLite integration and recovery drills |
 | MIG-009 | P1 | Proposed | Secure migration approval and deployment audit UI | Node planner tests, SQLite integration and recovery drills |
 | MIG-010 | P1 | Proposed | Concurrency hardening, restore automation and rollback policy | Node planner tests, SQLite integration and recovery drills |
+
+## C# XML API documentation and Studio finish gates
+
+See docs/CSHARP-DOCUMENTATION.md; issue #41 tracks outstanding documentation coverage. 'Implemented' is source-level only until CI passes.
+
+| ID | Priority | Status | Requirement | Verification |
+|---|---|---|---|---|
+| DOC-001 | P0 | Implemented (unverified) | All .NET projects emit compiler XML documentation files | DocFX, CS1591 and generator/browser tests |
+| DOC-002 | P0 | Implemented (unverified) | DocFX generates HTML API reference from C# XML documentation | DocFX, CS1591 and generator/browser tests |
+| DOC-003 | P0 | Implemented (unverified) | EF Core, async browse and Razor generators emit XML comments | DocFX, CS1591 and generator/browser tests |
+| DOC-004 | P0 | Implemented (unverified) | Auditor inventories undocumented handwritten and generated C# APIs | DocFX, CS1591 and generator/browser tests |
+| DOC-005 | P0 | In Progress | Every public/protected handwritten API has meaningful documentation | DocFX, CS1591 and generator/browser tests |
+| DOC-006 | P0 | In Progress | All generated C# and extension scaffolds have complete XML comments | DocFX, CS1591 and generator/browser tests |
+| DOC-007 | P0 | Proposed | Close CS1591 warnings and progressively enforce as CI errors | DocFX, CS1591 and generator/browser tests |
+| DOC-008 | P1 | In Progress | Publish versioned browsable API docs and end-to-end author manual | DocFX, CS1591 and generator/browser tests |
+| DOC-009 | P0 | In Progress | Playwright validates ER diagram drag, zoom, navigation and SVG download | DocFX, CS1591 and generator/browser tests |
