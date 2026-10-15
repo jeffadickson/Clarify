@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-node --test tests/sample-template-catalog.test.mjs designer/templates.test.mjs designer/schema.test.mjs tests/studio-integration.test.mjs designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs workflow/elsa-catalog.test.mjs
+node --test tests/template-gallery-count.test.mjs tests/sample-template-catalog.test.mjs designer/templates.test.mjs designer/schema.test.mjs tests/studio-integration.test.mjs designer/clarifydsl.test.mjs workflow/workflowdsl.test.mjs workflow/compile.test.mjs workflow/elsa-manifest.test.mjs workflow/elsa-catalog.test.mjs
 node workflow/compile.mjs
 node --test tests/automatic-observability.test.mjs
 node tools/generate-observability.mjs
