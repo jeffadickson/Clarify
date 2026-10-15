@@ -40,15 +40,15 @@ public sealed class SalesDbContext(DbContextOptions<SalesDbContext> options) : D
     public DbSet<Order> OrderRows => Set<Order>();
     public DbSet<OrderLine> OrderLineRows => Set<OrderLine>();
     protected override void OnModelCreating(ModelBuilder model) {
-        model.Entity<Customer>().HasKey(x => x.Id);
+        model.Entity<Customer>().ToTable("Customer").HasKey(x => x.Id);
         model.Entity<Customer>().Property(x => x.Name).IsRequired();
         model.Entity<Customer>().Property(x => x.Name).HasMaxLength(160);
         model.Entity<Customer>().Property(x => x.Email).HasMaxLength(254);
-        model.Entity<Product>().HasKey(x => x.Id);
+        model.Entity<Product>().ToTable("Product").HasKey(x => x.Id);
         model.Entity<Product>().Property(x => x.Name).IsRequired();
         model.Entity<Product>().Property(x => x.Name).HasMaxLength(160);
-        model.Entity<Order>().HasKey(x => x.Id);
-        model.Entity<OrderLine>().HasKey(x => x.Id);
+        model.Entity<Order>().ToTable("Order").HasKey(x => x.Id);
+        model.Entity<OrderLine>().ToTable("OrderLine").HasKey(x => x.Id);
         model.Entity<Order>().HasOne<Customer>().WithMany().HasForeignKey<Order>(x => x.CustomerId).OnDelete(DeleteBehavior.Restrict);
         model.Entity<Order>().HasIndex(x => x.CustomerId);
         model.Entity<OrderLine>().HasOne<Order>().WithMany().HasForeignKey<OrderLine>(x => x.OrderId).OnDelete(DeleteBehavior.Cascade);
