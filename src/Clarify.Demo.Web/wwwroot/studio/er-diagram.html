@@ -19,7 +19,7 @@ aside{margin-top:12px}noscript{display:block;padding:15px}
 <header><h1>Clarify · Database Relationship Diagram</h1><a href="/studio/schema">Back to Data Dictionary</a></header>
 <main><div class="toolbar">
 <button id="refresh">Reload local dictionary</button>
-<button id="download">Export SVG</button>
+<button id="download">Export SVG</button><button id="auto-layout">Auto layout</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="fit">Fit</button><button id="reset-layout">Reset positions</button>
 <span id="status" role="status"></span></div>
 <svg id="diagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entity-relationship diagram showing tables, fields, and foreign-key connections"></svg>
 <div class="legend"><span><i></i> Native foreign key</span><span><i class="external"></i> Cross-database reference (application managed)</span><span>Drag tables to rearrange</span></div>
@@ -27,31 +27,35 @@ aside{margin-top:12px}noscript{display:block;padding:15px}
 <noscript>Enable JavaScript to view the schema diagram.</noscript></main>
 <script type="module">
 import {analyzeDependencies} from './dependencies.mjs';
+import {autoLayout,routeRelationship} from './er-layout.mjs';
 const svg=document.getElementById('diagram'),ns='http://www.w3.org/2000/svg';
 const make=(tag,attrs={},text)=>{const n=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;return n};
-let model,positions=new Map(),drag=null;
+let model,positions=new Map(),drag=null,zoom=1,pan={x:0,y:0},panning=null,extent={w:1180,h:540};
 const width=1180,nodeWidth=240;
 function loadLocal(base){try{const value=localStorage.getItem('clarify-schema-prototype');return value?JSON.parse(value):base}catch{return base}}
-function layout(entities){const columns=Math.max(1,Math.floor(width/280));positions=new Map(entities.map((e,i)=>[e.name,{x:25+(i%columns)*280,y:32+Math.floor(i/columns)*290}]))}
+function layout(entities){const saved=readPositions();const result=autoLayout(model,width,saved);positions=new Map(Object.entries(result.positions));extent={w:result.contentWidth,h:result.contentHeight}}
+function readPositions(){try{return JSON.parse(localStorage.getItem('clarify-er-positions')||'{}')}catch{return {}}}
+function persistPositions(){try{localStorage.setItem('clarify-er-positions',JSON.stringify(Object.fromEntries(positions)))}catch{}}
+function applyView(){const boxW=extent.w/zoom,boxH=extent.h/zoom;svg.setAttribute('viewBox',pan.x+' '+pan.y+' '+boxW+' '+boxH)}
 const center=(name,field)=>{const p=positions.get(name);if(!p)return null;const e=model.entities.find(x=>x.name===name);const i=e?.fields.findIndex(x=>x.name===field)??-1;return {x:p.x+nodeWidth/2,y:p.y+48+(i>=0?i*24:0)}};
 function draw(){
  const graph=analyzeDependencies(model);
  svg.replaceChildren();
  document.getElementById('status').textContent=model.entities.length+' entities · '+(model.relationships||[]).length+' relationships · '+graph.databases.length+' database(s)';
  document.getElementById('warnings').textContent=[...graph.errors,...graph.warnings].join(' · ');
- const maxRows=Math.max(...model.entities.map(e=>e.fields.length),1);
- const rows=Math.ceil(model.entities.length/4);
- svg.setAttribute('viewBox','0 0 '+width+' '+Math.max(540,rows*Math.max(290,90+maxRows*24)+50));
+ extent.w=Math.max(width,...[...positions.values()].map(p=>p.x+nodeWidth+30));
+ extent.h=Math.max(540,...model.entities.map(e=>positions.get(e.name).y+90+e.fields.length*24));
+ applyView();
  const paths=make('g',{'aria-hidden':'true'});svg.append(paths);
- for(const r of model.relationships||[]){
+ for(const [edgeIndex,r] of (model.relationships||[]).entries()){
    const child=center(r.from,r.foreignKey),parent=center(r.to,r.principalKey||'Id');
    if(!child||!parent)continue;
    const a={x:positions.get(r.from).x,y:child.y},b={x:positions.get(r.to).x+nodeWidth,y:parent.y};
    // Choose the shorter facing sides of each table.
    if(a.x>b.x){a.x=positions.get(r.from).x;b.x=positions.get(r.to).x+nodeWidth}
    else{a.x=positions.get(r.from).x+nodeWidth;b.x=positions.get(r.to).x}
-   const mid=(a.x+b.x)/2,external=r.kind==='external';
-   paths.append(make('path',{d:'M'+a.x+','+a.y+' H'+mid+' V'+b.y+' H'+b.x,
+   const external=r.kind==='external';
+   paths.append(make('path',{d:routeRelationship({x:positions.get(r.from).x,y:child.y},{x:positions.get(r.to).x,y:parent.y},nodeWidth,(edgeIndex%5)-2),
       fill:'none',stroke:external?'#af7a45':'#5584bb','stroke-width':2.5,
       ...(external?{'stroke-dasharray':'7 5'}:{})}));
    paths.append(make('circle',{cx:a.x,cy:a.y,r:4,fill:external?'#af7a45':'#5584bb'}));
@@ -74,19 +78,28 @@ function draw(){
      event.preventDefault();
      drag={name:e.name,x:event.clientX,y:event.clientY,...positions.get(e.name)};
    });
-   svg.append(group);
+   group.addEventListener('keydown',event=>{const steps={ArrowLeft:[-16,0],ArrowRight:[16,0],ArrowUp:[0,-16],ArrowDown:[0,16]};if(!steps[event.key])return;event.preventDefault();const [dx,dy]=steps[event.key],at=positions.get(e.name);positions.set(e.name,{x:Math.max(0,at.x+dx),y:Math.max(0,at.y+dy)});persistPositions();draw();const focus=[...svg.querySelectorAll('g[role="group"]')].find(x=>x.getAttribute('aria-label')===e.name+' table');focus?.focus()});
+ svg.append(group);
  }
 }
 document.addEventListener('pointermove',event=>{
  if(!drag)return;
- const bounds=svg.getBoundingClientRect(),scale=width/bounds.width;
+ const bounds=svg.getBoundingClientRect(),scale=(extent.w/zoom)/bounds.width;
  positions.set(drag.name,{
    x:Math.max(0,drag.x+(event.clientX-drag.x)*scale),
    y:Math.max(0,drag.y+(event.clientY-drag.y)*scale)
  });
  draw();
 });
-document.addEventListener('pointerup',()=>{drag=null});
+document.addEventListener('pointerup',()=>{if(drag)persistPositions();drag=null;panning=null});
+svg.addEventListener('pointerdown',e=>{if(e.target===svg)panning={x:e.clientX,y:e.clientY,px:pan.x,py:pan.y}});
+svg.addEventListener('pointermove',e=>{if(!panning||drag)return;const rect=svg.getBoundingClientRect();pan={x:panning.px-(e.clientX-panning.x)*(extent.w/zoom)/rect.width,y:panning.py-(e.clientY-panning.y)*(extent.h/zoom)/rect.height};applyView()});
+function changeZoom(factor){zoom=Math.max(.35,Math.min(3.5,zoom*factor));applyView()}
+document.getElementById('zoom-in').onclick=()=>changeZoom(1.25);
+document.getElementById('zoom-out').onclick=()=>changeZoom(.8);
+document.getElementById('fit').onclick=()=>{zoom=1;pan={x:0,y:0};applyView()};
+document.getElementById('auto-layout').onclick=()=>{const result=autoLayout(model,width,{});positions=new Map(Object.entries(result.positions));pan={x:0,y:0};zoom=1;persistPositions();draw()};
+document.getElementById('reset-layout').onclick=()=>{localStorage.removeItem('clarify-er-positions');const result=autoLayout(model,width,{});positions=new Map(Object.entries(result.positions));pan={x:0,y:0};zoom=1;draw()};
 async function reload(){const response=await fetch('./dictionary.json');if(!response.ok)throw Error('Failed to load dictionary');model=loadLocal(await response.json());layout(model.entities);draw()}
 document.getElementById('refresh').onclick=()=>reload().catch(e=>document.getElementById('warnings').textContent=e.message);
 document.getElementById('download').onclick=()=>{const blob=new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='clarify-er-diagram.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
