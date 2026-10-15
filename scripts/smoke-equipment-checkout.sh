@@ -6,12 +6,11 @@ tmp="$(mktemp -d)"
 pid=""
 cleanup(){ if [[ -n "$pid" ]]; then kill "$pid" 2>/dev/null || true; wait "$pid" 2>/dev/null || true; fi; rm -rf "$tmp"; }
 trap cleanup EXIT
-cp examples/equipment-checkout/EquipmentCheckout.csproj "$tmp/" 2>/dev/null || true
 # Run in sample working directory; preserve the user's own working database.
 cp -R examples/equipment-checkout/. "$tmp/"
 rm -f "$tmp/equipment-checkout.sqlite"
 # Generated context is included in the copied project by default SDK globbing.
-(dotnet run --project "$tmp/EquipmentCheckout.csproj" -c Release --urls "http://127.0.0.1:$port" >"$tmp/server.log" 2>&1) &
+(cd "$tmp" && dotnet run --project EquipmentCheckout.csproj -c Release --urls "http://127.0.0.1:$port" >"$tmp/server.log" 2>&1) &
 pid=$!
 for i in $(seq 1 60); do
  if curl --silent --fail "http://127.0.0.1:$port/api/snapshot" >/dev/null; then break; fi
