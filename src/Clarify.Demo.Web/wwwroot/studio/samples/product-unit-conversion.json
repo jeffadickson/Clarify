@@ -1,0 +1,31 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.product-unit-conversion",
+  "version": "0.2.0",
+  "title": "Product unit conversion preview",
+  "category": "forms",
+  "description": "Sample forms layout for Product. Generates editable DSL, not business logic.",
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  },
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 6,
+      "fields": [
+        "Length",
+        "Mass",
+        "Temperature"
+      ],
+      "title": "Product unit conversion preview"
+    }
+  ]
+}
