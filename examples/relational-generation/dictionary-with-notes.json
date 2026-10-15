@@ -1,0 +1,138 @@
+{
+  "defaultDatabase": "sales",
+  "databases": [
+    {
+      "id": "sales",
+      "provider": "sqlite"
+    }
+  ],
+  "entities": [
+    {
+      "name": "Customer",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "long",
+          "required": true,
+          "primaryKey": true
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "required": true,
+          "maxLength": 160
+        },
+        {
+          "name": "Email",
+          "type": "string",
+          "maxLength": 254
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "long",
+          "required": true,
+          "primaryKey": true
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "required": true,
+          "maxLength": 160
+        },
+        {
+          "name": "PriceCents",
+          "type": "long",
+          "required": true
+        },
+        {
+          "name": "Notes",
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "long",
+          "required": true,
+          "primaryKey": true
+        },
+        {
+          "name": "CustomerId",
+          "type": "long",
+          "required": true
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "OrderLine",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "long",
+          "required": true,
+          "primaryKey": true
+        },
+        {
+          "name": "OrderId",
+          "type": "long",
+          "required": true
+        },
+        {
+          "name": "ProductId",
+          "type": "long",
+          "required": true
+        },
+        {
+          "name": "Quantity",
+          "type": "int",
+          "required": true
+        },
+        {
+          "name": "UnitPriceCents",
+          "type": "long",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "from": "Order",
+      "to": "Customer",
+      "foreignKey": "CustomerId",
+      "principalKey": "Id",
+      "cardinality": "one-to-many",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "OrderLine",
+      "to": "Order",
+      "foreignKey": "OrderId",
+      "principalKey": "Id",
+      "cardinality": "one-to-many",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "OrderLine",
+      "to": "Product",
+      "foreignKey": "ProductId",
+      "principalKey": "Id",
+      "cardinality": "one-to-many",
+      "onDelete": "restrict"
+    }
+  ]
+}
