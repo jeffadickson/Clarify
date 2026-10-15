@@ -1,0 +1,13 @@
+{
+  "projectName": "ClarifyDsl",
+  "languages": [
+    {
+      "id": "clarify-dsl",
+      "grammar": "src/clarify.langium",
+      "fileExtensions": [
+        ".clarify"
+      ]
+    }
+  ],
+  "out": "src/generated"
+}
