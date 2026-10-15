@@ -1,3 +1,4 @@
+import {validateControl} from './controls.mjs';
 // Declarative template instantiation. No eval, executable hooks or C# rewriting.
 // Template packages provide immutable output recipes, never arbitrary JS code.
 const ident=/^[A-Za-z_][A-Za-z0-9_]*$/;
@@ -40,6 +41,12 @@ export function instantiateTemplate(template,dictionary,bindings){
   fields.forEach((field,i)=>{
    if(!ident.test(field.name))throw Error("Invalid field name");
    const width=Math.floor(columns/2);
+   const configured=recipe.controls?.[field.name];
+   if(configured){
+    const errors=validateControl(field,configured);
+    if(errors.length)throw Error("Invalid control for "+field.name+": "+errors.join("; "));
+    lines.push("    // @clarify-control "+JSON.stringify({field:field.name,...configured}));
+   }
    const semantics=fieldSemantics(field);
    if(semantics.dotnet)
     lines.push("    // @clarify-type "+JSON.stringify({field:field.name,...semantics}));
