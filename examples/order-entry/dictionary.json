@@ -29,7 +29,28 @@
         {
           "name": "Price",
           "type": "money",
-          "required": true
+          "required": true,
+          "currency": "USD"
+        },
+        {
+          "name": "Length",
+          "type": "length",
+          "displayUnit": "mm"
+        },
+        {
+          "name": "Mass",
+          "type": "mass",
+          "displayUnit": "kg"
+        },
+        {
+          "name": "Pressure",
+          "type": "pressure",
+          "displayUnit": "kPa"
+        },
+        {
+          "name": "Temperature",
+          "type": "temperature",
+          "displayUnit": "°C"
         }
       ]
     },
@@ -69,7 +90,8 @@
         {
           "name": "UnitPrice",
           "type": "money",
-          "required": true
+          "required": true,
+          "currency": "USD"
         }
       ]
     }
