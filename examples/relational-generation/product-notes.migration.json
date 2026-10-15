@@ -1,0 +1,104 @@
+{
+  "format": "clarify-sqlite-migration/v1",
+  "planId": "clarify-sqlite-82cf008e",
+  "database": "sales",
+  "provider": "sqlite",
+  "executable": true,
+  "blocked": [],
+  "operations": [
+    {
+      "kind": "add-nullable-column",
+      "table": "Product",
+      "column": "Notes",
+      "type": "TEXT",
+      "sql": "ALTER TABLE \"Product\" ADD COLUMN \"Notes\" TEXT NULL;"
+    }
+  ],
+  "precondition": {
+    "database": "sales",
+    "expectedTables": [
+      {
+        "name": "Customer",
+        "columns": [
+          {
+            "name": "Id",
+            "type": "INTEGER"
+          },
+          {
+            "name": "Name",
+            "type": "TEXT"
+          },
+          {
+            "name": "Email",
+            "type": "TEXT"
+          }
+        ]
+      },
+      {
+        "name": "Product",
+        "columns": [
+          {
+            "name": "Id",
+            "type": "INTEGER"
+          },
+          {
+            "name": "Name",
+            "type": "TEXT"
+          },
+          {
+            "name": "PriceCents",
+            "type": "INTEGER"
+          }
+        ]
+      },
+      {
+        "name": "Order",
+        "columns": [
+          {
+            "name": "Id",
+            "type": "INTEGER"
+          },
+          {
+            "name": "CustomerId",
+            "type": "INTEGER"
+          },
+          {
+            "name": "Date",
+            "type": "TEXT"
+          }
+        ]
+      },
+      {
+        "name": "OrderLine",
+        "columns": [
+          {
+            "name": "Id",
+            "type": "INTEGER"
+          },
+          {
+            "name": "OrderId",
+            "type": "INTEGER"
+          },
+          {
+            "name": "ProductId",
+            "type": "INTEGER"
+          },
+          {
+            "name": "Quantity",
+            "type": "INTEGER"
+          },
+          {
+            "name": "UnitPriceCents",
+            "type": "INTEGER"
+          }
+        ]
+      }
+    ]
+  },
+  "review": {
+    "requiresApproval": true,
+    "backupRequired": true,
+    "destructive": false,
+    "notice": "Generated plan is not applied automatically. Confirm a verified backup and use explicit approval."
+  }
+}
