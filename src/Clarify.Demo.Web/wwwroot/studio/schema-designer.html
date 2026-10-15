@@ -40,7 +40,7 @@ function fieldDialog(name){dialog("New field in "+name,[{name:"name",label:"Fiel
  return addField(model,name,field);
 })}
 $("add-entity").onclick=()=>dialog("New entity",[{name:"name",label:"Entity name"}],v=>addEntity(model,v.name));
-$("add-relation").onclick=()=>dialog("Connect entities",[{name:"from",label:"Child entity",options:model.entities.map(x=>x.name)},{name:"to",label:"Parent entity",options:model.entities.map(x=>x.name)},{name:"foreignKey",label:"Foreign key field"},{name:"onDelete",label:"Delete behavior",options:["restrict","cascade","set-null"]}],v=>addRelationship(model,v.from,v.to,v.foreignKey,v.onDelete));
+$("add-relation").onclick=()=>dialog("Connect entities",[{name:"from",label:"Child entity",options:model.entities.map(x=>x.name)},{name:"to",label:"Parent entity",options:model.entities.map(x=>x.name)},{name:"foreignKey",label:"Foreign key field"},{name:"onDelete",label:"Delete behavior",options:["restrict","cascade","set-null"]},{name:"kind",label:"Relationship enforcement",options:["native","external"]}],v=>addRelationship(model,v.from,v.to,v.foreignKey,v.onDelete,v.kind));
 $("reset").onclick=async()=>{if(!confirm("Discard local dictionary changes?"))return;model=structuredClone(baseline);localStorage.removeItem("clarify-schema-prototype");render()};
 $("export").onclick=()=>{const errors=[...validate(model),...analyzeDependencies(model).errors];if(errors.length){$("errors").textContent=errors.join("\n");return}const blob=new Blob([JSON.stringify(model,null,2)+"\n"],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dictionary.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 render();
