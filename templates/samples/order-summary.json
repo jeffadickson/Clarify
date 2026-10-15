@@ -1,0 +1,25 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.order-summary",
+  "version": "0.1.0",
+  "title": "Order summary",
+  "category": "forms",
+  "description": "Sample forms pattern for Order. This currently generates editable form DSL; data persistence uses existing generated application plumbing.",
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 6,
+      "fields": [
+        "Date",
+        "CustomerId"
+      ],
+      "title": "Order summary"
+    }
+  ]
+}
