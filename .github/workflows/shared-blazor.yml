@@ -34,6 +34,8 @@ jobs:
       - run: node tools/generate-async-contracts.mjs
       - run: git diff --exit-code -- examples/generated/AsyncStores.g.cs
       - run: node tools/generate-shared-blazor.mjs
+      - run: node --test tests/documentation-generation.test.mjs
+      - run: node tools/audit-csharp-docs.mjs --report --strict-generated
       - run: git diff --exit-code -- src/Clarify.Forms.Shared/CustomerFields.razor
       - run: dotnet restore tests/Clarify.M0.Tests/Clarify.M0.Tests.csproj
       - run: dotnet build src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release
@@ -45,6 +47,17 @@ jobs:
       - name: Smoke running web host and Studio
         run: bash scripts/smoke-web.sh
       - run: dotnet publish src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release -o artifacts/web
+      - name: Build XML documentation reference with DocFX
+        run: |
+          dotnet tool restore
+          dotnet docfx docs/docfx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clarify-documentation
+          path: |
+            docs/_site
+            artifacts/documentation-coverage.json
+          if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         with:
           name: clarify-web
