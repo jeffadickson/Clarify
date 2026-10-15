@@ -56,6 +56,8 @@ public static class ClarifyFormParser
         var stack = new Stack<string>();
         var seenForm = false;
         var completed = false;
+        var gridColumns = new Stack<int>();
+        var grid = new Regex(@"^grid\\s+columns\\s+(?<count>\\d+)(?:\\s+gap\\s+\\d+)?\\s*\\{$");
         var offset = 0;
         var rows = source.Split('\n');
         for (var index = 0; index < rows.Length; index++)
@@ -87,11 +89,23 @@ public static class ClarifyFormParser
                 if (stack.Count == 0) errors.Add(new("DSL002", "Unexpected closing brace", line, column));
                 else
                 {
-                    stack.Pop();
+                    var closed=stack.Pop();
+                    if (closed=="grid" && gridColumns.Count>0)gridColumns.Pop();
                     if (stack.Count == 0) completed = true;
                 }
             }
-            else if (Block.IsMatch(text)) stack.Push(text.Split(' ', 2)[0]);
+            else if (Block.IsMatch(text))
+            {
+                var kind=text.Split(' ',2)[0];
+                if(kind=="grid")
+                {
+                    var match=grid.Match(text);
+                    if(!match.Success || !int.TryParse(match.Groups["count"].Value,out var count) || count<1 || count>24)
+                        errors.Add(new("DSL010","Invalid grid columns",line,column));
+                    else gridColumns.Push(count);
+                }
+                stack.Push(kind);
+            }
             else if (text.StartsWith("title ", StringComparison.Ordinal) ||
                      text.StartsWith("size ", StringComparison.Ordinal) ||
                      text.StartsWith("breakpoint ", StringComparison.Ordinal) ||
@@ -111,6 +125,8 @@ public static class ClarifyFormParser
                     var h = int.Parse(m.Groups["h"].Value);
                     if (x < 1 || y < 1 || w < 1 || h < 1)
                         errors.Add(new("DSL005", "Coordinates and spans must be positive", line, column));
+                    else if(gridColumns.Count>0 && x+w-1>gridColumns.Peek())
+                        errors.Add(new("DSL011","Field exceeds grid columns",line,column));
                     else fields.Add(new(m.Groups["name"].Value, x, y, w, h,
                         new(offset + raw.IndexOf(text, StringComparison.Ordinal), text.Length, line, column)));
                 }
