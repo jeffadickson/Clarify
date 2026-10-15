@@ -608,3 +608,20 @@ Implementation: designer/ef-models.mjs; example: examples/relational-generation.
 | EFGEN-008 | P0 | Proposed | Generate reviewed EF Core migrations and rollback plan | Node golden tests and SQLite .NET smoke |
 | EFGEN-009 | P1 | In Progress | Preserve user-authored C# and avoid destructive regeneration | Node golden tests and SQLite .NET smoke |
 | EFGEN-010 | P1 | Proposed | Support composite keys and alternate principal keys | Node golden tests and SQLite .NET smoke |
+
+## Reviewed database migration requirements
+
+See docs/SQLITE-MIGRATIONS.md. Implemented means committed source, not verified production operation.
+
+| ID | Priority | Status | Requirement | Verification |
+|---|---|---|---|---|
+| MIG-001 | P0 | Implemented | Plan nullable SQLite column additions without executing SQL | Node planner tests, SQLite integration and recovery drills |
+| MIG-002 | P0 | Implemented | Refuse destructive or unsupported migration changes | Node planner tests, SQLite integration and recovery drills |
+| MIG-003 | P0 | Implemented | Require explicit plan ID and existing database | Node planner tests, SQLite integration and recovery drills |
+| MIG-004 | P0 | Implemented | Validate SQLite schema before applying planned changes | Node planner tests, SQLite integration and recovery drills |
+| MIG-005 | P0 | Implemented | Create online backup and transactional migration journal | Node planner tests, SQLite integration and recovery drills |
+| MIG-006 | P0 | In Progress | Pass real SQLite migration smoke in CI and verify restore | Node planner tests, SQLite integration and recovery drills |
+| MIG-007 | P0 | Proposed | Immutable dictionary IDs and rename-safe migration snapshots | Node planner tests, SQLite integration and recovery drills |
+| MIG-008 | P0 | Proposed | Generate provider-specific EF Core migrations for PostgreSQL/SQL Server | Node planner tests, SQLite integration and recovery drills |
+| MIG-009 | P1 | Proposed | Secure migration approval and deployment audit UI | Node planner tests, SQLite integration and recovery drills |
+| MIG-010 | P1 | Proposed | Concurrency hardening, restore automation and rollback policy | Node planner tests, SQLite integration and recovery drills |
