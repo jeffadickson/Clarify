@@ -47,6 +47,18 @@ jobs:
       - name: Smoke running web host and Studio
         run: bash scripts/smoke-web.sh
       - run: dotnet publish src/Clarify.Demo.Web/Clarify.Demo.Web.csproj -c Release -o artifacts/web
+      - name: Install Chromium UI test dependencies
+        run: |
+          npm install --prefix tests/browser --no-audit --no-fund
+          ./tests/browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Playwright Studio ER diagram browser tests
+        run: ./tests/browser/node_modules/.bin/playwright test --config tests/browser/playwright.config.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: clarify-playwright
+          path: artifacts/playwright-report
+          if-no-files-found: ignore
       - name: Build XML documentation reference with DocFX
         run: |
           dotnet tool restore
