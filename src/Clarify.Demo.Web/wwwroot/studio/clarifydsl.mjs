@@ -1,3 +1,4 @@
+import {parseControlMetadata,validateControl} from './controls.mjs';
 export function schemaForm(s,name){const e=s.entities.find(x=>x.name===name);if(!e)throw Error("Unknown entity");return 'form '+name+'Editor for '+name+' {\n  grid columns 12 {\n'+e.fields.map((f,i)=>'    '+f.name+' at ('+(1+(i%2)*6)+','+(1+Math.floor(i/2))+') span (6,1)').join('\n')+'\n  }\n}\n'}
 const loc=/\bat\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*span\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/;
 export function parse(source,schema){
@@ -17,7 +18,7 @@ const c={id:n[1],name:n[1],x:+m[1],y:+m[2],w:+m[3],h:+m[4],line:i,path:stack.at(
 if(c.x<1||c.y<1||c.w<1||c.h<1||c.x+c.w-1>stack.at(-1).columns)errors.push('Line '+(i+1)+': out of bounds');
 if(controls.some(z=>z.name===c.name))errors.push('Line '+(i+1)+': duplicate field');
 if(controls.some(z=>z.path===c.path&&c.x<z.x+z.w&&z.x<c.x+c.w&&c.y<z.y+z.h&&z.y<c.y+c.h))errors.push('Line '+(i+1)+': overlap');
-controls.push(c)}
+const meta=parseControlMetadata(source,c.name);if(meta){const field=entity?.fields.find(f=>f.name===c.name);if(field){for(const issue of validateControl(field,meta))errors.push('Line '+(i+1)+': '+issue)}c.control=meta;}controls.push(c)}
 if(opened||stack.length!==1)errors.push('Unclosed block');
 return {ok:!errors.length,errors,controls,lines,nodes,form:header[1],entity:header[2],columns:nodes.find(n=>n.kind==='grid')?.columns||12}}
 export function patchField(source,schema,id,change){const p=parse(source,schema);if(!p.ok)throw Error(p.errors.join('; '));const c=p.controls.find(x=>x.id===id);if(!c)throw Error('Unknown field');const v={...c,...change};if(![v.x,v.y,v.w,v.h].every(x=>Number.isInteger(x)&&x>0))throw Error('Invalid position');const lines=source.split('\n');lines[c.line]=lines[c.line].replace(loc,'at ('+v.x+','+v.y+') span ('+v.w+','+v.h+')');const out=lines.join('\n'),q=parse(out,schema);if(!q.ok)throw Error(q.errors.join('; '));return out}
