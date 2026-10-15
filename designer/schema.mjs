@@ -1,3 +1,4 @@
+import {analyzeDependencies} from './dependencies.mjs';
 // Clarify's early graphical data-dictionary model. Pure functions keep editing testable.
 // Existing entity/field properties are preserved when editing; unknown metadata is not discarded.
 const identifier=/^[A-Za-z_][A-Za-z0-9_]*$/;
@@ -25,7 +26,7 @@ export function validate(model){
   if(!["one-to-many","one-to-one"].includes(r.cardinality))errors.push("Invalid cardinality");
   if(!["restrict","cascade","set-null"].includes(r.onDelete))errors.push("Invalid deletion policy");
  }
- return errors;
+ return [...errors,...analyzeDependencies(model).errors];
 }
 export function addEntity(model,name){
  if(!identifier.test(name))throw Error("Entity name must be a valid identifier");
@@ -37,12 +38,12 @@ export function addField(model,entity,field){
  if(!e)throw Error("Unknown entity");
  e.fields.push(field);const errors=validate(next);if(errors.length)throw Error(errors.join("; "));return next;
 }
-export function addRelationship(model,from,to,foreignKey,onDelete="restrict"){
+export function addRelationship(model,from,to,foreignKey,onDelete="restrict",kind="native"){
  const next=structuredClone(model),left=next.entities.find(x=>x.name===from),right=next.entities.find(x=>x.name===to);
  if(!left||!right)throw Error("Unknown entity");
  if(!left.fields.some(f=>f.name===foreignKey))left.fields.push({name:foreignKey,type:"long",required:true});
  next.relationships??=[];
  if(next.relationships.some(x=>x.from===from&&x.foreignKey===foreignKey))throw Error("Relationship already exists");
- next.relationships.push({from,to,foreignKey,cardinality:"one-to-many",onDelete});
+ next.relationships.push({from,to,foreignKey,cardinality:"one-to-many",onDelete,...(kind==="external"?{kind:"external"}:{})});
  const errors=validate(next);if(errors.length)throw Error(errors.join("; "));return next;
 }
