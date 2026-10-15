@@ -1,0 +1,40 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.order-items",
+  "version": "0.1.0",
+  "title": "Order items master-detail",
+  "category": "master-detail",
+  "description": "Sample master-detail pattern for Order. This currently generates editable form DSL; nested grids are not implemented yet.",
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    },
+    {
+      "name": "Detail",
+      "kind": "entity"
+    }
+  ],
+  "relationships": [
+    {
+      "parent": "Entity",
+      "child": "Detail"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 12,
+      "fields": [
+        "CustomerId",
+        "Date"
+      ],
+      "title": "Order items master-detail"
+    },
+    {
+      "entity": "Detail",
+      "columns": 12,
+      "title": "OrderLine details"
+    }
+  ]
+}
