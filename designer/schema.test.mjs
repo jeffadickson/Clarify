@@ -6,3 +6,15 @@ test("add field and relationship from child to parent",()=>{let m=addEntity(base
 test("duplicate column rejected",()=>assert.throws(()=>addField(base,"Customer",{name:"Name",type:"string"}),/Duplicate/));
 test("invalid foreign keys rejected",()=>assert.ok(validate({...base,relationships:[{from:"Order",to:"Customer",foreignKey:"X",cardinality:"one-to-many",onDelete:"restrict"}]}).length));
 test("existing dictionary preserved",()=>{let m=addEntity(base,"Product");assert.deepEqual(base.entities[0].fields,[{name:"Name",type:"string",required:true}]);assert.equal(validate(m).length,0)});
+
+test("cross-database relationship must be explicitly external",()=>{
+ const m={entities:[{name:"A",database:"one",fields:[{name:"Id",type:"long"}]},{name:"B",database:"two",fields:[{name:"Id",type:"long"}]}],relationships:[]};
+ assert.throws(()=>addRelationship(m,"B","A","AId"),/kind external/);
+ const valid=addRelationship(m,"B","A","AId","restrict","external");
+ assert.equal(valid.relationships[0].kind,"external");
+ assert.deepEqual(validate(valid),[]);
+});
+test("set-null cannot target required foreign key",()=>{
+ const m={entities:[{name:"A",fields:[{name:"Id",type:"long"}]},{name:"B",fields:[{name:"Id",type:"long"},{name:"AId",type:"long",required:true}]}],relationships:[]};
+ assert.throws(()=>addRelationship(m,"B","A","AId","set-null"),/nullable/);
+});
