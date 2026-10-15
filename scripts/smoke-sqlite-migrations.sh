@@ -28,6 +28,17 @@ if dotnet run --project tools/Clarify.Migrations.Sqlite/Clarify.Migrations.Sqlit
   echo "ERROR: migration accepted an incorrect approval" >&2; exit 1
 fi
 test ! -e "$tmp/rejected.db"
+python3 - "$plan" "$tmp/tampered.json" <<'PY'
+import json,sys
+with open(sys.argv[1]) as file: data=json.load(file)
+data['operations'][0]['column']='Tampered'
+with open(sys.argv[2],'w') as file: json.dump(data,file)
+PY
+if dotnet run --project tools/Clarify.Migrations.Sqlite/Clarify.Migrations.Sqlite.csproj -c Release -- \
+  --plan "$tmp/tampered.json" --db "$tmp/sales.db" --approve "$id" --backup "$tmp/tampered-backup.db"; then
+  echo "ERROR: modified migration plan was accepted" >&2; exit 1
+fi
+test ! -e "$tmp/tampered-backup.db"
 dotnet run --project tools/Clarify.Migrations.Sqlite/Clarify.Migrations.Sqlite.csproj -c Release -- \
   --plan "$plan" --db "$tmp/sales.db" --approve "$id" --backup "$tmp/backup.db"
 python3 - <<'PY'
