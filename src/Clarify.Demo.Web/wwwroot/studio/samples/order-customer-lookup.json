@@ -1,0 +1,30 @@
+{
+  "format": "clarify-template/v1",
+  "id": "clarify.sample.order-customer-lookup",
+  "version": "0.2.0",
+  "title": "Order customer lookup",
+  "category": "forms",
+  "description": "Sample forms layout for Order. Generates editable DSL, not business logic.",
+  "valueTypes": {
+    "money": "NodaMoney.Money",
+    "quantities": "UnitsNet",
+    "metadata": "dictionary"
+  },
+  "parameters": [
+    {
+      "name": "Entity",
+      "kind": "entity"
+    }
+  ],
+  "forms": [
+    {
+      "entity": "Entity",
+      "columns": 6,
+      "fields": [
+        "CustomerId",
+        "Date"
+      ],
+      "title": "Order customer lookup"
+    }
+  ]
+}
