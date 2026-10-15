@@ -5,7 +5,7 @@ node --test tests/sample-template-catalog.test.mjs designer/templates.test.mjs d
 node workflow/compile.mjs
 node --test tests/automatic-observability.test.mjs
 node tools/generate-observability.mjs
-node --test tests/async-generator.test.mjs
+node --test tests/standard-value-types.test.mjs tests/async-generator.test.mjs
 node tools/generate-async-contracts.mjs
 node tools/generate-shared-blazor.mjs
 dotnet restore src/Clarify.Demo.Web/Clarify.Demo.Web.csproj
