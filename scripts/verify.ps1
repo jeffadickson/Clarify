@@ -23,3 +23,6 @@ dotnet run --project examples/relational-generation/RelationalGeneration.Smoke.c
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 dotnet build tools/Clarify.Migrations.Sqlite/Clarify.Migrations.Sqlite.csproj -c Release
 exit $LASTEXITCODE
+
+dotnet test tests/Clarify.Dsl.Tests/Clarify.Dsl.Tests.csproj -c Release
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
