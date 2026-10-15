@@ -8,8 +8,17 @@ const allEntities=model=>new Map((model.entities||[]).map(e=>[e.name,e]));
 export function analyzeDependencies(model){
  const entities=allEntities(model),nodes=[],edges=[],errors=[],warnings=[];
  const databases=new Set();
+ const declared=new Map((model.databases||[]).map(d=>[d.id,d]));
+ if(model.databases?.length){
+  for(const d of model.databases){
+   if(!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(d.id||""))errors.push("Invalid database identifier");
+   if(!["sqlite","postgresql","sqlserver"].includes(d.provider))errors.push("Unsupported database provider: "+d.id);
+  }
+  if(declared.size!==model.databases.length)errors.push("Duplicate database identifier");
+ }
  for(const e of model.entities||[]){
   databases.add(store(model,e));
+  if(declared.size && !declared.has(store(model,e)))errors.push("Unregistered database for "+e.name+": "+store(model,e));
   nodes.push({id:e.name,kind:"entity",database:store(model,e)});
   for(const f of e.fields||[]){
    nodes.push({id:key(e.name,f.name),kind:"field",type:f.type,database:store(model,e)});
