@@ -27,5 +27,5 @@ test('Studio dependency analyzer matches canonical implementation',()=>{
  const html=read('src/Clarify.Demo.Web/wwwroot/studio/schema-designer.html');
  assert.match(html,/dependency-summary/);
  assert.match(html,/export-impact/);
- assert.match(html,/kind:"external"/);
+ assert.match(html,/options:\["native","external"\]/);
 });
