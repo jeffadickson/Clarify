@@ -28,7 +28,7 @@ const lines=parsed.controls.map(f=>{
 const out='@* Generated from examples/forms/Customer.clarify — do not edit manually. *@\n<div class="clarify-fields">\n'
 +lines.join('\n')+'\n</div>\n'
 +'<style>.clarify-fields{display:grid;grid-template-columns:repeat('+parsed.columns+',minmax(0,1fr));gap:1rem}.clarify-fields>div{display:flex;flex-direction:column;gap:.4rem}.clarify-fields input{min-width:0}.clarify-choice-buttons{display:flex;flex-wrap:wrap;gap:.4rem}.clarify-choice-buttons label{border:1px solid #879ab2;border-radius:6px;padding:.4rem .7rem;cursor:pointer}.clarify-choice-radio{display:flex;flex-direction:column;gap:.3rem}@@media(max-width:700px){.clarify-fields{display:flex;flex-direction:column}}</style>\n'
-+'@code {[Parameter,EditorRequired] public CustomerModel Model { get; set; } = default!; }\n';
++'@code {\n /// <summary>Customer record edited by the generated form.</summary>\n [Parameter, EditorRequired] public CustomerModel Model { get; set; } = default!;\n}\n';
 const target=resolve(root,'src/Clarify.Forms.Shared/CustomerFields.razor');
 writeFileSync(target,out,'utf8');
 console.log('Generated '+target);
