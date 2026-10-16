@@ -49,7 +49,7 @@ jobs:
           ./tests/browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Playwright Studio ER diagram browser tests
         run: ./tests/browser/node_modules/.bin/playwright test --config tests/browser/playwright.config.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: clarify-playwright
@@ -59,14 +59,14 @@ jobs:
         run: |
           dotnet tool restore
           dotnet docfx docs/docfx.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: clarify-documentation
           path: |
             docs/_site
             artifacts/documentation-coverage.json
           if-no-files-found: warn
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: clarify-web
           path: artifacts/web
