@@ -1,5 +1,5 @@
 using Elsa.Workflows.Runtime;
-using Elsa.Workflows.Runtime.Stimuli;
+using Elsa.Workflows.Runtime.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +12,7 @@ namespace Clarify.Examples.Elsa;
 [ApiController]
 [Route("api/clarify/approvals")]
 [Authorize(Policy = "ClarifyManager")] // Host must configure this policy and real identity.
-public sealed class ManagerApprovalController(IWorkflowResumer resumer) : ControllerBase
+public sealed class ManagerApprovalController(IWorkflowDispatcher dispatcher) : ControllerBase
 {
     public sealed record DecisionRequest(string OrderCorrelation, bool Approved);
 
@@ -24,14 +24,6 @@ public sealed class ManagerApprovalController(IWorkflowResumer resumer) : Contro
 
         // The bookmark payload MUST match the activity's payload precisely.
         // Including order correlation prevents cross-order resume collisions.
-        var stimulus = new BookmarkStimulus
-        {
-            BookmarkName = "Clarify.ManagerApproval",
-            Payload = new Dictionary<string, object>
-            {
-                ["OrderCorrelation"] = request.OrderCorrelation
-            }
-        };
         var actor = User.Identity?.Name;
         if (string.IsNullOrWhiteSpace(actor))
             return Forbid();
@@ -39,13 +31,22 @@ public sealed class ManagerApprovalController(IWorkflowResumer resumer) : Contro
         // Elsa resumes the suspended activity, using bookmark persistence and
         // the configured runtime lock provider. This endpoint must additionally
         // enforce per-order authorization and audit the real actor.
-        var results = await resumer.ResumeAsync(stimulus,
-            new Dictionary<string, object>
+        // Elsa 3.8 dispatches by activity/bookmark type and matching stimulus.
+        // A queued dispatch is not proof that the workflow already resumed.
+        await dispatcher.DispatchAsync(new DispatchResumeWorkflowsRequest(
+            activityTypeName: "Clarify.ManagerApproval",
+            bookmarkPayload: new Dictionary<string, object>
+            {
+                ["OrderCorrelation"] = request.OrderCorrelation
+            })
+        {
+            Input = new Dictionary<string, object>
             {
                 ["Decision"] = request.Approved ? "Approved" : "Rejected",
                 ["ApprovedBy"] = actor,
                 ["ApprovedAt"] = DateTime.UtcNow
-            });
-        return results.Count == 0 ? NotFound() : Ok(new { Resumed = results.Count });
+            }
+        });
+        return Accepted(new { Queued = true });
     }
 }
