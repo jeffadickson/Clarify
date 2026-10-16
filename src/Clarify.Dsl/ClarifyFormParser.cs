@@ -86,7 +86,7 @@ public static class ClarifyFormParser
         var seenForm = false;
         var completed = false;
         var gridColumns = new Stack<int>();
-        var grid = new Regex(@"^grid\\s+columns\\s+(?<count>\\d+)(?:\\s+gap\\s+\\d+)?\\s*\\{$");
+        var grid = new Regex(@"^grid\s+columns\s+(?<count>\d+)(?:\s+gap\s+\d+)?\s*\{$");
         var offset = 0;
         var rows = source.Split('\n');
         for (var index = 0; index < rows.Length; index++)
