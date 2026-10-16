@@ -2,18 +2,6 @@ name: Shared Blazor + DSL
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'src/**'
-      - 'docs/**'
-      - 'Directory.Build.props'
-      - '.config/**'
-      - 'README.md'
-      - 'designer/**'
-      - 'tools/**'
-      - 'examples/**'
-      - 'scripts/**'
-      - 'tests/**'
-      - '.github/workflows/shared-blazor.yml'
   pull_request:
 permissions:
   contents: read
