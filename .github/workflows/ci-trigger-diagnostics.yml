@@ -1,0 +1,35 @@
+name: CI Trigger Diagnostics
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trigger:
+    name: GitHub Actions trigger health
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show trigger identity
+        run: |
+          echo "event=${{ github.event_name }}"
+          echo "ref=${{ github.ref }}"
+          echo "sha=${{ github.sha }}"
+          echo "repository=${{ github.repository }}"
+          echo "run_id=${{ github.run_id }}"
+          echo "attempt=${{ github.run_attempt }}"
+          echo "runner=${{ runner.os }}"
+      - name: Verify checkout and source
+        uses: actions/checkout@v4
+      - name: Validate required CI files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .github/workflows/shared-blazor.yml
+          test -f tests/Clarify.Dsl.Tests/ParserTests.cs
+          test -f src/Clarify.Dsl/Clarify.Dsl.csproj
+          test -f examples/equipment-checkout/EquipmentCheckout.csproj
+          echo "CI_TRIGGER_HEALTHY sha=$(git rev-parse HEAD)"
