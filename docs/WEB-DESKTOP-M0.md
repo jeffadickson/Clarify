@@ -17,9 +17,9 @@ Navigate to the local web URL and save a customer. Restart and confirm the recor
 Requires .NET MAUI workload and a supported platform SDK. Windows: Visual Studio with MAUI workload. Mac: supported macOS/Xcode with MAUI Mac Catalyst.
 ```sh
 dotnet workload install maui
-dotnet build src/Clarify.Demo.Desktop -f net8.0-windows10.0.19041.0
+dotnet build src/Clarify.Demo.Desktop -f net10.0-windows10.0.19041.0
 ```
-On macOS use `-f net8.0-maccatalyst`. Run in IDE or platform tooling; workload/signing/prerequisites vary. Linux desktop is **not** supported by this MAUI scaffold.
+On macOS use `-f net10.0-maccatalyst`. Run in IDE or platform tooling; workload/signing/prerequisites vary. Linux desktop is **not** supported by this MAUI scaffold.
 
 Desktop app uses its own SQLite file under `FileSystem.AppDataDirectory`. The web host uses a different SQLite file. **Shared UI and data-model behavior do not imply shared database contents or automatic sync.**
 
