@@ -96,9 +96,20 @@ app.MapPost("/api/equipment", async (EquipmentInput input,
         string.IsNullOrWhiteSpace(input.SerialNumber) || input.SerialNumber.Length > 80)
         return Results.BadRequest(new { error = "Name and serial number are required." });
     await using var db = await factory.CreateDbContextAsync(ct);
-    var item = new Equipment { Name = input.Name.Trim(), SerialNumber = input.SerialNumber.Trim() };
+    var serial = input.SerialNumber.Trim();
+    if (await db.EquipmentRows.AnyAsync(x => x.SerialNumber == serial, ct))
+        return Results.Conflict(new { error = "An item with this serial number already exists." });
+    var item = new Equipment { Name = input.Name.Trim(), SerialNumber = serial };
     db.EquipmentRows.Add(item);
-    await db.SaveChangesAsync(ct);
+    try
+    {
+        await db.SaveChangesAsync(ct);
+    }
+    catch (DbUpdateException ex) when (ex.InnerException is Microsoft.Data.Sqlite.SqliteException { SqliteErrorCode: 19 })
+    {
+        // The unique database index also rejects concurrent duplicate requests.
+        return Results.Conflict(new { error = "An item with this serial number already exists." });
+    }
     return Results.Ok(new { item.Id });
 });
 
