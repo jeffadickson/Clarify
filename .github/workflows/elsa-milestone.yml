@@ -7,6 +7,9 @@ on:
       - 'scripts/bootstrap-elsa.ps1'
       - 'workflow/**'
       - 'examples/workflows/**'
+      - 'examples/elsa/**'
+      - 'tests/Clarify.Elsa.Approval/**'
+      - 'tests/Clarify.Elsa.Smoke/**'
   pull_request:
   workflow_dispatch:
 permissions:

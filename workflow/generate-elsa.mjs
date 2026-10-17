@@ -34,8 +34,10 @@ using Clarify.Examples.Elsa;
 
 namespace Clarify.Examples.Elsa;
 
-// Durable execution requires Elsa runtime persistence in the host.
-// WriteLine steps only demonstrate dispatch; replace with idempotent C# activities.
+/// <summary>
+/// A generated code-first Elsa approval workflow. Durable execution requires
+/// Elsa runtime persistence in the host; sample activities are illustrative.
+/// </summary>
 public sealed class GeneratedOrderApprovalWorkflow : WorkflowBase
 {
     /// <summary>Constructs the generated Elsa activity graph.</summary>

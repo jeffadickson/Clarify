@@ -21,3 +21,16 @@ test('core generated files include explanatory XML comments',()=>{
  const razor=read('src/Clarify.Forms.Shared/CustomerFields.razor');
  assert.match(razor,/\/\/\/ <summary>Customer record edited/);
 });
+
+test('Razor source and both generators escape CSS media rules',()=>{
+ for(const path of [
+  'src/Clarify.Forms.Shared/CustomerPage.razor',
+  'src/Clarify.Forms.Shared/OrderPage.razor',
+  'src/Clarify.Forms.Shared/CustomerFields.razor',
+  'src/Clarify.Demo.Web/Components/Pages/Studio.razor'
+ ]) {
+  assert.doesNotMatch(read(path),/(?<!@)@media\\b/,path);
+ }
+ for(const path of ['tools/generate-shared-blazor.mjs','tools/generate-blazor.mjs'])
+  assert.match(read(path),/@@media/,path);
+});

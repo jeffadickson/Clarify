@@ -48,3 +48,17 @@ test('checked-in EF Core source matches deterministic generator output',()=>{
  const checkedIn=readFileSync(new URL('../examples/relational-generation/generated/SalesDbContext.g.cs',import.meta.url),'utf8');
  assert.equal(generated,checkedIn);
 });
+
+test('unique dictionary fields produce database-enforced indexes',()=>{
+ const model=structuredClone(fixture);
+ const field=model.entities.find(e=>e.name==='Product').fields.find(f=>f.name==='Name');
+ field.unique=true;
+ const source=generateEfModels(model).files[0].source;
+ assert.match(source,/HasIndex\\(x => x.Name\\)\\.IsUnique\\(\\)/);
+ const invalid=structuredClone(model);
+ invalid.entities.find(e=>e.name==='Product').fields.find(f=>f.name==='Name').unique='yes';
+ assert.throws(()=>generateEfModels(invalid),/unique must be boolean/);
+ const redundant=structuredClone(model);
+ redundant.entities.find(e=>e.name==='Product').fields.find(f=>f.primaryKey).unique=true;
+ assert.throws(()=>generateEfModels(redundant),/Primary key is already unique/);
+});

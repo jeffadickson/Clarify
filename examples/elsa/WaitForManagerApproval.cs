@@ -26,7 +26,8 @@ public sealed class WaitForManagerApproval : Activity
         context.CreateBookmark(new CreateBookmarkArgs
         {
             BookmarkName = "Clarify.ManagerApproval",
-            Payload = new Dictionary<string, object> { ["OrderCorrelation"] = order },
+            Stimulus = new Dictionary<string, object> { ["OrderCorrelation"] = order },
+            IncludeActivityInstanceId = false,
             Callback = OnResumeAsync,
             AutoBurn = true // A consumed approval cannot be resumed a second time.
         });
