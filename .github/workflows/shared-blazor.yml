@@ -9,6 +9,19 @@ jobs:
   web:
     runs-on: ubuntu-latest
     steps:
+      - name: Record CI run identity
+        run: |
+          echo "Workflow: $GITHUB_WORKFLOW"
+          echo "Event: $GITHUB_EVENT_NAME"
+          echo "SHA: $GITHUB_SHA"
+          echo "Ref: $GITHUB_REF"
+          echo "Run URL: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          {
+            echo "## Clarify CI diagnostic"
+            echo "- Event: \`$GITHUB_EVENT_NAME\`"
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
