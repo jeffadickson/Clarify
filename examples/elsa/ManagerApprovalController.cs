@@ -34,19 +34,17 @@ public sealed class ManagerApprovalController(IWorkflowDispatcher dispatcher) : 
         // Elsa 3.8 dispatches by activity/bookmark type and matching stimulus.
         // A queued dispatch is not proof that the workflow already resumed.
         await dispatcher.DispatchAsync(new DispatchResumeWorkflowsRequest(
-            activityTypeName: "Clarify.ManagerApproval",
-            bookmarkPayload: new Dictionary<string, object>
+            ActivityTypeName: "Clarify.ManagerApproval",
+            BookmarkPayload: new Dictionary<string, object>
             {
                 ["OrderCorrelation"] = request.OrderCorrelation
-            })
-        {
-            Input = new Dictionary<string, object>
+            },
+            Input: new Dictionary<string, object>
             {
                 ["Decision"] = request.Approved ? "Approved" : "Rejected",
                 ["ApprovedBy"] = actor,
                 ["ApprovedAt"] = DateTime.UtcNow
-            }
-        });
+            }));
         return Accepted(new { Queued = true });
     }
 }
