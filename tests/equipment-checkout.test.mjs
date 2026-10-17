@@ -14,6 +14,7 @@ test('checkout app generated code is reproducible',()=>{
  const source=output.files[0].source;
  assert.match(source,/HasOne<Person>\(\)\.WithMany\(\)\.HasForeignKey<Loan>\(x => x.PersonId\)/);
  assert.match(source,/HasOne<Equipment>\(\)\.WithMany\(\)\.HasForeignKey<Loan>\(x => x.EquipmentId\)/);
+ assert.match(source,/HasIndex\(x => x.SerialNumber\)\.IsUnique\(\)/);
 });
 test('checkout sample has independently authored host and UI',()=>{
  const program=read('examples/equipment-checkout/Program.cs');
