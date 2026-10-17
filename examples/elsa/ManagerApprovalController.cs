@@ -44,7 +44,7 @@ public sealed class ManagerApprovalController(IWorkflowDispatcher dispatcher) : 
                 ["Decision"] = request.Approved ? "Approved" : "Rejected",
                 ["ApprovedBy"] = actor,
                 ["ApprovedAt"] = DateTime.UtcNow
-            }));
+            }), HttpContext.RequestAborted);
         return Accepted(new { Queued = true });
     }
 }
