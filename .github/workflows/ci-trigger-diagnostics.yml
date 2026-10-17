@@ -23,7 +23,7 @@ jobs:
           echo "attempt=${{ github.run_attempt }}"
           echo "runner=${{ runner.os }}"
       - name: Verify checkout and source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Validate required CI files
         shell: bash
         run: |
