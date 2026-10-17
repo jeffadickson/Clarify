@@ -28,6 +28,10 @@ def req(path,payload=None):
  except urllib.error.HTTPError as e:return e.code,json.load(e)
 status,initial=req("/api/snapshot")
 assert status==200 and len(initial["equipment"])>=3 and len(initial["people"])>=2
+status,duplicate=req("/api/equipment",{"name":"Duplicate serial","serialNumber":initial["equipment"][0]["serialNumber"]})
+assert status==409, (status,duplicate)
+status,created=req("/api/equipment",{"name":"Unique test device","serialNumber":"SMOKE-UNIQUE-001"})
+assert status==200 and created["id"]>0, (status,created)
 person=initial["people"][0]["id"]
 equipment=initial["equipment"][0]["id"]
 status,loan=req("/api/loans",{"personId":person,"equipmentId":equipment})
