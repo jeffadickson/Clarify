@@ -26,6 +26,8 @@ export function generateEfModels(dictionary){
   if(!['int','long','string'].includes(keys[0].type))throw Error('Unsupported key type '+keys[0].type);
   const fieldNames=new Set();
   for(const f of fields){
+   if(f.unique!==undefined && typeof f.unique!=='boolean')throw Error('unique must be boolean on '+entity.name+'.'+f.name);
+   if(f.unique===true && f.primaryKey)throw Error('Primary key is already unique: '+entity.name+'.'+f.name);
    if(!ident.test(f.name)||fieldNames.has(f.name))throw Error('Invalid or duplicate field '+entity.name+'.'+f.name);
    fieldNames.add(f.name);
   }
