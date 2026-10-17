@@ -65,6 +65,7 @@ export function generateEfModels(dictionary){
      lines.push('        model.Entity<'+e.name+'>().Property(x => x.'+f.name+').HasMaxLength('+f.maxLength+');');
     }
     if(f.type==='decimal')lines.push('        model.Entity<'+e.name+'>().Property(x => x.'+f.name+').HasPrecision(19,4);');
+    if(f.unique===true)lines.push('        model.Entity<'+e.name+'>().HasIndex(x => x.'+f.name+').IsUnique();');
    }
   }
   for(const r of dictionary.relationships||[]){
