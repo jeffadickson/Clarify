@@ -5,7 +5,7 @@ This is a **standalone runnable ASP.NET Core/.NET 10 + SQLite application** buil
 ## What you can do
 
 - Browse the seeded inventory (oscilloscope, multimeter, thermal camera)
-- Add equipment and borrowers
+- Add equipment and borrowers; equipment serial numbers are unique at the database level
 - Check equipment out to a borrower
 - Return items; prevent checking out an already-loaned item
 - See checkout history with borrower and equipment names
@@ -28,7 +28,7 @@ node --test tests/equipment-checkout.test.mjs
 bash scripts/smoke-equipment-checkout.sh
 ```
 
-The smoke script uses an isolated temporary database and verifies checkout, duplicate-checkout rejection, return, and checkout again.
+The smoke script uses an isolated temporary database and verifies serial-number uniqueness, checkout, duplicate-checkout rejection, return, and checkout again.
 
 ## Files and ownership
 
@@ -47,8 +47,9 @@ The source generator only writes into the `generated` directory. It does **not**
 This sample is a **functional hand-assembled frontend and business layer over a generated EF Core model**, not yet proof of automatic form/CRUD generation from the 40-template gallery. The full visual-to-app workflow remains a core Clarify milestone.
 
 - **No authentication:** This is a localhost-only sample. Do not publish it on the internet.
-- **Schema changes:** Uses `EnsureCreated` only for the initial demonstration database. Existing data requires reviewed migrations.
-- **Concurrent checkout:** The duplicate-loan check is an application rule; a production database also needs a uniqueness/concurrency constraint to prevent races under load.
+- **Schema changes:** Uses `EnsureCreated` only for the initial demonstration database. Existing data requires reviewed migrations. The new serial-number unique index applies to newly created sample databases; it does not retrofit an existing database.
+- **Unique serial numbers:** The dictionary generates a unique SQLite index, and the API reports HTTP 409 on duplicate insert, including index-enforced races. Existing databases require a reviewed migration before relying on this invariant.
+- **Concurrent checkout:** The duplicate-loan check is still an application rule; a production database also needs a filtered active-loan uniqueness/concurrency constraint to prevent races under load.
 - **Validation:** Basic server-side field checks are implemented. Production auth/audit, email validation and full generated validators are still required.
 - **No separate workflow engine:** Returning an item is an ordinary C# command, not an Elsa workflow.
 
