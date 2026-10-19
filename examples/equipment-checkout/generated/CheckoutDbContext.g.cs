@@ -57,6 +57,7 @@ public sealed class CheckoutDbContext(DbContextOptions<CheckoutDbContext> option
         model.Entity<Equipment>().Property(x => x.Name).HasMaxLength(120);
         model.Entity<Equipment>().Property(x => x.SerialNumber).IsRequired();
         model.Entity<Equipment>().Property(x => x.SerialNumber).HasMaxLength(80);
+        model.Entity<Equipment>().HasIndex(x => x.SerialNumber).IsUnique();
         model.Entity<Loan>().ToTable("Loan").HasKey(x => x.Id);
         model.Entity<Loan>().HasOne<Person>().WithMany().HasForeignKey<Loan>(x => x.PersonId).OnDelete(DeleteBehavior.Restrict);
         model.Entity<Loan>().HasIndex(x => x.PersonId);

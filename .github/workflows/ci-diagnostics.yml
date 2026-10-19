@@ -51,6 +51,11 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Export active-parser parity fixtures
+        run: node tools/export-dsl-parity-fixtures.mjs
       - name: Environment
         run: dotnet --info
       - name: Restore native parser

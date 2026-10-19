@@ -4,7 +4,7 @@ const read=p=>JSON.parse(readFileSync(new URL(p,root),'utf8'));
 const dictionary=read('examples/order-entry/dictionary.json');
 const index=read('src/Clarify.Demo.Web/wwwroot/studio/sample-template-index.json');
 test('all 40 templates have parsable forms and matching served assets',()=>{
- assert.equal(index.length,40);assert.equal(new Set(index.map(x=>x.slug)).size,20);
+ assert.equal(index.length,40);assert.equal(new Set(index.map(x=>x.slug)).size,index.length);
  for(const item of index){
   const source=read('templates/samples/'+item.slug+'.json');
   const served=read('src/Clarify.Demo.Web/wwwroot/studio/samples/'+item.slug+'.json');

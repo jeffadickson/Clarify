@@ -7,22 +7,30 @@
     {
       "Kind": "step",
       "Name": "ValidateOrder",
-      "Role": null
+      "Role": null,
+      "NativeType": null,
+      "Config": null
     },
     {
       "Kind": "wait",
       "Name": "Approval",
-      "Role": "Manager"
+      "Role": "Manager",
+      "NativeType": null,
+      "Config": null
     },
     {
       "Kind": "step",
       "Name": "ReserveInventory",
-      "Role": null
+      "Role": null,
+      "NativeType": null,
+      "Config": null
     },
     {
       "Kind": "step",
       "Name": "PublishOrder",
-      "Role": null
+      "Role": null,
+      "NativeType": null,
+      "Config": null
     }
   ],
   "MaxRetries": 3

@@ -48,7 +48,8 @@
           "name": "SerialNumber",
           "type": "string",
           "required": true,
-          "maxLength": 80
+          "maxLength": 80,
+          "unique": true
         }
       ]
     },
